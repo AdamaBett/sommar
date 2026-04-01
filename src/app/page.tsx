@@ -5,8 +5,9 @@ import { ProblemStats } from '@/components/landing/ProblemStats';
 import { Antidote } from '@/components/landing/Antidote';
 import { HowItWorks } from '@/components/landing/HowItWorks';
 import { NotJustDating } from '@/components/landing/NotJustDating';
+import { MidCTA } from '@/components/landing/MidCTA';
 import { ForOrganizers } from '@/components/landing/ForOrganizers';
-import { EmailCapture } from '@/components/landing/EmailCapture';
+import { FinalCTA } from '@/components/landing/FinalCTA';
 import { Footer } from '@/components/landing/Footer';
 
 export default function LandingPage(): JSX.Element {
@@ -20,8 +21,9 @@ export default function LandingPage(): JSX.Element {
         <Antidote />
         <HowItWorks />
         <NotJustDating />
+        <MidCTA />
         <ForOrganizers />
-        <EmailCapture />
+        <FinalCTA />
       </main>
       <Footer />
     </>

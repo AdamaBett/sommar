@@ -178,6 +178,36 @@ body {
   }
 }
 
+/* ── Neon animated border ─────────────────────────────── */
+@keyframes neon-border-spin {
+  to { transform: rotate(360deg); }
+}
+
+.neon-border {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  padding: 2px;
+  display: inline-block;
+}
+
+.neon-border::before {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(
+    #1DFFA8,
+    #00D4FF,
+    #A855F7,
+    #EC4899,
+    #FF6B3D,
+    #FFB840,
+    #1DFFA8
+  );
+  animation: neon-border-spin 4s linear infinite;
+  z-index: -1;
+}
+
 /* Hide scrollbar utility */
 .scrollbar-none {
   -ms-overflow-style: none;

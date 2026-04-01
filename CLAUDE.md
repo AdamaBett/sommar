@@ -24,7 +24,7 @@ Qualquer feature completada deve ser adicionada ao Patch Notes neste arquivo.
 
 **Sommar** é infraestrutura de conexão humana. Onde houver duas ou mais pessoas reunidas (evento, bar, praia, congresso, hackathon, retiro, coworking, qualquer lugar), o Sommar facilita o encontro entre elas. A IA central (**Matter**) conduz onboarding conversacional, cria perfis profundos (**Oris**) com 5 facetas, e faz matching via embeddings vetoriais. As pessoas se conectam através de mensagens temporárias (**Correio Elegante**) dentro de lobbies vinculados a eventos ou áreas geográficas. O Sommar é agnóstico ao tipo de vínculo: não decide se o match é romance, amizade, parceria ou mentoria. Mostra POR QUÊ duas pessoas devem se conhecer. Elas decidem o resto.
 
-**Escopo atual:** MSP (Minimum Scaleable Product) para piloto no Sounds in da City (Florianópolis, 50-500 pessoas). MSP significa que a arquitetura é pensada para escalar desde o dia 1. Funciona para qualquer tipo de evento (festival, congresso, feira, hackathon, Campus Party, retiro, encontro comunitário). O campo `matter_context` no evento é o que contextualiza a Matter para cada tipo de evento. Nunca hardcodar nada específico de música ou de um tipo de evento.
+**Escopo atual:** MSP (Minimum Scaleable Product). Plataforma 100% agnóstica ao tipo de evento e ao organizador. Funciona para festival, congresso, hackathon, retiro, feira, meetup, Campus Party, coworking, qualquer encontro presencial de 50 a 50.000 pessoas. A arquitetura é pensada para escalar desde o dia 1. O campo `matter_context` no evento é o que contextualiza a Matter para cada contexto — é o organizador que escreve isso, não o código. JAMAIS hardcodar referências a eventos específicos, tipos de música, cidades ou qualquer coisa que não seja universal. O Sommar não é uma ferramenta para um evento. É infraestrutura para todos os eventos.
 
 **Time:** Bet (PM, não dev) + Gusta (full-stack dev). Bootstrap, R$1k/mês max.
 
@@ -34,7 +34,7 @@ Qualquer feature completada deve ser adicionada ao Patch Notes neste arquivo.
 - **Linguagem:** TypeScript strict mode
 - **Backend/DB:** Supabase (Postgres + Auth + Realtime + Storage + Edge Functions)
 - **Embeddings:** pgvector extension no Supabase
-- **IA conversação:** Claude API (claude-sonnet-4-20250514) para Matter, ice-breakers, narrativas
+- **IA conversação:** Claude API — `claude-sonnet-4-6` para Matter (onboarding + lobby), `claude-haiku-4-5` para ice-breakers e extração de dados (tarefa simples, custo 5x menor)
 - **IA embeddings:** OpenAI text-embedding-3-small para vetores do Ori
 - **Hosting:** Vercel (domínio sommar.app, DNS configurado)
 - **Repo:** github.com/AdamaBett/sommar
@@ -512,6 +512,107 @@ Você é a Matter, a inteligência central do Sommar. Sua essência:
 4. Contexto do evento (se em lobby ativo), incluindo `matter_context` do organizador
 5. Estado dos correios (ativos, expirados, matches pendentes)
 6. Identidade do usuário (gênero, orientação, interested_in, modelo relacional). A Matter NUNCA presume heterossexualidade, monogamia ou binariedade de gênero.
+
+## Matter — Arquitetura de Inteligência
+
+### O que cada método de auth nos dá
+
+| Campo | Google OAuth | Email OTP |
+|---|---|---|
+| Nome | ✅ `user_metadata.full_name` | ❌ Matter coleta na 1ª mensagem |
+| Email | ✅ | ✅ |
+| Foto | ✅ `user_metadata.avatar_url` | ❌ |
+| Idade | ❌ | ❌ |
+| Localização | ❌ | ❌ |
+| Gênero/orientação | ❌ | ❌ |
+
+**Regra de ouro:** A Matter NUNCA pergunta algo que já sabemos. Se veio do Google e temos o nome → ela cumprimenta pelo nome já na primeira mensagem, sem perguntar.
+
+### Personalização do onboarding
+
+O onboarding não é um script linear. A Matter recebe no contexto:
+```json
+{
+  "auth_method": "google" | "email",
+  "known_data": {
+    "name": "Matheus",         // se disponível do Google
+    "has_photo": true,         // se tem avatar do Google
+    "event_context": "Sounds in da City — festival de música ao vivo..."  // se veio de /e/[slug]
+  },
+  "extracted_so_far": {        // facet_data já extraído
+    "essencia": { "valores": "..." }
+  },
+  "completeness_score": 0.12   // 0 a 1
+}
+```
+
+Com isso, a Matter adapta:
+- Ponto de partida da conversa (o que ainda não sabe)
+- Tom (quem veio de festival vs. hackathon recebe abordagens diferentes)
+- O que perguntar e em que ordem
+- Quanto aprofundar antes de avançar para arquétipos/facetas
+
+### Camada de extração (extraction layer)
+
+Após cada mensagem do usuário, roda um call paralelo e assíncrono com Haiku que:
+1. Lê a conversa até aquele ponto
+2. Retorna JSON estruturado com o que conseguiu extrair
+3. Faz merge incremental no `facet_data` JSONB do perfil (merge, não substituição)
+4. Recalcula o `completeness_score` do Ori
+
+O Ori nasce **durante** a conversa, não só no final. O Ori Reveal acontece quando `completeness_score >= 0.65`.
+
+**Formato de saída da extração (Haiku):**
+```json
+{
+  "facet_data": {
+    "essencia": {
+      "valores": "autonomia, profundidade, leveza",
+      "energia_social": "seletivamente extrovertido",
+      "como_se_comunica": "direto mas cuidadoso"
+    },
+    "criativo": {
+      "musica": "jazz, soul, eletrônica orgânica"
+    }
+  },
+  "identity": {
+    "gender": null,
+    "interested_in": ["todos"]
+  },
+  "completeness_score": 0.28,
+  "confidence": "medium"
+}
+```
+
+Campos com `null` → ainda não mencionados. Nunca presumir.
+
+### Continuidade pós-onboarding
+
+Quando a pessoa abre a Matter no lobby, perfil ou qualquer outra tela:
+- O sistema injeta o Ori atual completo no contexto
+- A Matter já sabe tudo que foi coletado
+- Se surgir oportunidade natural, ela aprofunda uma faceta
+- A extração continua rodando → Ori melhora ao longo do tempo
+- O `version` do Ori incrementa a cada atualização significativa (score delta > 0.1)
+
+A Matter nunca diz "posso te fazer mais algumas perguntas para completar seu perfil?" — isso é de chatbot. Se quiser aprofundar, ela o faz organicamente dentro do contexto da conversa.
+
+### Onboarding via email OTP
+
+Se a pessoa entrou por email:
+1. Supabase envia magic link (sem senha)
+2. Após confirmação, redirect para `/onboarding`
+3. Primeira mensagem da Matter pergunta o nome preferido (única exceção de pergunta direta)
+4. A partir daí, conversa normal
+5. O avatar é gerado a partir das iniciais do nome (sem foto)
+
+### Regras de coleta de identidade durante o onboarding
+
+A Matter coleta gênero, orientação e `interested_in` de forma conversacional, NUNCA como formulário. Regras:
+- Se a pessoa não mencionar, não forçar
+- Se houver hesitação ou resposta vaga, oferecer saída: *"Sem pressão, você ajusta isso a qualquer momento no perfil"*
+- Fallbacks: gênero não declarado → não visível. interested_in não declarado → `["todos"]`. orientation → não visível.
+- A Matter NUNCA presume heterossexualidade, monogamia ou binariedade.
 
 ## Correio Elegante — Regras de Expiração
 

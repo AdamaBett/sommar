@@ -139,11 +139,20 @@ export function ForOrganizers(): JSX.Element {
 
             {/* CTA */}
             <ScrollReveal delay={0.4}>
-              <a href="mailto:contato@sommar.app">
-                <Button variant="secondary" size="md">
-                  Fale com a gente
-                </Button>
-              </a>
+              <div className="flex flex-col sm:flex-row items-start gap-3">
+                <a href="/login?role=organizer">
+                  <Button variant="secondary" size="md">
+                    Criar meu primeiro evento
+                  </Button>
+                </a>
+                <a
+                  href="mailto:contato@sommar.app"
+                  className="text-sm flex items-center gap-1 pt-2.5 transition-colors duration-200 hover:opacity-80"
+                  style={{ color: 'var(--text-subtle)' }}
+                >
+                  ou fale com a gente →
+                </a>
+              </div>
             </ScrollReveal>
           </GlassCard>
         </ScrollReveal>
