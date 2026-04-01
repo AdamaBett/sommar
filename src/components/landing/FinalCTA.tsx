@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { NeonCTA } from '@/components/ui/NeonCTA';
 import { ScrollReveal } from '@/components/landing/ScrollReveal';
 
