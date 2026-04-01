@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sommar — Conexões que importam</title>
+<meta name="description" content="O mundo está desconectado. A gente vai mudar isso.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--g:#1D9E75;--gg:#1DFFA8;--co:#D85A30;--cg:#FF6B3D;--am:#EF9F27;--ag:#FFB840;--cy:#00D4FF;--pu:#A855F7;--pk:#EC4899}
+html{scroll-behavior:smooth}
+body{background:#000;color:#fff;font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* COSMOS */
+#cosmos{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(0,0,0,.9) 30%,transparent)}
+.nav-logo{font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:2px;color:rgba(255,255,255,.9)}
+.nav-cta{padding:8px 20px;border-radius:20px;border:1px solid rgba(29,255,168,.2);background:transparent;color:var(--gg);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .3s;letter-spacing:.5px}
+.nav-cta:hover{background:rgba(29,158,117,.1);border-color:rgba(29,255,168,.4)}
+
+/* HERO */
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 24px 80px;text-align:center}
+.hero-orb{width:160px;height:160px;margin:0 auto 48px;position:relative;opacity:0;animation:oe 2s cubic-bezier(.16,1,.3,1) .3s forwards}
+@keyframes oe{0%{opacity:0;transform:scale(.3);filter:blur(20px)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+.ho-aura{position:absolute;inset:-25%;border-radius:50%;background:radial-gradient(circle,rgba(29,158,117,.08),rgba(0,212,255,.04) 40%,transparent 65%);filter:blur(25px);animation:aB 5s ease-in-out infinite}
+@keyframes aB{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.3);opacity:.9}}
+.ho-s1{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(29,255,168,.5),rgba(0,212,255,.25) 40%,rgba(168,85,247,.12) 70%,transparent);filter:blur(10px);animation:sf 7s ease-in-out infinite}
+@keyframes sf{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.06) rotate(3deg)}75%{transform:scale(1.03) rotate(-2deg)}}
+.ho-s2{position:absolute;inset:6%;border-radius:50%;background:radial-gradient(circle at 62% 68%,rgba(255,107,61,.18),rgba(236,72,153,.1) 40%,transparent 70%);filter:blur(14px);animation:sd 9s ease-in-out infinite}
+@keyframes sd{0%,100%{transform:scale(1)}50%{transform:scale(1.06) rotate(-3deg)}}
+.ho-core{position:absolute;inset:26%;border-radius:50%;background:radial-gradient(circle at 38% 32%,#fff,var(--gg) 25%,var(--cy) 55%,transparent 75%);filter:blur(6px);animation:ca 4s ease-in-out infinite}
+@keyframes ca{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(1.05);opacity:.85}}
+.ho-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(29,255,168,.05);animation:rs 30s linear infinite}
+@keyframes rs{to{transform:rotate(360deg)}}
+
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(28px,6vw,52px);font-weight:300;line-height:1.2;max-width:700px;margin-bottom:20px;opacity:0;animation:fu 1.2s ease .8s forwards;transform:translateY(20px)}
+@keyframes fu{to{opacity:1;transform:translateY(0)}}
+.hero h1 em{font-style:italic;color:var(--gg)}
+.hero h1 .coral{color:var(--cg)}
+.hero-sub{font-size:clamp(15px,2.5vw,18px);font-weight:300;line-height:1.6;color:rgba(255,255,255,.5);max-width:520px;margin:0 auto 40px;opacity:0;animation:fu 1.2s ease 1s forwards;transform:translateY(20px)}
+.hero-cta{display:flex;flex-direction:column;align-items:center;gap:16px;opacity:0;animation:fu 1.2s ease 1.2s forwards;transform:translateY(20px)}
+.btn-main{padding:16px 40px;border-radius:30px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;color:#000;background:var(--g);box-shadow:0 0 30px rgba(29,255,168,.2)}
+.btn-main:hover{transform:scale(1.04);box-shadow:0 0 40px rgba(29,255,168,.3)}
+.hero-note{font-size:12px;color:rgba(255,255,255,.2);letter-spacing:.5px}
+
+/* STATS SECTION */
+.stats{position:relative;z-index:1;padding:80px 24px;display:flex;flex-wrap:wrap;justify-content:center;gap:20px;max-width:900px;margin:0 auto}
+.stat{flex:1;min-width:200px;max-width:280px;text-align:center;padding:32px 20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:20px;backdrop-filter:blur(8px)}
+.stat-num{font-family:'Fraunces',serif;font-size:40px;font-weight:300;margin-bottom:8px}
+.stat-num.green{color:var(--gg)}.stat-num.coral{color:var(--cg)}.stat-num.amber{color:var(--ag)}.stat-num.cyan{color:var(--cy)}
+.stat-label{font-size:13px;font-weight:300;color:rgba(255,255,255,.45);line-height:1.5}
+.stat-src{font-size:10px;color:rgba(255,255,255,.15);margin-top:8px}
+
+/* SECTION */
+.section{position:relative;z-index:1;padding:100px 24px;max-width:700px;margin:0 auto}
+.section-tag{font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;font-weight:500}
+.section-tag.green{color:var(--g)}.section-tag.coral{color:var(--co)}.section-tag.amber{color:var(--am)}.section-tag.cyan{color:var(--cy)}
+.section h2{font-family:'Fraunces',serif;font-size:clamp(24px,4vw,36px);font-weight:300;line-height:1.3;margin-bottom:20px}
+.section h2 em{font-style:italic;color:var(--gg)}
+.section h2 .hl{color:var(--ag)}
+.section p{font-size:16px;font-weight:300;line-height:1.7;color:rgba(255,255,255,.5);margin-bottom:16px}
+.section p strong{color:rgba(255,255,255,.8);font-weight:500}
+
+/* WHAT WE ARE */
+.features{display:flex;flex-direction:column;gap:16px;margin-top:32px}
+.feat{padding:24px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:18px;position:relative;overflow:hidden}
+.feat::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;opacity:.4}
+.feat.f-green::before{background:linear-gradient(to bottom,var(--gg),var(--cy))}
+.feat.f-coral::before{background:linear-gradient(to bottom,var(--cg),var(--ag))}
+.feat.f-purple::before{background:linear-gradient(to bottom,var(--pu),var(--pk))}
+.feat.f-cyan::before{background:linear-gradient(to bottom,var(--cy),var(--gg))}
+.feat-title{font-family:'Fraunces',serif;font-size:18px;margin-bottom:8px;color:rgba(255,255,255,.9)}
+.feat-desc{font-size:14px;font-weight:300;line-height:1.6;color:rgba(255,255,255,.4)}
+
+/* CTA FINAL */
+.final-cta{position:relative;z-index:1;padding:100px 24px 120px;text-align:center;max-width:600px;margin:0 auto}
+.final-cta h2{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,40px);font-weight:300;line-height:1.3;margin-bottom:20px}
+.final-cta h2 em{color:var(--gg);font-style:italic}
+.final-cta p{font-size:15px;font-weight:300;color:rgba(255,255,255,.4);margin-bottom:32px;line-height:1.6}
+
+/* EMAIL CAPTURE */
+.email-wrap{display:flex;gap:10px;max-width:400px;margin:0 auto 16px}
+.email-input{flex:1;padding:14px 20px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.9);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:all .3s}.email-input::placeholder{color:rgba(255,255,255,.25)}.email-input:focus{border-color:rgba(29,255,168,.2)}
+.email-btn{padding:14px 28px;border-radius:14px;border:none;background:var(--g);color:#000;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s;white-space:nowrap}.email-btn:hover{background:var(--gg)}
+.email-note{font-size:11px;color:rgba(255,255,255,.15)}
+
+/* FOOTER */
+footer{position:relative;z-index:1;padding:40px 24px;text-align:center;border-top:1px solid rgba(255,255,255,.04)}
+footer p{font-size:11px;color:rgba(255,255,255,.15);letter-spacing:1px}
+footer .logo{font-family:'Fraunces',serif;font-weight:600;font-size:13px;letter-spacing:3px;color:rgba(255,255,255,.2);margin-bottom:8px;display:block}
+
+/* RESPONSIVE */
+@media(max-width:600px){.stats{gap:12px}.stat{min-width:140px;padding:24px 16px}.stat-num{font-size:32px}.email-wrap{flex-direction:column}}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(.16,1,.3,1)}.reveal.vis{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div id="cosmos"><canvas id="cv"></canvas></div>
+
+<nav>
+  <span class="nav-logo">SOMMAR</span>
+  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">quero participar</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb">
+    <div class="ho-aura"></div>
+    <div class="ho-ring"></div>
+    <div class="ho-s2"></div>
+    <div class="ho-s1"></div>
+    <div class="ho-core"></div>
+  </div>
+  <h1>O mundo está <em>desconectado</em>.<br>A gente vai <span class="coral">mudar</span> isso.</h1>
+  <p class="hero-sub">Apps de namoro te esgotam. LinkedIn é performance. Redes sociais são barulho. Enquanto isso, as conexões que mudam vidas continuam não acontecendo. Até agora.</p>
+  <div class="hero-cta">
+    <button class="btn-main" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Quero ser dos primeiros</button>
+    <span class="hero-note">Alpha test em Florianópolis. Vagas limitadas.</span>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat reveal">
+    <div class="stat-num coral">1 em 6</div>
+    <div class="stat-label">pessoas no mundo sofre de solidão</div>
+    <div class="stat-src">OMS, 2025</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num amber">79%</div>
+    <div class="stat-label">da Gen Z tem burnout de apps de namoro</div>
+    <div class="stat-src">Forbes Health, 2024</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num cyan">60%</div>
+    <div class="stat-label">dos adultos nos EUA se sentem solitários regularmente</div>
+    <div class="stat-src">APA, 2024</div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="section reveal">
+  <span class="section-tag coral">O problema</span>
+  <h2>Temos mais <em>ferramentas de conexão</em> do que nunca. E nunca estivemos tão sozinhos.</h2>
+  <p>Tinder virou um jogo de fotos onde <strong>78% dos usuários se sentem esgotados</strong>. LinkedIn é uma vitrine de ego disfarçada de networking. Instagram é uma timeline de vidas que ninguém vive de verdade. Ghosting virou norma. Conexões líquidas viraram padrão.</p>
+  <p>Enquanto isso, <strong>a pessoa que poderia ser seu sócio, seu próximo melhor amigo, ou o amor da sua vida</strong> pode estar a 10 metros de você num evento, num café, numa feira. Mas vocês nunca vão se encontrar. Porque nenhuma tecnologia existe pra fazer essa ponte. Até agora.</p>
+</section>
+
+<!-- WHAT IS SOMMAR -->
+<section class="section reveal">
+  <span class="section-tag green">O que é o Sommar</span>
+  <h2>Uma IA que te <em>conhece de verdade</em> e conecta com quem faz sentido. Pra <span class="hl">tudo</span>.</h2>
+  <p>Sommar não é app de namoro. Não é rede social. Não é LinkedIn. É uma inteligência que entende quem você é, o que busca, e encontra as pessoas certas. Amor, amizade, parceria, comunidade. Sem swipe. Sem performance. Sem bullshit.</p>
+  <div class="features">
+    <div class="feat f-green">
+      <div class="feat-title">Matter: sua anfitriã</div>
+      <div class="feat-desc">Uma IA que conversa com você de verdade. Em 2 minutos ela te conhece melhor do que qualquer perfil de rede social. E cria seu Ori.</div>
+    </div>
+    <div class="feat f-coral">
+      <div class="feat-title">Ori: sua essência digital</div>
+      <div class="feat-desc">Um agente autônomo que carrega quem você é. Enquanto você vive o momento, seu Ori conversa com outros Oris buscando compatibilidade real. Em background.</div>
+    </div>
+    <div class="feat f-purple">
+      <div class="feat-title">Conexão por essência, não por foto</div>
+      <div class="feat-desc">Sem swipe. Sem julgamento superficial. O Sommar conecta por complementaridade de valores, interesses, e intenções. Quando dá match, você sabe exatamente por quê.</div>
+    </div>
+    <div class="feat f-cyan">
+      <div class="feat-title">Funciona na vida real</div>
+      <div class="feat-desc">Eventos, festas, conferências, feiras. Escaneia um QR code e a mágica acontece enquanto você curte o momento. Também funciona online.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section reveal">
+  <span class="section-tag amber">Na prática</span>
+  <h2>Dois minutos. <em>Zero esforço</em>. Conexões que ficam.</h2>
+  <p><strong>1. Escaneia o QR code</strong> no evento (ou abre o app direto). A Matter te recebe com contexto do momento.</p>
+  <p><strong>2. Conversa rápida.</strong> 4 mensagens. A Matter descobre o que você busca: alguém especial, um parceiro de projeto, gente nova, tudo junto.</p>
+  <p><strong>3. Seu Ori trabalha.</strong> Enquanto você vive, seu agente conversa com os agentes de quem tá por perto. Quando encontra compatibilidade real, te avisa.</p>
+  <p><strong>4. Match com substância.</strong> Nada de "87% compatível". Você recebe um relatório explicando exatamente por que essa pessoa importa pra você. Com um quebra-gelo da Matter pra começar a conversa.</p>
+</section>
+
+<!-- ANTI-APPS -->
+<section class="section reveal">
+  <span class="section-tag cyan">O que a gente NÃO é</span>
+  <h2>Tudo que te <em>frustra</em> nos outros apps? A gente fez o oposto.</h2>
+  <p><strong>Sem swipe infinito.</strong> Seu Ori faz o trabalho. Você recebe só o que importa.</p>
+  <p><strong>Sem ghosting.</strong> Seu Ori mantém a conversa viva mesmo quando você tá offline. Ninguém desaparece.</p>
+  <p><strong>Sem performance.</strong> Não tem likes, não tem seguidores, não tem vitrine. Tem conexão.</p>
+  <p><strong>Sem burnout.</strong> A IA trabalha enquanto você vive. O oposto do scroll infinito. Background intelligence pra que você gaste tempo com gente, não com tela.</p>
+</section>
+
+<!-- CTA -->
+<section class="final-cta reveal" id="cta">
+  <h2>Alpha test em <em>Florianópolis</em>. Vagas limitadas.</h2>
+  <p>O Sommar nasce nos eventos e espaços públicos de Floripa. Se você quer ser dos primeiros a experimentar conexões que realmente importam, deixa seu email.</p>
+  <div class="email-wrap">
+    <input type="email" class="email-input" placeholder="seu email" id="emailInput">
+    <button class="email-btn" onclick="capture()">Quero participar</button>
+  </div>
+  <span class="email-note">Sem spam. Só aviso quando abrir as vagas.</span>
+  <div id="emailSuccess" style="display:none;margin-top:20px;padding:16px;border-radius:14px;background:rgba(29,158,117,.08);border:1px solid rgba(29,255,168,.15)">
+    <p style="font-size:14px;color:var(--gg);margin:0">Pronto. Quando abrir, você é dos primeiros a saber. ✦</p>
+  </div>
+</section>
+
+<footer>
+  <span class="logo">SOMMAR</span>
+  <p>Conexões que importam. Florianópolis, 2026.</p>
+</footer>
+
+<script>
+// COSMOS
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');let W,H;const stars=[];
+function resize(){const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=document.body.scrollHeight;cv.width=W*d;cv.height=H*d;cv.style.width=W+'px';cv.style.height=H+'px';cx.setTransform(d,0,0,d,0,0);stars.length=0;
+  const cols=[[29,255,168],[0,212,255],[168,85,247],[236,72,153],[239,159,39],[255,255,255]];
+  for(let i=0;i<100;i++){const c=cols[~~(Math.random()*cols.length)];stars.push({x:Math.random()*W,y:Math.random()*H,s:.4+Math.random()*1.5,r:c[0],g:c[1],b:c[2],a:.1+Math.random()*.35,p:Math.random()*6.28,sp:.002+Math.random()*.006})}}
+function draw(){cx.clearRect(0,0,W,H);stars.forEach(s=>{s.p+=s.sp;const f=Math.sin(s.p)*.15+.85,a=s.a*f;const g=cx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.s*4);g.addColorStop(0,`rgba(${s.r},${s.g},${s.b},${a*.4})`);g.addColorStop(1,`rgba(${s.r},${s.g},${s.b},0)`);cx.fillStyle=g;cx.beginPath();cx.arc(s.x,s.y,s.s*4,0,Math.PI*2);cx.fill();cx.fillStyle=`rgba(${s.r},${s.g},${s.b},${a})`;cx.beginPath();cx.arc(s.x,s.y,s.s,0,Math.PI*2);cx.fill()});requestAnimationFrame(draw)}
+resize();draw();addEventListener('resize',resize);
+
+// Scroll reveal
+const revs=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.15});
+revs.forEach(r=>obs.observe(r));
+
+// Email capture
+function capture(){
+  const email=document.getElementById('emailInput').value.trim();
+  if(!email||!email.includes('@'))return;
+  document.querySelector('.email-wrap').style.display='none';
+  document.querySelector('.email-note').style.display='none';
+  document.getElementById('emailSuccess').style.display='block';
+}
+</script>
+</body>
+</html>

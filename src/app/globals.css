@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Sommar core colors */
+  --green: #1D9E75;
+  --green-glow: #1DFFA8;
+  --coral: #D85A30;
+  --coral-glow: #FF6B3D;
+  --amber: #EF9F27;
+  --amber-glow: #FFB840;
+  --cyan: #00D4FF;
+  --purple: #A855F7;
+  --pink: #EC4899;
+
+  /* Backgrounds */
+  --bg: #000000;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-hover: rgba(255, 255, 255, 0.06);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  /* Text */
+  --text-strong: rgba(255, 255, 255, 0.87);
+  --text-medium: rgba(255, 255, 255, 0.6);
+  --text-subtle: rgba(255, 255, 255, 0.35);
+  --text-muted: rgba(255, 255, 255, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-strong);
+  font-family: var(--font-outfit), 'Outfit', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Glass card utility */
+@layer components {
+  .glass {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .glass-hover:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-medium);
+  }
+
+  /* Text gradient utilities */
+  .text-gradient-green {
+    background: linear-gradient(135deg, var(--green-glow), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-warm {
+    background: linear-gradient(135deg, var(--amber-glow), var(--coral-glow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-purple {
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Selection */
+::selection {
+  background: rgba(29, 158, 117, 0.3);
+  color: #fff;
+}
+
+/* Matter orb animations */
+@keyframes orb-breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.6;
+  }
+}
+
+@keyframes orb-float-1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(10%, -10%) scale(1.05);
+  }
+  66% {
+    transform: translate(-5%, 8%) scale(0.95);
+  }
+}
+
+@keyframes orb-float-2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-12%, 6%) scale(0.95);
+  }
+  66% {
+    transform: translate(8%, -12%) scale(1.05);
+  }
+}
+
+@keyframes orb-pulse {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes orb-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Equalizer bar animation for Ori active indicator */
+@keyframes wave-bar-eq {
+  0%, 100% {
+    transform: scaleY(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scaleY(1.6);
+    opacity: 1;
+  }
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

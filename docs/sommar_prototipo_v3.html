@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Sommar</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--g:#1D9E75;--gg:#1DFFA8;--co:#D85A30;--cg:#FF6B3D;--am:#EF9F27;--ag:#FFB840;--cy:#00D4FF;--pu:#A855F7;--pk:#EC4899;--ws:rgba(255,255,255,.87);--wm:rgba(255,255,255,.45);--wg:rgba(255,255,255,.1)}
+html,body{height:100%;overflow:hidden;background:#000;color:#fff;font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased;touch-action:manipulation}
+::-webkit-scrollbar{display:none}*{scrollbar-width:none}
+#cosmos{position:fixed;inset:0;z-index:0}
+.scr{position:fixed;inset:0;z-index:10;opacity:0;pointer-events:none;transition:opacity .5s ease}.scr.active{opacity:1;pointer-events:auto}
+
+/* ORB */
+.orb{position:relative}.orb-aura{position:absolute;inset:-20%;border-radius:50%;background:radial-gradient(circle,rgba(29,158,117,.07),rgba(0,212,255,.035) 40%,transparent 65%);filter:blur(25px);animation:aB 5s ease-in-out infinite}
+@keyframes aB{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.25);opacity:.9}}
+.orb-ring{position:absolute;border-radius:50%;border:1px solid rgba(29,255,168,.06);animation:rs 25s linear infinite}.orb-ring:nth-child(2){border-color:rgba(0,212,255,.04);animation:rs 35s linear infinite reverse}
+@keyframes rs{to{transform:rotate(360deg)}}
+.orb-s2{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle at 62% 68%,rgba(255,107,61,.2),rgba(236,72,153,.12) 40%,rgba(239,159,39,.08) 70%,transparent);filter:blur(16px);animation:sd 9s ease-in-out infinite}
+@keyframes sd{0%,100%{transform:scale(1) rotate(0)}33%{transform:scale(1.08) rotate(-4deg)}66%{transform:scale(.94) rotate(3deg)}}
+.orb-s1{position:absolute;inset:14%;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(29,255,168,.55),rgba(0,212,255,.3) 40%,rgba(168,85,247,.15) 70%,transparent);filter:blur(10px);animation:sf 7s ease-in-out infinite}
+@keyframes sf{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.06) rotate(4deg)}50%{transform:scale(.97) rotate(-2deg)}75%{transform:scale(1.04) rotate(1deg)}}
+.orb-core{position:absolute;inset:28%;border-radius:50%;background:radial-gradient(circle at 38% 32%,#fff,var(--gg) 25%,var(--cy) 55%,transparent 75%);filter:blur(6px);animation:ca 4s ease-in-out infinite}
+@keyframes ca{0%,100%{transform:scale(1);opacity:.95}25%{transform:scale(1.08) rotate(2deg);opacity:1}50%{transform:scale(.96);opacity:.85}75%{transform:scale(1.05) rotate(-1deg);opacity:.95}}
+.orb-p{position:absolute;border-radius:50%;top:50%;left:50%;animation:po linear infinite}
+@keyframes po{0%{transform:rotate(0deg) translateX(var(--r)) rotate(0deg);opacity:.2}25%{opacity:.8}50%{transform:rotate(180deg) translateX(var(--r)) rotate(-180deg);opacity:.2}75%{opacity:.8}100%{transform:rotate(360deg) translateX(var(--r)) rotate(-360deg);opacity:.2}}
+.orb.thinking .orb-core,.orb.thinking .orb-s1{animation:tc .6s ease-in-out infinite}
+@keyframes tc{0%,100%{transform:scale(1);filter:blur(6px)}50%{transform:scale(1.15);filter:blur(8px)}}
+@keyframes fi{to{opacity:1}}@keyframes fu{to{opacity:1;transform:translateY(0)}}@keyframes dp{0%,100%{box-shadow:0 0 6px var(--g)}50%{box-shadow:0 0 16px var(--gg)}}
+
+/* SHARED */
+.glass{background:rgba(255,255,255,.02);border:1px solid var(--wg);border-radius:16px;backdrop-filter:blur(12px)}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:50;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.bk{width:40px;height:40px;border-radius:50%;border:1px solid var(--wg);background:transparent;color:var(--wm);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}.bk:hover{border-color:rgba(255,255,255,.15);color:var(--ws)}
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;justify-content:space-around;align-items:center;padding:16px 24px 28px;background:linear-gradient(to top,#000 60%,transparent)}
+.ni{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;color:var(--wm);transition:color .3s;-webkit-tap-highlight-color:transparent}.ni:hover,.ni.act{color:var(--gg)}.ni svg{width:22px;height:22px}.ni span{font-size:10px;letter-spacing:.5px}
+.tg{padding:5px 12px;border-radius:16px;font-size:11px;border:1px solid}
+.tg.g{border-color:rgba(29,158,117,.3);color:var(--gg);background:rgba(29,158,117,.06)}
+.tg.a{border-color:rgba(239,159,39,.3);color:var(--ag);background:rgba(239,159,39,.06)}
+.tg.c{border-color:rgba(0,212,255,.3);color:var(--cy);background:rgba(0,212,255,.06)}
+.tg.p{border-color:rgba(168,85,247,.3);color:var(--pu);background:rgba(168,85,247,.06)}
+.tg.k{border-color:rgba(216,90,48,.3);color:var(--cg);background:rgba(216,90,48,.06)}
+.tg.pk{border-color:rgba(236,72,153,.3);color:var(--pk);background:rgba(236,72,153,.06)}
+.badge{font-size:9px;padding:3px 8px;border-radius:10px;font-weight:500;letter-spacing:.5px}
+.badge.love{background:rgba(236,72,153,.15);color:var(--pk);border:1px solid rgba(236,72,153,.2)}
+.badge.proj{background:rgba(29,158,117,.15);color:var(--gg);border:1px solid rgba(29,158,117,.2)}
+.badge.friend{background:rgba(0,212,255,.15);color:var(--cy);border:1px solid rgba(0,212,255,.2)}
+
+/* QR */
+.qr-w{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}
+.qr-orb{width:190px;height:190px;margin-bottom:40px;opacity:0;animation:oe 2.4s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes oe{0%{opacity:0;transform:scale(.3);filter:blur(30px)}60%{opacity:1;transform:scale(1.05);filter:blur(0)}100%{opacity:1;transform:scale(1)}}
+.btn-log{position:relative;display:flex;align-items:center;gap:12px;padding:16px 36px;border:none;border-radius:60px;background:transparent;cursor:pointer;overflow:hidden;transition:transform .3s}.btn-log:hover{transform:scale(1.04)}.btn-log:active{transform:scale(.97)}
+.btn-log::before{content:'';position:absolute;inset:0;border-radius:60px;padding:1.5px;background:linear-gradient(135deg,var(--gg),var(--cy),var(--pu),var(--pk),var(--ag),var(--gg));background-size:300% 300%;animation:bf 4s linear infinite;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+@keyframes bf{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* CHAT */
+.ch-os{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:center;z-index:11;pointer-events:none;transition:height .8s cubic-bezier(.16,1,.3,1)}
+.ch-ms{position:fixed;bottom:88px;left:0;right:0;top:0;z-index:20;display:flex;flex-direction:column;justify-content:flex-end;padding:0 16px 16px;pointer-events:none;overflow:hidden}
+.msg{max-width:82%;padding:14px 18px;border-radius:16px;font-size:14.5px;line-height:1.55;font-weight:300;margin-bottom:10px;pointer-events:auto;opacity:0;backdrop-filter:blur(20px);animation:mf .7s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes mf{0%{opacity:0;transform:translateY(24px) scale(.96);filter:blur(3px)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+.msg-m{align-self:flex-start;background:rgba(29,158,117,.06);border:1px solid rgba(29,255,168,.12);color:var(--ws);position:relative}
+.msg-m::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;background:linear-gradient(to bottom,var(--gg),var(--cy));opacity:.4}
+.msg-m em{color:var(--gg);font-style:italic}.msg-m strong{color:#fff;font-weight:500}
+.msg-u{align-self:flex-end;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:var(--ws)}
+.msg.fading{opacity:.2;filter:blur(1px);transition:all .5s}
+.msg-tp{align-self:flex-start;display:flex;gap:5px;padding:14px 20px;background:rgba(29,158,117,.06);border:1px solid rgba(29,255,168,.08);border-radius:16px;margin-bottom:10px}
+.td{width:5px;height:5px;border-radius:50%;animation:tb 1.2s ease-in-out infinite}
+.td:nth-child(1){background:var(--gg)}.td:nth-child(2){background:var(--cy);animation-delay:.12s}.td:nth-child(3){background:var(--pu);animation-delay:.24s}
+@keyframes tb{0%,70%,100%{transform:translateY(0);opacity:.3}35%{transform:translateY(-5px);opacity:1}}
+.qr-l{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px;pointer-events:auto;opacity:0;animation:fu .6s cubic-bezier(.16,1,.3,1) .2s forwards;transform:translateY(12px)}
+.qr-p{padding:10px 18px;border-radius:24px;font-family:'Outfit',sans-serif;font-size:13px;background:rgba(255,255,255,.03);color:var(--ws);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:all .3s}.qr-p:hover{border-color:transparent;background:rgba(29,158,117,.06);transform:translateY(-1px)}.qr-p:active{transform:scale(.95)}
+.qr-p.sel{border-color:var(--g);background:rgba(29,158,117,.1);color:var(--gg);pointer-events:none}
+.in-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:8px 14px 28px;display:flex;align-items:center;gap:10px;background:linear-gradient(to top,rgba(0,0,0,.95) 40%,rgba(0,0,0,.6) 70%,transparent)}
+.in-g{flex:1;padding:13px 18px;border-radius:26px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);color:var(--ws);font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:300;outline:none;transition:all .3s}.in-g::placeholder{color:rgba(255,255,255,.25)}.in-g:focus{border-color:rgba(29,255,168,.2);background:rgba(255,255,255,.05)}
+.snd{width:44px;height:44px;border-radius:50%;border:none;background:radial-gradient(circle at 40% 35%,var(--gg),var(--g) 60%);color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transform:scale(.8);transition:all .3s;box-shadow:0 0 20px rgba(29,255,168,.2)}.snd.vis{opacity:1;transform:scale(1)}
+.mic{width:44px;height:44px;border-radius:50%;border:1px solid var(--wg);background:transparent;color:var(--wm);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s}
+
+/* ORI */
+.ori-v{position:fixed;inset:0;z-index:300;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 1s}.ori-v.on{opacity:1;pointer-events:auto}
+.ori-orb{width:140px;height:140px;position:relative;margin-bottom:36px;animation:om 2.5s cubic-bezier(.16,1,.3,1) forwards;transform:scale(0)}
+@keyframes om{0%{transform:scale(0) rotate(-30deg);filter:blur(30px);opacity:0}40%{transform:scale(1.2) rotate(5deg);filter:blur(0);opacity:1}60%{transform:scale(.9) rotate(-2deg)}100%{transform:scale(1) rotate(0)}}
+.ori-core{position:absolute;inset:22%;border-radius:50%;background:radial-gradient(circle at 38% 32%,rgba(255,255,255,.85),var(--ag) 25%,var(--cg) 50%,var(--pu) 75%,transparent 90%);filter:blur(5px);animation:ca 3.5s ease-in-out infinite}
+.ori-aura{position:absolute;inset:-30%;border-radius:50%;background:radial-gradient(circle,rgba(239,159,39,.1),rgba(255,107,61,.05) 30%,rgba(168,85,247,.03) 50%,transparent 70%);filter:blur(20px)}
+.ori-ring{position:absolute;inset:-5%;border-radius:50%;border:1px solid rgba(239,159,39,.08);animation:rs 20s linear infinite}.ori-ring:nth-child(2){inset:-15%;border-color:rgba(255,107,61,.05);animation-direction:reverse;animation-duration:30s}
+
+/* LOBBY */
+#lobCv{position:fixed;inset:0;z-index:1}
+.toast{position:fixed;left:16px;right:16px;z-index:200;background:rgba(216,90,48,.1);border:1px solid rgba(255,107,61,.2);border-radius:16px;padding:14px 16px;backdrop-filter:blur(16px);display:flex;align-items:center;gap:12px;cursor:pointer;transform:translateY(-120%);opacity:0;transition:all .6s cubic-bezier(.16,1,.3,1)}.toast.show{transform:translateY(0);opacity:1}
+.toast1{top:80px}.toast2{top:148px;background:rgba(29,158,117,.08);border-color:rgba(29,255,168,.15)}
+.t-orb{width:32px;height:32px;border-radius:50%;filter:blur(3px);flex-shrink:0;animation:ca 2s ease-in-out infinite}
+@keyframes wb{0%,100%{transform:scaleY(1);opacity:.4}50%{transform:scaleY(1.6);opacity:1}}
+
+/* MATCH */
+.m-scr{position:relative;z-index:10;padding:90px 20px 160px;max-width:420px;margin:0 auto;display:flex;flex-direction:column;align-items:center;overflow-y:auto;height:100%;-webkit-overflow-scrolling:touch}
+.merge{position:relative;width:180px;height:100px;margin-bottom:16px;opacity:0;animation:fi 1s cubic-bezier(.16,1,.3,1) .3s forwards}
+.merge div{position:absolute;width:60px;height:60px;border-radius:50%;top:50%;transform:translateY(-50%);filter:blur(4px)}
+.rpt{width:100%;background:rgba(255,255,255,.02);border:1px solid var(--wg);border-radius:20px;padding:20px;margin-bottom:20px;opacity:0;transform:translateY(12px);animation:fu .8s ease .9s forwards}
+.rpt-b{font-size:13.5px;font-weight:300;line-height:1.7;color:var(--wm)}.rpt-b strong{color:var(--ws);font-weight:500}.rpt-b .hg{color:var(--gg)}.rpt-b .ha{color:var(--ag)}
+.rpt-dv{width:40px;height:1px;background:var(--wg);margin:14px 0}
+.ice{width:100%;background:rgba(239,159,39,.04);border:1px solid rgba(239,159,39,.1);border-radius:16px;padding:18px;margin-bottom:24px;opacity:0;transform:translateY(12px);animation:fu .8s ease 1.1s forwards}
+.m-cta{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:16px 20px 32px;display:flex;gap:12px;max-width:420px;margin:0 auto;background:linear-gradient(to top,#000 70%,transparent);opacity:0;transform:translateY(20px);animation:fu .6s ease 1.3s forwards}
+.btn-go{flex:1;padding:16px;border-radius:16px;border:none;background:var(--g);color:#000;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 0 24px rgba(29,255,168,.2);transition:all .3s}.btn-go:hover{transform:scale(1.02)}.btn-go:active{transform:scale(.97)}
+.btn-lt{padding:16px 20px;border-radius:16px;border:1px solid var(--wg);background:transparent;color:var(--wm);font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer}
+@keyframes be{0%{width:10px;height:10px;opacity:.8}100%{width:500px;height:500px;opacity:0;border-width:.5px}}
+@keyframes cf{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}
+
+/* CHAT 1:1 */
+.c1-them{align-self:flex-start;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.1);position:relative}
+.c1-them::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;background:linear-gradient(to bottom,var(--cy),var(--pu));opacity:.3}
+.c1-matter{align-self:center;max-width:88%;background:rgba(29,158,117,.06);border:1px solid rgba(29,255,168,.12);text-align:center;border-radius:16px}
+.c1-mbadge{display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:8px}
+.c1-morb{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.6),var(--gg) 40%,var(--cy) 70%,transparent);filter:blur(1.5px)}
+.c1-ice{align-self:center;width:90%;padding:16px;border-radius:16px;background:rgba(239,159,39,.04);border:1px solid rgba(239,159,39,.1);text-align:center;opacity:0;animation:mf .6s cubic-bezier(.16,1,.3,1) .3s forwards}
+
+/* PROFILE */
+.prof-scr{position:relative;z-index:10;padding:90px 20px 120px;max-width:420px;margin:0 auto;display:flex;flex-direction:column;align-items:center;overflow-y:auto;height:100%}
+.prof-orb{width:80px;height:80px;position:relative;margin-bottom:16px}
+.prof-orb .ori-core{inset:20%}
+.prof-orb .ori-aura{inset:-30%}
+.toggle{width:40px;height:22px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);position:relative;cursor:pointer;transition:all .3s;flex-shrink:0}
+.toggle.on{background:rgba(29,158,117,.2);border-color:rgba(29,255,168,.3)}
+.toggle-k{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--wm);transition:all .3s}.toggle.on .toggle-k{left:20px;background:var(--gg);box-shadow:0 0 8px rgba(29,255,168,.4)}
+
+/* CONNECTIONS */
+.cx-scr{position:relative;z-index:10;padding:120px 16px 120px;max-width:420px;margin:0 auto;overflow-y:auto;height:100%}
+.conn{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.02);border:1px solid var(--wg);border-radius:16px;margin-bottom:8px;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px)}.conn:hover{background:rgba(255,255,255,.03);transform:translateX(4px)}.conn:active{transform:scale(.98)}
+.conn-orb{width:40px;height:40px;border-radius:50%;position:relative;flex-shrink:0}
+.conn-orb-i{position:absolute;inset:15%;border-radius:50%;filter:blur(3px)}
+.conn-orb-g{position:absolute;inset:-15%;border-radius:50%;filter:blur(8px);opacity:.3}
+</style>
+</head>
+<body>
+<div id="cosmos"><canvas id="cv"></canvas></div>
+
+<!-- ===== QR LANDING ===== -->
+<div class="scr active" id="scrQR">
+<div style="position:fixed;top:0;left:0;right:0;padding:16px 24px;text-align:center;z-index:20;opacity:0;animation:fi 1.5s ease .8s forwards"><span style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--wm)">Sounds in da City — Florianópolis</span></div>
+<div class="qr-w">
+  <div class="orb qr-orb" id="qrOrb"><div class="orb-aura"></div><div class="orb-ring" style="inset:2%"></div><div class="orb-ring" style="inset:-5%"></div><div class="orb-s2"></div><div class="orb-s1"></div><div class="orb-core"></div></div>
+  <div style="text-align:center;padding:0 40px;max-width:380px;z-index:2;opacity:0;transform:translateY(20px);animation:fu 1.8s cubic-bezier(.16,1,.3,1) 1s forwards">
+    <h2 style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;line-height:1.45;color:var(--ws)">Eu sou a <em style="font-style:italic;color:var(--gg)">Matter</em>.<br>Posso te conectar com alguém<br>que faça sentido pra você.</h2>
+    <p style="font-size:13px;color:var(--wm);margin-top:8px;font-weight:300">Dois minutos de conversa. O resto a gente cuida.</p>
+  </div>
+  <div style="margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:20px;z-index:2;opacity:0;transform:translateY(16px);animation:fu 1.5s cubic-bezier(.16,1,.3,1) 1.6s forwards">
+    <button class="btn-log" onclick="go('chat')"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" opacity=".9"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" opacity=".7"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.84z" opacity=".5"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" opacity=".6"/></svg><span style="font-size:15px;font-weight:500;color:var(--ws)">Entrar com Google</span></button>
+    <span style="font-size:12px;font-weight:300;color:rgba(255,255,255,.15)">Sua próxima conexão pode estar aqui.</span>
+  </div>
+</div>
+<div style="position:fixed;bottom:0;left:0;right:0;padding:20px;display:flex;justify-content:center;gap:6px;z-index:20;opacity:0;animation:fi 1.5s ease 2.2s forwards"><span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.15)">powered by</span><span style="font-family:'Fraunces',serif;font-weight:600;font-size:11px;letter-spacing:3px;color:rgba(255,255,255,.2)">SOMMAR</span></div>
+</div>
+
+<!-- ===== CHAT ===== -->
+<div class="scr" id="scrChat">
+<div class="hdr"><div style="display:flex;align-items:center;gap:8px"><div style="width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--gg);animation:dp 2s ease-in-out infinite"></div><span style="font-size:12px;font-weight:300;color:var(--wm)">Matter</span></div><span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2)">Sounds in da City</span></div>
+<div class="ch-os" id="cOS" style="height:52vh"><div class="orb" id="cOrb" style="width:190px;height:190px;transition:all .8s cubic-bezier(.16,1,.3,1)"><div class="orb-aura"></div><div class="orb-ring" style="inset:2%"></div><div class="orb-ring" style="inset:-5%"></div><div class="orb-s2"></div><div class="orb-s1"></div><div class="orb-core"></div></div></div>
+<div class="ch-ms" id="cMs"></div>
+<div class="in-bar" id="cIn"><input class="in-g" id="cInp" placeholder="fala..." autocomplete="off"><button class="mic" title="Em breve: voz"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="9" y="1" width="6" height="11" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button><button class="snd" id="cSnd" onclick="cSendMsg()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div>
+<div class="ori-v" id="oriV"><div class="ori-orb"><div class="ori-aura"></div><div class="ori-ring"></div><div class="ori-ring"></div><div class="ori-core"></div></div><div style="text-align:center;padding:0 28px;opacity:0;animation:fu 1.2s ease .8s forwards;transform:translateY(16px)"><h2 style="font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--ws);margin-bottom:14px">Seu <span style="color:var(--ag);font-weight:400">Ori</span> nasceu.</h2><p style="font-size:14px;font-weight:300;line-height:1.65;color:var(--wm);margin-bottom:36px">Ori é sua inteligência pessoal. Um agente autônomo que carrega sua essência. Enquanto você curte o som, <strong style="color:var(--ws);font-weight:400">ele conversa com os Oris</strong> das pessoas aqui, buscando <em style="color:var(--gg);font-style:normal">compatibilidade real</em>. Amor, amizade, parceria.</p></div><button onclick="go('lobby')" style="padding:15px 44px;border-radius:30px;border:none;background:linear-gradient(135deg,var(--am),var(--co));color:#000;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 0 30px rgba(239,159,39,.2);opacity:0;animation:fu 1s ease 1.3s forwards;transform:translateY(16px)">Entrar no evento</button></div>
+</div>
+
+<!-- ===== LOBBY ===== -->
+<div class="scr" id="scrLobby">
+<canvas id="lobCv"></canvas>
+<div style="position:fixed;top:0;left:0;right:0;z-index:50;padding:16px 20px 40px;background:linear-gradient(to bottom,#000 50%,transparent)"><div style="font-family:'Fraunces',serif;font-size:15px;color:var(--ws)">Sounds in da City</div><div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--g)"><span style="width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--gg);animation:dp 2s ease-in-out infinite;display:inline-block"></span>ao vivo</div></div>
+<div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;text-align:center;pointer-events:none;opacity:0;animation:fi 2s ease .5s forwards"><div id="lCnt" style="font-family:'Fraunces',serif;font-size:72px;font-weight:300;line-height:1;opacity:.12;text-shadow:0 0 60px rgba(29,255,168,.08)">47</div><div style="font-size:12px;font-weight:300;color:rgba(255,255,255,.15);letter-spacing:3px;text-transform:uppercase;margin-top:4px">Oris conectados</div></div>
+<div style="position:fixed;bottom:100px;left:16px;right:16px;z-index:30;background:rgba(29,158,117,.06);border:1px solid rgba(29,255,168,.1);border-radius:20px;padding:20px;backdrop-filter:blur(12px);opacity:0;transform:translateY(20px);animation:fu .8s cubic-bezier(.16,1,.3,1) 1s forwards">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.6),var(--gg) 30%,var(--cy) 60%,transparent 85%);filter:blur(2px);flex-shrink:0;animation:ca 3s ease-in-out infinite"></div><span style="font-family:'Fraunces',serif;font-size:14px;color:var(--ws)">Matter</span></div>
+  <p style="font-size:14px;font-weight:300;line-height:1.55;color:var(--wm)">Seu Ori tá conversando com <strong style="color:var(--gg);font-weight:500">12 agentes</strong> agora. Relaxa e curte o som. <em style="color:var(--ag);font-style:italic">Te aviso quando pintar algo.</em></p>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.04)"><div style="display:flex;gap:2px;align-items:center"><div style="width:2px;height:8px;border-radius:2px;background:var(--g);animation:wb 1.2s ease-in-out infinite"></div><div style="width:2px;height:14px;border-radius:2px;background:var(--g);animation:wb 1.2s ease-in-out infinite;animation-delay:.15s"></div><div style="width:2px;height:10px;border-radius:2px;background:var(--g);animation:wb 1.2s ease-in-out infinite;animation-delay:.3s"></div><div style="width:2px;height:16px;border-radius:2px;background:var(--g);animation:wb 1.2s ease-in-out infinite;animation-delay:.45s"></div><div style="width:2px;height:8px;border-radius:2px;background:var(--g);animation:wb 1.2s ease-in-out infinite;animation-delay:.6s"></div></div><span style="font-size:11px;color:var(--wm)">Sommar analisando...</span></div>
+</div>
+<div class="toast toast1" id="toast1" onclick="showMatch('love')"><div class="t-orb" style="background:radial-gradient(circle,rgba(255,255,255,.5),var(--pk) 40%,var(--pu) 70%,transparent)"></div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-family:'Fraunces',serif;font-size:14px;color:var(--ws)">Match encontrado</span><span class="badge love">pessoal</span></div><div style="font-size:12px;font-weight:300;color:var(--wm)">Vocês dois curtem música e ecovilas.</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+<div class="toast toast2" id="toast2" onclick="showMatch('proj')"><div class="t-orb" style="background:radial-gradient(circle,rgba(255,255,255,.5),var(--gg) 40%,var(--cy) 70%,transparent)"></div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-family:'Fraunces',serif;font-size:14px;color:var(--ws)">Match encontrado</span><span class="badge proj">projeto</span></div><div style="font-size:12px;font-weight:300;color:var(--wm)">Ela quer construir algo e tem skills de dev.</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+<div class="bnav" id="lobNav"><button class="ni act" onclick="go('lobby')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg><span>Lobby</span></button><button class="ni" onclick="go('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg><span>Perfil</span></button><button class="ni" onclick="go('connections')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Conexões</span></button></div>
+</div>
+
+<!-- ===== MATCH ===== -->
+<div class="scr" id="scrMatch">
+<div class="hdr" style="padding-bottom:32px;background:linear-gradient(to bottom,#000 60%,transparent)"><button class="bk" onclick="go('lobby')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><span id="mLabel" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--co)">Match encontrado</span><div style="width:40px"></div></div>
+<div class="m-scr" id="mScr"></div>
+<div class="m-cta"><button class="btn-go" onclick="go('chat1')">Iniciar conversa</button><button class="btn-lt" onclick="go('lobby')">Depois</button></div>
+</div>
+
+<!-- ===== CHAT 1:1 ===== -->
+<div class="scr" id="scrChat1">
+<div class="hdr" style="gap:12px;background:linear-gradient(to bottom,rgba(0,0,0,.95) 50%,transparent);padding-bottom:28px">
+  <button class="bk" style="width:36px;height:36px" onclick="go('match')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+  <div id="c1Avatar" style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--ws);flex-shrink:0"></div>
+  <div style="flex:1"><div id="c1Name" style="font-family:'Fraunces',serif;font-size:15px;color:var(--ws)"></div><div style="font-size:11px;color:var(--g)">online agora</div></div>
+  <span style="font-size:10px;color:rgba(255,255,255,.2)">@matter</span>
+</div>
+<div class="ch-ms" id="c1Ms"></div>
+<div class="in-bar" id="c1In"><input class="in-g" id="c1Inp" placeholder="escreve..." autocomplete="off"><button class="mic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="9" y="1" width="6" height="11" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button><button class="snd" id="c1Snd" onclick="c1Send()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div>
+</div>
+
+<!-- ===== PROFILE ===== -->
+<div class="scr" id="scrProfile">
+<div class="hdr" style="background:linear-gradient(to bottom,#000 60%,transparent);padding-bottom:32px"><button class="bk" onclick="go('lobby')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><span style="font-size:12px;color:var(--wm);letter-spacing:.5px;cursor:pointer">editar perfil</span></div>
+<div class="prof-scr">
+  <div class="prof-orb"><div class="ori-aura"></div><div style="position:absolute;inset:-5%;border-radius:50%;border:1px solid rgba(239,159,39,.06);animation:rs 20s linear infinite"></div><div class="ori-core"></div></div>
+  <div style="width:64px;height:64px;border-radius:50%;border:2px solid rgba(239,159,39,.2);background:linear-gradient(135deg,rgba(239,159,39,.3),rgba(168,85,247,.2),rgba(236,72,153,.15));display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--ws);margin-bottom:16px">M</div>
+  <h1 style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:4px">Matheus</h1>
+  <p style="font-size:13px;font-weight:300;color:var(--wm);text-align:center;max-width:280px;line-height:1.5;margin-bottom:24px">Growth e inovação. Sonhando com ecovilas e conexões que fazem sentido. Floripa.</p>
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:28px"><span class="tg g">ecovilas</span><span class="tg a">growth</span><span class="tg p">música eletrônica</span><span class="tg c">sustentabilidade</span><span class="tg k">comunidade</span></div>
+  <div class="glass" style="width:100%;padding:20px;margin-bottom:14px">
+    <div style="font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--wm);margin-bottom:14px">Facetas</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div style="width:8px;height:8px;border-radius:50%;background:var(--g)"></div><div><div style="font-size:14px;color:var(--ws)">Profissional</div><div style="font-size:11px;color:var(--wm)">growth, CRO, experimentação</div></div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-k"></div></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div style="width:8px;height:8px;border-radius:50%;background:var(--pk)"></div><div><div style="font-size:14px;color:var(--ws)">Pessoal</div><div style="font-size:11px;color:var(--wm)">conexões, música, ecovilas</div></div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-k"></div></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div style="width:8px;height:8px;border-radius:50%;background:var(--pu)"></div><div><div style="font-size:14px;color:var(--ws)">Criativo</div><div style="font-size:11px;color:var(--wm)">design, branding, UX</div></div></div><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-k"></div></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div style="width:8px;height:8px;border-radius:50%;background:var(--am)"></div><div><div style="font-size:14px;color:var(--ws)">Empreendedor</div><div style="font-size:11px;color:var(--wm)">ideaXchange, ecovila</div></div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-k"></div></div></div>
+    </div>
+  </div>
+  <div class="glass" style="width:100%;padding:20px;margin-bottom:14px">
+    <div style="font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--wm);margin-bottom:14px">O que seu Ori sabe</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:13px;font-weight:300;color:var(--wm);padding-left:14px;position:relative"><span style="position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--am);opacity:.5"></span>Busca conexões pessoais e profissionais</div>
+      <div style="font-size:13px;font-weight:300;color:var(--wm);padding-left:14px;position:relative"><span style="position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--am);opacity:.5"></span>Interessado em ecovilas e sustentabilidade</div>
+      <div style="font-size:13px;font-weight:300;color:var(--wm);padding-left:14px;position:relative"><span style="position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--am);opacity:.5"></span>Tom: direto, energético, informal</div>
+      <div style="font-size:13px;font-weight:300;color:var(--wm);padding-left:14px;position:relative"><span style="position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--am);opacity:.5"></span>Aberto a conhecer alguém especial</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:12px;width:100%;margin-bottom:20px">
+    <div class="glass" style="flex:1;padding:16px;text-align:center"><div style="font-family:'Fraunces',serif;font-size:28px;font-weight:300;color:var(--gg)">3</div><div style="font-size:10px;color:var(--wm);letter-spacing:1px;text-transform:uppercase">eventos</div></div>
+    <div class="glass" style="flex:1;padding:16px;text-align:center"><div style="font-family:'Fraunces',serif;font-size:28px;font-weight:300;color:var(--ag)">7</div><div style="font-size:10px;color:var(--wm);letter-spacing:1px;text-transform:uppercase">matches</div></div>
+    <div class="glass" style="flex:1;padding:16px;text-align:center"><div style="font-family:'Fraunces',serif;font-size:28px;font-weight:300;color:var(--cg)">4</div><div style="font-size:10px;color:var(--wm);letter-spacing:1px;text-transform:uppercase">conexões</div></div>
+  </div>
+</div>
+<div class="bnav"><button class="ni" onclick="go('lobby')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg><span>Lobby</span></button><button class="ni act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg><span>Perfil</span></button><button class="ni" onclick="go('connections')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Conexões</span></button></div>
+</div>
+
+<!-- ===== CONNECTIONS ===== -->
+<div class="scr" id="scrConnections">
+<div style="position:fixed;top:0;left:0;right:0;z-index:50;padding:16px 20px;background:linear-gradient(to bottom,#000 60%,transparent);padding-bottom:28px"><h1 style="font-family:'Fraunces',serif;font-size:24px;font-weight:300;color:var(--ws)">Conexões</h1><p style="font-size:12px;color:var(--wm);font-weight:300;margin-top:2px">Almas que cruzaram seu caminho</p><div style="margin-top:12px;position:relative"><svg style="position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--wm)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input style="width:100%;padding:11px 16px 11px 38px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--wg);color:var(--ws);font-family:'Outfit',sans-serif;font-size:13px;font-weight:300;outline:none" placeholder="buscar por nome ou interesse..."></div></div>
+<div class="cx-scr">
+  <div style="font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--wm);margin-bottom:10px;display:flex;align-items:center;gap:8px;padding-left:4px"><div style="width:5px;height:5px;border-radius:50%;background:var(--g)"></div>Sounds in da City — hoje</div>
+  <div class="conn" onclick="go('chat1')"><div class="conn-orb"><div class="conn-orb-g" style="background:radial-gradient(circle,rgba(0,212,255,.3),transparent 70%)"></div><div class="conn-orb-i" style="background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.5),var(--cy) 40%,var(--pu) 70%,transparent)"></div></div><div style="flex:1;min-width:0"><div style="font-family:'Fraunces',serif;font-size:15px;color:var(--ws)">Rafael</div><div style="font-size:12px;font-weight:300;color:var(--wm)">Arquiteto · ecovilas</div><div style="display:flex;gap:4px;margin-top:6px"><span class="tg g" style="font-size:9px;padding:2px 7px">ecovilas</span><span class="tg pk" style="font-size:9px;padding:2px 7px">pessoal</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font-size:10px;color:rgba(255,255,255,.2)">20min</span><div style="width:8px;height:8px;border-radius:50%;background:var(--gg);box-shadow:0 0 6px var(--gg)"></div><span style="font-size:9px;color:var(--g)">ativo</span></div></div>
+  <div class="conn"><div class="conn-orb"><div class="conn-orb-g" style="background:radial-gradient(circle,rgba(29,255,168,.3),transparent 70%)"></div><div class="conn-orb-i" style="background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.5),var(--gg) 40%,var(--cy) 70%,transparent)"></div></div><div style="flex:1;min-width:0"><div style="font-family:'Fraunces',serif;font-size:15px;color:var(--ws)">Camila</div><div style="font-size:12px;font-weight:300;color:var(--wm)">Dev full-stack · quer empreender</div><div style="display:flex;gap:4px;margin-top:6px"><span class="tg c" style="font-size:9px;padding:2px 7px">tech</span><span class="tg g" style="font-size:9px;padding:2px 7px">projeto</span></div></div><div style="text-align:right"><span style="font-size:10px;color:rgba(255,255,255,.2)">45min</span></div></div>
+  <div style="font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--wm);margin:20px 0 10px;display:flex;align-items:center;gap:8px;padding-left:4px"><div style="width:5px;height:5px;border-radius:50%;background:var(--co)"></div>Feira Agroecológica — 3 dias</div>
+  <div class="conn"><div class="conn-orb"><div class="conn-orb-g" style="background:radial-gradient(circle,rgba(239,159,39,.3),transparent 70%)"></div><div class="conn-orb-i" style="background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.5),var(--ag) 40%,var(--g) 70%,transparent)"></div></div><div style="flex:1;min-width:0"><div style="font-family:'Fraunces',serif;font-size:15px;color:var(--ws)">Fernanda</div><div style="font-size:12px;font-weight:300;color:var(--wm)">Permacultora · banco de sementes</div><div style="display:flex;gap:4px;margin-top:6px"><span class="tg g" style="font-size:9px;padding:2px 7px">permacultura</span><span class="tg a" style="font-size:9px;padding:2px 7px">sementes</span></div></div><div><span style="font-size:10px;color:rgba(255,255,255,.2)">3d</span></div></div>
+</div>
+<div class="bnav"><button class="ni" onclick="go('lobby')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg><span>Lobby</span></button><button class="ni" onclick="go('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg><span>Perfil</span></button><button class="ni act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Conexões</span></button></div>
+</div>
+
+<script>
+// COSMOS
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');let W,H;const stars=[];
+function resize(){const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cv.style.width=W+'px';cv.style.height=H+'px';cx.setTransform(d,0,0,d,0,0);stars.length=0;const cols=[[29,255,168],[0,212,255],[168,85,247],[236,72,153],[239,159,39],[255,255,255]];for(let i=0;i<70;i++){const c=cols[~~(Math.random()*cols.length)];stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.15,vy:-.1-Math.random()*.3,s:.5+Math.random()*1.8,r:c[0],g:c[1],b:c[2],a:.15+Math.random()*.45,p:Math.random()*6.28,sp:.003+Math.random()*.008})}}
+function drawS(){cx.clearRect(0,0,W,H);stars.forEach(s=>{s.x+=s.vx;s.y+=s.vy;s.p+=s.sp;if(s.y<-10){s.y=H+10;s.x=Math.random()*W}if(s.x<-10)s.x=W+10;if(s.x>W+10)s.x=-10;const f=Math.sin(s.p)*.15+.85,a=s.a*f;const g=cx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.s*5);g.addColorStop(0,`rgba(${s.r},${s.g},${s.b},${a*.4})`);g.addColorStop(1,`rgba(${s.r},${s.g},${s.b},0)`);cx.fillStyle=g;cx.beginPath();cx.arc(s.x,s.y,s.s*5,0,Math.PI*2);cx.fill();cx.fillStyle=`rgba(${s.r},${s.g},${s.b},${a})`;cx.beginPath();cx.arc(s.x,s.y,s.s,0,Math.PI*2);cx.fill()});requestAnimationFrame(drawS)}
+resize();drawS();addEventListener('resize',resize);
+function addP(el,cs,sc){cs.forEach((p,i)=>{const e=document.createElement('div');e.classList.add('orb-p');e.style.cssText=`width:${2+Math.random()*2.5}px;height:${2+Math.random()*2.5}px;background:${p.b};--r:${p.r*sc}px;animation-duration:${p.d}s;animation-delay:${-i*1.2}s`;el.appendChild(e)})}
+const oC=[{b:'#1DFFA8',r:88,d:6},{b:'#00D4FF',r:92,d:7.5},{b:'#A855F7',r:96,d:9},{b:'#EC4899',r:84,d:7},{b:'#FFB840',r:90,d:8},{b:'#FF6B3D',r:82,d:10}];
+addP(document.getElementById('qrOrb'),oC,1);addP(document.getElementById('cOrb'),oC,1);
+
+// NAV
+let cur='QR';
+function go(s){document.getElementById('scr'+cur).classList.remove('active');const m={qr:'QR',chat:'Chat',lobby:'Lobby',match:'Match',chat1:'Chat1',profile:'Profile',connections:'Connections'};cur=m[s];document.getElementById('scr'+cur).classList.add('active');if(s==='chat')startChat();if(s==='lobby')startLobby();if(s==='chat1')startChat1()}
+
+// MATCH DATA
+const matches={love:{type:'love',typeLabel:'🔥 conexão pessoal',typeCls:'love',name:'Rafael',letter:'R',bio:'Arquiteto, permacultor, solteiro. Sonhando com construção sustentável acessível na ilha.',tags:[{t:'ecovilas',c:'g'},{t:'sustentabilidade',c:'a'},{t:'construção natural',c:'c'},{t:'comunidade',c:'p'},{t:'Floripa',c:'k'}],orbL:'radial-gradient(circle at 50% 40%,rgba(255,255,255,.5),#FFB840 30%,#FF6B3D 60%,transparent 85%)',orbR:'radial-gradient(circle at 50% 40%,rgba(255,255,255,.5),#00D4FF 30%,#A855F7 60%,transparent 85%)',avatar:'border:2px solid rgba(0,212,255,.3);background:linear-gradient(135deg,rgba(0,212,255,.3),rgba(168,85,247,.3),rgba(236,72,153,.2))',report:'<p><strong>Vocês dois querem construir uma ecovila.</strong> Mas por caminhos que se completam: você traz visão de negócio e a capacidade de engajar comunidades. Ele traz <span class="hg">12 anos de arquitetura bioclimática</span> e já projetou duas comunidades sustentáveis em SC.</p><div class="rpt-dv"></div><p>Ele tá procurando alguém que <strong>entenda engajamento e comunidade</strong>. Você tá procurando alguém que transforme terreno em estrutura. Complementaridade rara.</p><div class="rpt-dv"></div><p>Vocês dois estão aqui agora, moram na ilha, e compartilham interesse em <span class="ha">construção natural, permacultura, e vida em comunidade</span>. Não é coincidência. É geometria.</p>',ice:'"Rafael, a Matter me contou que você projetou ecovilas no interior de SC. Como faz pra construção natural ser acessível?"'},
+proj:{type:'proj',typeLabel:'🚀 projeto',typeCls:'proj',name:'Camila',letter:'C',bio:'Dev full-stack, cansada do CLT. Quer construir algo próprio com impacto real.',tags:[{t:'tech',c:'c'},{t:'startup',c:'g'},{t:'impacto social',c:'p'},{t:'product',c:'a'},{t:'Floripa',c:'k'}],orbL:'radial-gradient(circle at 50% 40%,rgba(255,255,255,.5),#FFB840 30%,#FF6B3D 60%,transparent 85%)',orbR:'radial-gradient(circle at 50% 40%,rgba(255,255,255,.5),#1DFFA8 30%,#00D4FF 60%,transparent 85%)',avatar:'border:2px solid rgba(29,255,168,.3);background:linear-gradient(135deg,rgba(29,255,168,.3),rgba(0,212,255,.3),rgba(168,85,247,.2))',report:'<p><strong>Ela é dev full-stack e tá procurando alguém com visão de produto e growth.</strong> Você tem exatamente isso. Ela sabe construir, você sabe posicionar e escalar.</p><div class="rpt-dv"></div><p>Ela mencionou que quer trabalhar com <span class="hg">algo que tenha impacto social</span>. O ideaXchange é exatamente isso. Talvez a co-founder que você tá procurando esteja a 10 metros de você.</p><div class="rpt-dv"></div><p>Além disso: vocês dois estão cansados de construir pro sonho dos outros. <span class="ha">É hora de construir pro de vocês.</span></p>',ice:'"Camila, a Matter diz que você tá querendo sair do CLT e construir algo próprio. O que te segura ainda?"'}};
+
+let curMatch='love';
+function showMatch(type){curMatch=type;go('match');const m=matches[type];document.getElementById('mScr').innerHTML=`
+<div class="merge"><div style="left:20px;background:${m.orbL};animation:sf 3s ease-in-out infinite"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--ag),#fff,var(--cy));opacity:.2"></div><div style="right:20px;background:${m.orbR};animation:sd 3s ease-in-out infinite"></div></div>
+<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;opacity:0;transform:translateY(12px);animation:fu .8s ease .4s forwards"><span class="badge ${m.typeCls}" style="font-size:11px;padding:5px 14px;border-radius:20px">${m.typeLabel}</span></div>
+<div style="text-align:center;margin-bottom:28px;opacity:0;transform:translateY(12px);animation:fu .8s ease .5s forwards"><div style="width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--ws);margin:0 auto 16px;box-shadow:0 0 30px rgba(0,212,255,.1);${m.avatar}">${m.letter}</div><h2 style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:6px">${m.name}</h2><p style="font-size:13px;font-weight:300;color:var(--wm);line-height:1.5;max-width:280px;margin:0 auto">${m.bio}</p></div>
+<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:24px;opacity:0;transform:translateY(12px);animation:fu .8s ease .7s forwards">${m.tags.map(t=>`<span class="tg ${t.c}">${t.t}</span>`).join('')}</div>
+<div class="rpt"><div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:32px;height:32px;border-radius:10px;background:rgba(29,158,117,.1);border:1px solid rgba(29,255,168,.15);display:flex;align-items:center;justify-content:center;color:var(--gg);flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><div><div style="font-family:'Fraunces',serif;font-size:15px;color:var(--ws)">Por que vocês precisam se conhecer</div><div style="font-size:11px;color:var(--wm)">Relatório gerado pelo Sommar</div></div></div><div class="rpt-b">${m.report}</div></div>
+<div class="ice"><div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--am);margin-bottom:8px">✦ Quebra-gelo da Matter</div><p style="font-family:'Fraunces',serif;font-size:15px;font-weight:300;font-style:italic;line-height:1.5;color:var(--ws)">${m.ice}</p></div><div style="height:80px"></div>`;
+  // Burst
+  const cl=['#1DFFA8','#FFB840','#FF6B3D','#00D4FF','#A855F7','#EC4899'];
+  for(let i=0;i<3;i++){const r=document.createElement('div');r.style.cssText=`position:fixed;top:30%;left:50%;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;z-index:201;border:2px solid ${['#FF6B3D','#FFB840','#1DFFA8'][i]};animation:be 1.5s cubic-bezier(.16,1,.3,1) ${i*.1}s forwards;opacity:0`;document.body.appendChild(r);setTimeout(()=>r.remove(),2000)}
+  for(let i=0;i<25;i++){setTimeout(()=>{const p=document.createElement('div');const sz=2+Math.random()*4;const dx=(Math.random()-.5)*200,dy=-80-Math.random()*120;p.style.cssText=`position:fixed;width:${sz}px;height:${sz}px;border-radius:50%;background:${cl[~~(Math.random()*cl.length)]};left:${30+Math.random()*40}vw;top:${20+Math.random()*15}vh;pointer-events:none;z-index:201;animation:cf ${1.5+Math.random()}s ease-out forwards;--dx:${dx}px;--dy:${dy}px`;document.body.appendChild(p);setTimeout(()=>p.remove(),3000)},i*40)}
+  if(navigator.vibrate)navigator.vibrate([50,30,50,30,100]);
+}
+
+// CHAT ENGINE
+const cMs=document.getElementById('cMs'),cInp=document.getElementById('cInp'),cSnd=document.getElementById('cSnd'),cOrb=document.getElementById('cOrb'),cOS=document.getElementById('cOS');let cStep=0;
+const resp={"Conhecer gente nova":"Show! Tem muita gente interessante aqui hoje. Vou te ajudar a encontrar as certas.","Alguém especial":"Adoro a honestidade. Se tiver alguém aqui na mesma sintonia, eu te encontro.","Parceria pra projetos":"Tem gente construindo coisas incríveis nessa cidade. Vamos ver quem combina contigo.","Tudo isso junto":"Esse é o espírito. A vida não vem em caixinhas separadas, né?","Criativo caótico":"Caos criativo é subestimado. As melhores ideias nascem do barulho.","Visionário incansável":"Gosto. Gente que não desliga nunca é o tipo que muda as coisas de verdade.","Reservado mas intenso":"A intensidade silenciosa é a mais poderosa. Vou encontrar alguém que entenda isso.","Faço amizade até com poste":"Haha, o mundo precisa de mais gente assim. Mas vamos além do poste.","Ideias que mudam o mundo":"Esse evento tá cheio de gente com esse brilho. Vou achar as certas.","Música e arte":"Faz sentido. O Sounds mistura jazz, eletrônica, soul, música africana e brasileira. Gente criativa por todo lado.","Vida, amor e conexões reais":"Num mundo de conexões líquidas, buscar algo real é coragem. Tô contigo.","Negócios e criar algo":"Floripa tá fervendo de gente construindo coisas. Vamos conectar as peças."};
+const flow=[{text:"Que bom que você tá aqui. O Sounds sempre junta gente incrível. Eu sou a Matter, e posso te conectar com quem faz sentido pra você."},{text:"O que te faria sair daqui hoje pensando \"valeu a pena\"?",qr:[{t:"Conhecer gente nova",e:"✨",c:""},{t:"Alguém especial",e:"🔥",c:"pk"},{t:"Parceria pra projetos",e:"🚀",c:"cy"},{t:"Tudo isso junto",e:"💫",c:"pu"}]},{text:null,qr:[{t:"Criativo caótico",e:"🎨",c:"co"},{t:"Visionário incansável",e:"⚡",c:"am"},{t:"Reservado mas intenso",e:"🌊",c:"cy"},{t:"Faço amizade até com poste",e:"😄",c:""}],pre:"Anotado. Como você se descreveria?"},{text:null,qr:[{t:"Ideias que mudam o mundo",e:"🌍",c:""},{t:"Música e arte",e:"🎵",c:"pu"},{t:"Vida, amor e conexões reais",e:"💜",c:"pk"},{t:"Negócios e criar algo",e:"💡",c:"am"}],pre:"Se alguém aqui puxasse assunto contigo, o que te faria parar e prestar atenção?"},{text:"Já te conheço o suficiente. Tô criando <strong>seu Ori</strong> agora. Um agente autônomo que carrega sua essência e vai conversar com os agentes das outras pessoas. Em background. Enquanto você vive.",auto:4000},{ori:true}];
+function startChat(){cStep=0;cMs.innerHTML='';cOS.style.height='52vh';cOrb.style.width='190px';cOrb.style.height='190px';document.getElementById('cIn').style.display='flex';setTimeout(()=>advC(0),800)}
+function advC(s){if(s>=flow.length)return;const f=flow[s];if(f.ori){document.getElementById('cIn').style.display='none';setTimeout(()=>{document.getElementById('oriV').classList.add('on');spawnC()},600);return}if(s>0){cOS.style.height='25vh';cOrb.style.width='110px';cOrb.style.height='110px'}cOrb.classList.add('thinking');addTp();setTimeout(()=>{cOrb.classList.remove('thinking');rmTp();addMM(f.text||f.pre);if(f.qr)setTimeout(()=>addQRs(f.qr),400);if(f.auto)setTimeout(()=>{cStep=s+1;advC(s+1)},f.auto)},1000+Math.random()*700)}
+function addMM(h){const d=document.createElement('div');d.classList.add('msg','msg-m');d.innerHTML=h;cMs.appendChild(d);fadeM();cMs.scrollTop=1e6}
+function addUM(t){const d=document.createElement('div');d.classList.add('msg','msg-u');d.textContent=t;cMs.appendChild(d);fadeM();cMs.scrollTop=1e6}
+function addTp(){const d=document.createElement('div');d.classList.add('msg-tp');d.id='tp';d.innerHTML='<div class="td"></div><div class="td"></div><div class="td"></div>';cMs.appendChild(d);cMs.scrollTop=1e6}
+function rmTp(){const t=document.getElementById('tp');if(t)t.remove()}
+function fadeM(){const ms=cMs.querySelectorAll('.msg:not(.fading)');if(ms.length>3)for(let i=0;i<ms.length-3;i++)ms[i].classList.add('fading')}
+function addQRs(rr){const w=document.createElement('div');w.classList.add('qr-l');w.id='aqr';rr.forEach(r=>{const b=document.createElement('button');b.classList.add('qr-p');if(r.c)b.classList.add(r.c);b.innerHTML=`<span style="margin-right:6px;font-size:15px">${r.e}</span>${r.t}`;b.onclick=()=>pickQR(r.t,w);w.appendChild(b)});cMs.appendChild(w);cMs.scrollTop=1e6}
+function pickQR(t,w){w.querySelectorAll('.qr-p').forEach(b=>{if(b.textContent.includes(t))b.classList.add('sel');else{b.style.opacity='0';b.style.transform='scale(.8)'}b.style.pointerEvents='none'});setTimeout(()=>{w.remove();addUM(t);const r=resp[t];if(r){cOrb.classList.add('thinking');addTp();setTimeout(()=>{cOrb.classList.remove('thinking');rmTp();addMM(r);cStep++;setTimeout(()=>advC(cStep),800)},1200)}else{cStep++;setTimeout(()=>advC(cStep),300)}},300)}
+function cSendMsg(){const t=cInp.value.trim();if(!t)return;cInp.value='';cSnd.classList.remove('vis');const qr=document.getElementById('aqr');if(qr)qr.remove();addUM(t);cStep++;setTimeout(()=>advC(cStep),300)}
+cInp.addEventListener('input',()=>{cSnd.classList.toggle('vis',cInp.value.trim().length>0)});cInp.addEventListener('keydown',e=>{if(e.key==='Enter'&&cInp.value.trim())cSendMsg()});
+function spawnC(){const cl=['#1DFFA8','#FFB840','#FF6B3D','#00D4FF','#A855F7','#EC4899','#FFF'];for(let i=0;i<50;i++){setTimeout(()=>{const p=document.createElement('div');const sz=2+Math.random()*5;const dx=(Math.random()-.5)*280,dy=-120-Math.random()*200;p.style.cssText=`position:fixed;width:${sz}px;height:${sz}px;border-radius:50%;background:${cl[~~(Math.random()*cl.length)]};left:${35+Math.random()*30}vw;top:${35+Math.random()*20}vh;pointer-events:none;z-index:301;animation:cf ${1.5+Math.random()*1.5}s ease-out forwards;--dx:${dx}px;--dy:${dy}px`;document.body.appendChild(p);setTimeout(()=>p.remove(),3500)},i*40)}}
+
+// LOBBY
+let lA=0;
+function startLobby(){document.getElementById('oriV').classList.remove('on');document.getElementById('toast1').classList.remove('show');document.getElementById('toast2').classList.remove('show');
+  const lc=document.getElementById('lobCv'),lx=lc.getContext('2d');let lW,lH;const ps=[],cn=[];const CL=[[29,255,168],[0,212,255],[168,85,247],[236,72,153],[239,159,39],[255,107,61]];
+  function lR(){const d=Math.min(devicePixelRatio||1,2);lW=innerWidth;lH=innerHeight;lc.width=lW*d;lc.height=lH*d;lc.style.width=lW+'px';lc.style.height=lH+'px';lx.setTransform(d,0,0,d,0,0);ps.length=0;ps.push({x:lW*.5,y:lH*.38,vx:0,vy:0,s:6,r:239,g:159,b:39,a:.7,p:0,sp:.008,gl:20,u:1});const n=Math.min(~~(lW*lH/12000),50);for(let i=0;i<n;i++){const c=CL[~~(Math.random()*CL.length)];ps.push({x:Math.random()*lW,y:Math.random()*lH,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,s:2.5+Math.random()*3.5,r:c[0],g:c[1],b:c[2],a:.15+Math.random()*.4,p:Math.random()*Math.PI*2,sp:.005+Math.random()*.01,gl:6+Math.random()*8,u:0})}}
+  function lD(){lx.clearRect(0,0,lW,lH);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.p+=p.sp;if(p.x<0||p.x>lW)p.vx*=-1;if(p.y<0||p.y>lH)p.vy*=-1;if(p.u){p.vx+=(lW*.5-p.x)*.0002;p.vy+=(lH*.38-p.y)*.0002;p.vx*=.99;p.vy*=.99}const pl=Math.sin(p.p)*.2+.8,a=p.a*pl;const g=lx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.gl*pl);g.addColorStop(0,`rgba(${p.r},${p.g},${p.b},${a*.5})`);g.addColorStop(.5,`rgba(${p.r},${p.g},${p.b},${a*.15})`);g.addColorStop(1,`rgba(${p.r},${p.g},${p.b},0)`);lx.fillStyle=g;lx.beginPath();lx.arc(p.x,p.y,p.gl*pl,0,Math.PI*2);lx.fill();lx.fillStyle=`rgba(${p.r},${p.g},${p.b},${a})`;lx.beginPath();lx.arc(p.x,p.y,p.s*pl,0,Math.PI*2);lx.fill();if(p.u){lx.fillStyle=`rgba(255,255,255,${a*.6})`;lx.beginPath();lx.arc(p.x,p.y,2,0,Math.PI*2);lx.fill()}});const u=ps[0];for(let i=1;i<ps.length;i++){const p=ps[i];const d=Math.sqrt((u.x-p.x)**2+(u.y-p.y)**2);if(d<120){lx.strokeStyle=`rgba(${p.r},${p.g},${p.b},${(1-d/120)*.08})`;lx.lineWidth=.5;lx.beginPath();lx.moveTo(u.x,u.y);lx.lineTo(p.x,p.y);lx.stroke()}}if(Math.random()<.02&&ps.length>2){const a=1+~~(Math.random()*(ps.length-1)),b=1+~~(Math.random()*(ps.length-1));if(a!==b){const d=Math.sqrt((ps[a].x-ps[b].x)**2+(ps[a].y-ps[b].y)**2);if(d<160)cn.push({a,b,l:1})}}for(let i=cn.length-1;i>=0;i--){const c=cn[i];c.l-=.008;if(c.l<=0){cn.splice(i,1);continue}lx.strokeStyle=`rgba(${ps[c.a].r},${ps[c.a].g},${ps[c.a].b},${c.l*.06})`;lx.lineWidth=.5;lx.beginPath();lx.moveTo(ps[c.a].x,ps[c.a].y);lx.lineTo(ps[c.b].x,ps[c.b].y);lx.stroke()}lA=requestAnimationFrame(lD)}
+  cancelAnimationFrame(lA);lR();lD();
+  let cnt=47;const cE=document.getElementById('lCnt');const ci=setInterval(()=>{if(cur!=='Lobby'){clearInterval(ci);return}if(Math.random()<.3){cnt+=Math.random()<.7?1:-1;cnt=Math.max(35,Math.min(65,cnt));cE.textContent=cnt}},3000);
+  setTimeout(()=>{if(cur==='Lobby'){document.getElementById('toast1').classList.add('show');if(navigator.vibrate)navigator.vibrate([100,50,100])}},5000);
+  setTimeout(()=>{if(cur==='Lobby')document.getElementById('toast2').classList.add('show')},8000)}
+
+// CHAT 1:1
+function startChat1(){const m=matches[curMatch];document.getElementById('c1Avatar').style.cssText=m.avatar+';width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--ws)';document.getElementById('c1Avatar').textContent=m.letter;document.getElementById('c1Name').textContent=m.name;const ms=document.getElementById('c1Ms');ms.innerHTML='';
+  // Icebreaker
+  const ice=document.createElement('div');ice.classList.add('msg','c1-ice');ice.innerHTML=`<div style="font-size:10px;color:var(--am);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Quebra-gelo da Matter</div><p style="font-family:'Fraunces',serif;font-size:14px;font-weight:300;font-style:italic;color:var(--ws);line-height:1.5;margin-bottom:12px">${m.ice}</p><button onclick="useIce()" style="padding:8px 20px;border-radius:20px;border:1px solid rgba(239,159,39,.2);background:rgba(239,159,39,.06);color:var(--ag);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer">usar essa</button>`;
+  ms.appendChild(ice);
+  // Simulate reply after icebreaker used
+  window.useIce=()=>{ice.style.display='none';const u=document.createElement('div');u.classList.add('msg','msg-u');u.textContent=m.ice.replace(/"/g,'');ms.appendChild(u);ms.scrollTop=1e6;
+    setTimeout(()=>{const tp=document.createElement('div');tp.classList.add('msg-tp');tp.innerHTML='<div class="td" style="background:var(--cy)"></div><div class="td" style="background:var(--pu);animation-delay:.12s"></div><div class="td" style="background:var(--pk);animation-delay:.24s"></div>';ms.appendChild(tp);ms.scrollTop=1e6;
+    setTimeout(()=>{tp.remove();const r=document.createElement('div');r.classList.add('msg','c1-them');r.style.cssText='padding:14px 18px;font-size:14.5px;line-height:1.55;font-weight:300;color:var(--ws)';r.textContent=curMatch==='love'?'Cara, que pergunta boa! O grande desafio é que bioconstrução é barata em material mas cara em mão de obra. Tenho testado um modelo de mutirão estruturado onde quem vai morar ajuda a construir. Reduz custo em uns 40%.':'Opa! A real é que o que me segura é não ter encontrado alguém com visão de produto. Eu sei construir, mas preciso de alguém que saiba pra onde apontar.';ms.appendChild(r);ms.scrollTop=1e6},3000)},1500)};
+  const c1Inp=document.getElementById('c1Inp'),c1Snd=document.getElementById('c1Snd');
+  c1Inp.oninput=()=>{c1Snd.classList.toggle('vis',c1Inp.value.trim().length>0)};
+  c1Inp.onkeydown=e=>{if(e.key==='Enter'&&c1Inp.value.trim()){c1Send()}};
+  window.c1Send=()=>{const t=c1Inp.value.trim();if(!t)return;const u=document.createElement('div');u.classList.add('msg','msg-u');u.textContent=t;ms.appendChild(u);c1Inp.value='';c1Snd.classList.remove('vis');ms.scrollTop=1e6;
+    if(t.toLowerCase().includes('@matter')){setTimeout(()=>{const tp=document.createElement('div');tp.classList.add('msg-tp');ms.appendChild(tp);ms.scrollTop=1e6;setTimeout(()=>{tp.remove();const r=document.createElement('div');r.classList.add('msg','c1-matter');r.style.cssText='padding:14px 18px;font-size:13.5px;line-height:1.55;color:var(--wm)';r.innerHTML=`<div class="c1-mbadge"><div class="c1-morb"></div><span style="font-size:10px;color:var(--g);letter-spacing:1px;text-transform:uppercase">Matter</span></div>Vocês dois tão no caminho certo. Que tal marcar um café essa semana pra desenhar isso juntos?`;ms.appendChild(r);ms.scrollTop=1e6},2000)},500)}
+    else{setTimeout(()=>{const tp=document.createElement('div');tp.classList.add('msg-tp');tp.innerHTML='<div class="td" style="background:var(--cy)"></div><div class="td" style="background:var(--pu);animation-delay:.12s"></div><div class="td" style="background:var(--pk);animation-delay:.24s"></div>';ms.appendChild(tp);ms.scrollTop=1e6;setTimeout(()=>{tp.remove();const r=document.createElement('div');r.classList.add('msg','c1-them');r.style.cssText='padding:14px 18px;font-size:14.5px;line-height:1.55;font-weight:300;color:var(--ws)';r.textContent='Interessante! Me conta mais sobre isso.';ms.appendChild(r);ms.scrollTop=1e6},2500)},1000)}
+  }}
+</script>
+</body>
+</html>

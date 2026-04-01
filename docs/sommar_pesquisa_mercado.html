@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sommar — Estratégia de Pesquisa de Mercado</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=Outfit:wght@300;400;500;600&display=swap');
+
+  :root {
+    --green: #1D9E75; --glow-green: #1DFFA8;
+    --coral: #D85A30; --glow-coral: #FF6B3D;
+    --amber: #EF9F27; --glow-amber: #FFB840;
+    --cyan: #00D4FF; --purple: #A855F7; --pink: #EC4899;
+    --neon: #39FF99;
+    --bg: #000000; --surface: #0D0D0D; --surface2: #111111; --surface3: #161616;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.04);
+    --text: #F0EDE8; --muted: rgba(240,237,232,0.42);
+    --font-display: 'Fraunces', serif; --font-body: 'Outfit', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-body); font-size: 14.5px; line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.022; pointer-events: none; z-index: 999;
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 28px; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 28px;
+  }
+  .nav-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .nav-item {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
+    color: var(--muted); text-decoration: none;
+    padding: 4px 10px; border-radius: 100px;
+    transition: all 0.18s;
+  }
+  .nav-item:hover { color: var(--text); background: var(--surface3); }
+  .nav-sep { color: var(--border); font-size: 10px; }
+
+  /* HEADER */
+  header {
+    padding: 80px 0 64px; position: relative; overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  header::before {
+    content: ''; position: absolute; top: -100px; left: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(29,158,117,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  header::after {
+    content: ''; position: absolute; bottom: -80px; right: -80px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .doc-tag {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--green);
+    background: rgba(29,158,117,0.09); border: 1px solid rgba(29,158,117,0.22);
+    padding: 5px 14px; border-radius: 100px; margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 5.5vw, 52px);
+    font-weight: 600; line-height: 1.08; letter-spacing: -0.025em;
+    margin-bottom: 20px;
+  }
+  header h1 em { font-style: italic; color: var(--glow-green); }
+  .header-sub {
+    font-size: 14.5px; color: var(--muted);
+    max-width: 560px; line-height: 1.7; margin-bottom: 28px;
+  }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    font-size: 11px; color: var(--muted); letter-spacing: 0.04em;
+  }
+  .meta-row span { display: flex; align-items: center; gap: 5px; }
+
+  /* SECTIONS */
+  .section {
+    padding: 56px 0; border-bottom: 1px solid var(--border);
+    scroll-margin-top: 60px;
+  }
+  .section:last-of-type { border-bottom: none; }
+
+  .s-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+  }
+  .s-title {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 3.5vw, 30px);
+    font-weight: 600; letter-spacing: -0.015em;
+    line-height: 1.15; margin-bottom: 20px;
+  }
+  .s-title .g { color: var(--glow-green); }
+  .s-title .c { color: var(--glow-coral); }
+  .s-title .a { color: var(--glow-amber); }
+  .s-title .cy { color: var(--cyan); }
+  .s-title .p { color: var(--purple); }
+
+  p { color: rgba(240,237,232,0.72); margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text); font-weight: 600; }
+
+  /* CALLOUT */
+  .callout {
+    padding: 20px 24px; border-radius: 4px;
+    background: var(--surface2); border: 1px solid var(--border);
+    margin: 20px 0;
+  }
+  .callout.green { border-left: 3px solid var(--green); }
+  .callout.coral { border-left: 3px solid var(--coral); }
+  .callout.amber { border-left: 3px solid var(--amber); }
+  .callout.cyan { border-left: 3px solid var(--cyan); }
+  .callout.purple { border-left: 3px solid var(--purple); }
+  .callout.neon { border-left: 3px solid var(--neon); background: rgba(29,255,168,0.03); border-color: rgba(29,255,168,0.3); }
+  .callout p { margin: 0; font-size: 13.5px; }
+  .callout-label {
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.16em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .callout-label.green { color: var(--green); }
+  .callout-label.coral { color: var(--coral); }
+  .callout-label.amber { color: var(--amber); }
+  .callout-label.cyan { color: var(--cyan); }
+  .callout-label.purple { color: var(--purple); }
+  .callout-label.neon { color: var(--neon); }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 22px 0; }
+  @media(max-width:620px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  /* CARD */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 5px; padding: 18px 20px;
+  }
+  .card h4 {
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+  .card h4.g { color: var(--glow-green); }
+  .card h4.c { color: var(--glow-coral); }
+  .card h4.a { color: var(--glow-amber); }
+  .card h4.cy { color: var(--cyan); }
+  .card h4.p { color: var(--purple); }
+  .card h4.pk { color: var(--pink); }
+  .card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .card li {
+    font-size: 12.5px; color: rgba(240,237,232,0.65);
+    padding-left: 14px; position: relative; line-height: 1.5;
+  }
+  .card li::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 5px; height: 1px; background: var(--muted);
+  }
+
+  /* PHASE BLOCK */
+  .phase {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 5px; overflow: hidden; margin-bottom: 14px;
+  }
+  .phase-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 22px; border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .phase-num {
+    font-family: var(--font-display); font-size: 28px; font-weight: 600;
+    line-height: 1; min-width: 36px;
+  }
+  .phase-meta { flex: 1; }
+  .phase-name { font-size: 14.5px; font-weight: 600; color: var(--text); }
+  .phase-desc { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .phase-badge {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+  }
+  .phase-body { padding: 18px 22px; }
+  .phase-body p { font-size: 13px; margin-bottom: 12px; }
+
+  .method-row {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+  }
+  .method-tag {
+    font-size: 11px; padding: 4px 12px;
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 100px; color: rgba(240,237,232,0.6);
+  }
+
+  /* PRICING TABLE */
+  .price-table {
+    width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 13px;
+  }
+  .price-table th {
+    text-align: left; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); padding: 10px 16px;
+    background: var(--surface2); border-bottom: 1px solid var(--border);
+  }
+  .price-table td {
+    padding: 12px 16px; border-bottom: 1px solid var(--border2);
+    color: rgba(240,237,232,0.7); vertical-align: top; line-height: 1.5;
+  }
+  .price-table tr:hover td { background: rgba(255,255,255,0.015); }
+  .price-table tr:last-child td { border-bottom: none; }
+
+  /* RISK TABLE */
+  .risk-table { width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 13px; }
+  .risk-table th {
+    text-align: left; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); padding: 8px 14px;
+    background: var(--surface2); border-bottom: 1px solid var(--border);
+  }
+  .risk-table td {
+    padding: 11px 14px; border-bottom: 1px solid var(--border2);
+    color: rgba(240,237,232,0.68); vertical-align: top; line-height: 1.5;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    padding: 2px 9px; border-radius: 100px;
+  }
+  .b-green { background: rgba(29,158,117,0.14); color: var(--glow-green); }
+  .b-coral { background: rgba(216,90,48,0.14); color: var(--glow-coral); }
+  .b-amber { background: rgba(239,159,39,0.14); color: var(--glow-amber); }
+  .b-cyan { background: rgba(0,212,255,0.12); color: var(--cyan); }
+  .b-purple { background: rgba(168,85,247,0.12); color: var(--purple); }
+  .b-neon { background: rgba(57,255,153,0.1); color: var(--neon); }
+
+  /* QUESTION LIST */
+  .q-list { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+  .q-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 14px 18px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .q-num {
+    font-family: var(--font-display); font-size: 13px; font-weight: 600;
+    color: var(--muted); min-width: 20px; padding-top: 1px;
+  }
+  .q-text { font-size: 13px; color: rgba(240,237,232,0.72); line-height: 1.55; }
+  .q-why { font-size: 11.5px; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+  /* CONNECTION TYPES */
+  .conn-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px; margin: 22px 0;
+  }
+  .conn-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 5px; padding: 14px 16px; text-align: center;
+  }
+  .conn-icon { font-size: 22px; margin-bottom: 6px; }
+  .conn-label { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .conn-sub { font-size: 10.5px; color: var(--muted); line-height: 1.4; }
+
+  /* DIVIDER */
+  .div-green { width: 32px; height: 2px; background: var(--green); border-radius: 1px; margin: 18px 0; }
+
+  /* ETHICS BLOCK */
+  .ethics-block {
+    background: linear-gradient(135deg, rgba(29,158,117,0.06) 0%, rgba(168,85,247,0.04) 100%);
+    border: 1px solid rgba(29,158,117,0.18);
+    border-radius: 8px; padding: 32px 36px; margin: 28px 0;
+  }
+  .ethics-block h3 {
+    font-family: var(--font-display); font-size: 20px; font-weight: 600;
+    margin-bottom: 14px; color: var(--text);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 0; text-align: center;
+    font-size: 11px; color: var(--muted);
+    border-top: 1px solid var(--border); letter-spacing: 0.05em;
+  }
+  footer strong { color: var(--green); }
+
+  /* SCROLL LINE */
+  .scroll-line {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--cyan), var(--purple));
+    width: 0%; z-index: 1000; transition: width 0.1s;
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-line" id="scrollLine"></div>
+
+<nav>
+  <div class="nav-inner">
+    <span style="font-size:12px; font-weight:600; color:var(--glow-green); font-family:var(--font-display); margin-right:8px;">Sommar</span>
+    <span class="nav-sep">·</span>
+    <a class="nav-item" href="#visao">Visão</a>
+    <a class="nav-item" href="#mercado">Mercado</a>
+    <a class="nav-item" href="#tam">TAM</a>
+    <a class="nav-item" href="#competidores">Competidores</a>
+    <a class="nav-item" href="#b2b-pitch">B2B & Parcerias</a>
+    <a class="nav-item" href="#fases">Fases</a>
+    <a class="nav-item" href="#perguntas">Perguntas-chave</a>
+    <a class="nav-item" href="#precificacao">Precificação</a>
+    <a class="nav-item" href="#potencial">Potencial</a>
+    <a class="nav-item" href="#etica">Ética</a>
+    <a class="nav-item" href="#roadmap">Roadmap</a>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="doc-tag">Documento Estratégico · Pesquisa de Mercado</div>
+    <h1>Entender o mercado<br>antes de <em>moldar</em> ele</h1>
+    <p class="header-sub">
+      Estratégia completa de pesquisa para o Sommar: uma camada de conexão humana sobre o mundo real, para todos os tipos de vínculo, em qualquer lugar onde pessoas se reúnam.
+    </p>
+    <div class="meta-row">
+      <span>📅 Março 2026</span>
+      <span>🌎 Brasil first, mundo depois</span>
+      <span>🤝 Todos os tipos de conexão</span>
+      <span>🔖 Documento vivo</span>
+    </div>
+  </div>
+</header>
+
+<!-- 00 - VISÃO ESTRATÉGICA -->
+<div class="section" id="visao">
+  <div class="wrap">
+    <div class="s-label">00 · Antes de tudo</div>
+    <h2 class="s-title">O Sommar não é um <span class="c">app de namoro</span></h2>
+
+    <p>Esse ponto precisa estar claro antes de qualquer pesquisa, porque ele determina quem você estuda, quais perguntas você faz, e como você interpreta os dados. O Sommar é uma <strong>camada de conexão sobre o mundo real</strong>, ativada pelo contexto, profundidade, e intenção. Não pelo swipe.</p>
+
+    <div class="conn-grid">
+      <div class="conn-item">
+        <div class="conn-icon">💞</div>
+        <div class="conn-label">Romance</div>
+        <div class="conn-sub">Encontrar alguém especial</div>
+      </div>
+      <div class="conn-item">
+        <div class="conn-icon">🤝</div>
+        <div class="conn-label">Amizade</div>
+        <div class="conn-sub">Conexões reais e duradouras</div>
+      </div>
+      <div class="conn-item">
+        <div class="conn-icon">🚀</div>
+        <div class="conn-label">Projetos</div>
+        <div class="conn-sub">Co-fundadores, parceiros</div>
+      </div>
+      <div class="conn-item">
+        <div class="conn-icon">🌱</div>
+        <div class="conn-label">Comunidade</div>
+        <div class="conn-sub">Pertencimento e tribo</div>
+      </div>
+      <div class="conn-item">
+        <div class="conn-icon">🩺</div>
+        <div class="conn-label">Profissional</div>
+        <div class="conn-sub">Médico, psicólogo, coach</div>
+      </div>
+      <div class="conn-item">
+        <div class="conn-icon">🎓</div>
+        <div class="conn-label">Mentoria</div>
+        <div class="conn-sub">Aprender e ensinar</div>
+      </div>
+      <div class="conn-item">
+        <div class="conn-icon">🎵</div>
+        <div class="conn-label">Cultura</div>
+        <div class="conn-sub">Bandas, grupos, eventos</div>
+      </div>
+      <div class="conn-item">
+        <div class="conn-icon">✨</div>
+        <div class="conn-label">O inesperado</div>
+        <div class="conn-sub">Que a Matter descobre</div>
+      </div>
+    </div>
+
+    <div class="callout neon">
+      <div class="callout-label neon">Implicação direta para a pesquisa</div>
+      <p>O mercado relevante não é o mercado de dating (US$12B global). É a interseção do mercado de solidão, de comunidade, de matchmaking profissional, e de experiências presenciais. Isso é uma ordem de grandeza maior, e muito menos explorado com tecnologia.</p>
+    </div>
+
+    <p>O Sommar também não é um produto puramente digital. Funciona <strong>antes do evento</strong> (onboarding, perfil), <strong>durante</strong> (matching em tempo real via localização), <strong>depois</strong> (follow-up da Matter, manutenção de vínculos) e <strong>sem evento algum</strong>: numa praia, num bar, num shopping, em qualquer lugar onde pessoas estejam e haja sinal de GPS.</p>
+
+    <div class="callout amber">
+      <div class="callout-label amber">Modelo de localização</div>
+      <p>A pessoa informa onde está, ex.: "Praia dos Açores, Florianópolis". O Sommar mostra apenas quem também está ali ou muito próximo. O contexto físico compartilhado é o primeiro sinal de compatibilidade. A Matter faz o resto.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 01 - MERCADO -->
+<div class="section" id="mercado">
+  <div class="wrap">
+    <div class="s-label">01 · Tamanho e perfil de mercado</div>
+    <h2 class="s-title">Brasil first. <span class="g">Mundo depois.</span></h2>
+
+    <p>A pesquisa de mercado precisa funcionar em duas velocidades: dados suficientes para validar o MSP no Brasil nos próximos 3–6 meses, e base conceitual para entender o potencial global sem perder o foco operacional de agora.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h4 class="g">Brasil · Foco imediato</h4>
+        <ul>
+          <li>214M+ habitantes, 3ª maior população de usuários de apps no mundo</li>
+          <li>Solidão crescente pós-pandemia, especialmente em 20–35 anos</li>
+          <li>Mercado de eventos culturais vivo e em expansão (shows, festivais, feiras)</li>
+          <li>Alta penetração de smartphone (86%), WhatsApp como infraestrutura</li>
+          <li>Desconfiança crescente com Tinder, Bumble, dating apps em geral</li>
+          <li>Custo de aquisição de usuário muito mais baixo que mercados maduros</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="cy">Global · Visão de longo prazo</h4>
+        <ul>
+          <li>Epidemia de solidão declarada pela OMS em 2025</li>
+          <li>79% de Millennials e Gen Z com burnout de apps de dating (Forbes Health/OnePoll, 2024, n=1.000)</li>
+          <li>30% dos adultos nos EUA sentem solidão ao menos uma vez por semana; 10% diariamente (APA, jan. 2024)</li>
+          <li>Tinder, Bumble e Hinge perderam juntos ~1,09M usuários no UK entre mai. 2023 e mai. 2024 (Ofcom, 2024)</li>
+          <li>Mercado de matchmaking humano estimado em US$10B+ crescendo</li>
+          <li>Europa, Latam, e SEA têm cultura de eventos presenciais forte</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:18px; font-weight:600; margin:28px 0 16px; color:var(--text);">Segmentos a mapear no Brasil</h3>
+
+    <div class="grid-3">
+      <div class="card">
+        <h4 class="g">Perfil 1 · O cansado dos apps</h4>
+        <ul>
+          <li>25–38 anos</li>
+          <li>Urbano, classes B/C</li>
+          <li>Usa ou usou Tinder, Bumble</li>
+          <li>Quer conexão real, não swipe</li>
+          <li>Frequenta eventos culturais</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="a">Perfil 2 · O solitário funcional</h4>
+        <ul>
+          <li>28–45 anos</li>
+          <li>Profissional estabelecido</li>
+          <li>Rede social estreita pós-faculdade</li>
+          <li>Quer amizades e comunidade</li>
+          <li>Dificuldade de fazer amigos adultos</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="cy">Perfil 3 · O construtor de projetos</h4>
+        <ul>
+          <li>22–40 anos</li>
+          <li>Empreendedor ou criativo</li>
+          <li>Precisa de co-fundador, parceiro</li>
+          <li>LinkedIn não resolve o lado humano</li>
+          <li>Frequenta meetups e eventos</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="p">Perfil 4 · O buscador de serviço</h4>
+        <ul>
+          <li>Qualquer faixa etária</li>
+          <li>Precisa de profissional específico</li>
+          <li>Médico, psicólogo, coach, massagista</li>
+          <li>Recomendação contextual importa</li>
+          <li>Confia mais em indicação que em ranking</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="pk">Perfil 5 · O organizador de eventos</h4>
+        <ul>
+          <li>B2B: produto dentro do produto</li>
+          <li>Quer engajamento real no evento</li>
+          <li>Valoriza dados sobre conexões geradas</li>
+          <li>Busca diferencial para a audiência</li>
+          <li>Modelo de parceria e co-marketing</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="c">Perfil 6 · O recém-chegado</h4>
+        <ul>
+          <li>Mudou de cidade (estudante, trabalho)</li>
+          <li>Rede zero no novo ambiente</li>
+          <li>Alta motivação para conectar</li>
+          <li>Floripa, SP, RJ, Campinas: cidades alvo</li>
+          <li>Momento de maior abertura emocional</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 - TAM & MERCADO GLOBAL -->
+<div class="section" id="tam">
+  <div class="wrap">
+    <div class="s-label">02 · Tamanho de mercado verificado</div>
+    <h2 class="s-title">O mercado <span class="g">existe e é enorme.</span> Os números provam.</h2>
+
+    <p>Os dados abaixo são de fontes primárias verificadas: relatórios financeiros públicos (SEC filings), pesquisas de mercado especializadas, e dados operacionais das empresas.</p>
+
+    <div class="stats-row" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin:24px 0;">
+      <div style="background:var(--surface); padding:20px 22px;">
+        <div style="font-family:var(--font-display); font-size:30px; font-weight:600; color:var(--glow-green); line-height:1; margin-bottom:6px;">$6.18B</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.4;">Receita global de dating apps em 2024<br><span style="color:rgba(255,255,255,0.25); font-size:10px;">Fonte: Business of Apps, 2025</span></div>
+      </div>
+      <div style="background:var(--surface); padding:20px 22px;">
+        <div style="font-family:var(--font-display); font-size:30px; font-weight:600; color:var(--cyan); line-height:1; margin-bottom:6px;">$8.9B</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.4;">Projeção para 2030 (CAGR ~7–9%)<br><span style="color:rgba(255,255,255,0.25); font-size:10px;">Fonte: Business of Apps / Straits Research</span></div>
+      </div>
+      <div style="background:var(--surface); padding:20px 22px;">
+        <div style="font-family:var(--font-display); font-size:30px; font-weight:600; color:var(--amber); line-height:1; margin-bottom:6px;">300M+</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.4;">Usuários de dating apps no mundo<br><span style="color:rgba(255,255,255,0.25); font-size:10px;">Fonte: Business of Apps, 2025</span></div>
+      </div>
+      <div style="background:var(--surface); padding:20px 22px;">
+        <div style="font-family:var(--font-display); font-size:30px; font-weight:600; color:var(--glow-coral); line-height:1; margin-bottom:6px;">2x</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.4;">Apps usados por usuário médio regularmente<br><span style="color:rgba(255,255,255,0.25); font-size:10px;">Fonte: Business of Apps, 2025</span></div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-label amber">O TAM real do Sommar: não é um mercado, são quatro</div>
+      <p>O Sommar resolve dor em quatro mercados simultaneamente. A soma deles é o TAM (Total Addressable Market, mercado total endereçável) real, não apenas o de dating. E esses mercados crescem em paralelo, com pouca sobreposição de players.</p>
+    </div>
+
+    <table class="price-table">
+      <thead>
+        <tr><th>Mercado</th><th>Tamanho global (2024)</th><th>CAGR projetado</th><th>Player referência</th><th>Como o Sommar endereça</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Conexão romântica e social</strong></td>
+          <td>$6.18B (apps) + $9B (matchmaking tradicional)</td>
+          <td>~7–9% a.a.</td>
+          <td>Tinder, Hinge, Bumble, Tawkify</td>
+          <td>Matching profundo via facetas. Sem swipe. Com contexto físico.</td>
+        </tr>
+        <tr>
+          <td><strong>Redes profissionais e networking</strong></td>
+          <td>$16.2B (LinkedIn total est.) · $2B só em Premium</td>
+          <td>~9% a.a.</td>
+          <td>LinkedIn, Lunchclub (descontinuado), Geneva</td>
+          <td>O LinkedIn não tem o lado humano. Não há como encontrar um co-fundador ideal num happy hour via LinkedIn.</td>
+        </tr>
+        <tr>
+          <td><strong>Saúde mental e matching profissional</strong></td>
+          <td>$7.48B (apps de saúde mental) · $3.84B (terapia online)</td>
+          <td>~14% a.a.</td>
+          <td>BetterHelp, Talkspace, Doctoralia</td>
+          <td>Encontrar o psicólogo certo via indicação contextual é muito mais eficaz que ranking de estrelas.</td>
+        </tr>
+        <tr>
+          <td><strong>Experiências e eventos presenciais (BR)</strong></td>
+          <td>R$25B+ movimentados em eventos em SP em 2025 (est. anual)</td>
+          <td>+12% a.a. (H1 2025 vs H1 2024)</td>
+          <td>Rock World (Rock in Rio), Live Nation, T4F</td>
+          <td>Eventos são o contexto perfeito para o Sommar. O B2B de eventos é o canal de distribuição, não apenas uma feature.</td>
+        </tr>
+        <tr style="background: rgba(29,255,168,0.04);">
+          <td style="color:var(--glow-green); font-weight:600;">TAM combinado (estimativa conservadora)</td>
+          <td style="color:var(--glow-green); font-weight:600;">$40B+ global</td>
+          <td style="color:var(--glow-green);">Crescimento composto</td>
+          <td style="color:var(--muted);">Nenhum player unificado</td>
+          <td style="color:var(--glow-green);">O Sommar é o único produto pensado para todos esses contextos com uma só camada de IA.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout green">
+      <div class="callout-label green">Por que esse número é defensável para um investidor</div>
+      <p>Cada mercado acima já tem bilhões em receita comprovada com players estabelecidos. O argumento não é "vamos conquistar todos eles": é que <strong>nenhum deles resolve a conexão humana de forma agnóstica ao tipo de vínculo</strong>. O LinkedIn não é o lugar certo para conhecer um amigo. O Tinder não é o lugar certo para encontrar um psicólogo. O BetterHelp não conecta você a um co-fundador. O Sommar, sim. É uma camada nova sobre necessidades já monetizadas em separado.</p>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:28px 0 14px; color:var(--text);">Brasil: o que torna esse mercado especialmente estratégico</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4 class="g">Vantagem competitiva local</h4>
+        <ul>
+          <li>RPP (Revenue Per Payer, receita média por usuário pagante) do Tinder no Brasil é ~$2–4/mês, um dos mais baixos do mundo. Hipótese a validar na pesquisa: se isso reflete falta de alternativa de qualidade, e não falta de disposição a pagar, o espaço para um produto melhor cobrar mais é significativo</li>
+          <li>Nenhum app local resolve conexão além de romance em escala. Espaço completamente vazio</li>
+          <li>CAC (Custo de Aquisição de Cliente) no Brasil é significativamente menor que em EUA ou Europa, especialmente via eventos e boca a boca</li>
+          <li>O modelo B2B via eventos tem tração natural: São Paulo movimentou R$12.8B em eventos só no primeiro semestre de 2025 (CNN Brasil / São Paulo Negócios, dez. 2025)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="cy">Por que Brasil primeiro é a jogada certa</h4>
+        <ul>
+          <li>Mercado de dating apps ainda imaturo em termos de qualidade percebida: usuário BR paga menos mas quer mais</li>
+          <li>Cultura de eventos presenciais extremamente forte: Rock in Rio 2024 reuniu 730 mil pessoas em 7 dias, movimentou R$2.9B na economia do Rio e teve 85+ marcas patrocinadoras (Rock World, out. 2024)</li>
+          <li>WhatsApp como infraestrutura de confiança reduz fricção de onboarding vs. qualquer outro país</li>
+          <li>Conexões de fundador na cena de eventos (DJs, produtores, organizadores) são um ativo real de go-to-market que não existe no Silicon Valley</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 - ANÁLISE DE COMPETIDORES -->
+<div class="section" id="competidores">
+  <div class="wrap">
+    <div class="s-label">03 · Análise competitiva · Dados verificados</div>
+    <h2 class="s-title">O que os competidores <span class="c">cobram, ganham, e perdem</span></h2>
+
+    <p>Todos os números abaixo vêm de demonstrações financeiras públicas (SEC filings), relatórios de resultados trimestrais, e pesquisas de mercado especializadas. Datas indicadas em cada dado.</p>
+
+    <!-- MATCH GROUP / TINDER -->
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:28px 0 6px; color:var(--text);">Match Group · Tinder + Hinge + OkCupid</h3>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">Holding. Nasdaq: MTCH. Fonte: SEC Filing Q4/FY 2024, publicado fev. 2025.</p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:20px;">
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--glow-green); line-height:1; margin-bottom:5px;">$3.5B</div>
+        <div style="font-size:11px; color:var(--muted);">Receita total FY2024</div>
+      </div>
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--amber); line-height:1; margin-bottom:5px;">36%</div>
+        <div style="font-size:11px; color:var(--muted);">Margem AOI (lucro ajustado)</div>
+      </div>
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--cyan); line-height:1; margin-bottom:5px;">14.9M</div>
+        <div style="font-size:11px; color:var(--muted);">Pagantes ativos FY2024</div>
+      </div>
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--glow-coral); line-height:1; margin-bottom:5px;">$19.12</div>
+        <div style="font-size:11px; color:var(--muted);">RPP médio mensal</div>
+      </div>
+    </div>
+
+    <table class="price-table">
+      <thead><tr><th>App</th><th>Receita FY2024</th><th>Pagantes</th><th>RPP/mês</th><th>Preço BR (R$/mês aprox.)</th><th>Sinal</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Tinder</strong></td>
+          <td>$1.94B <span style="font-size:10px;color:var(--muted);">(31% market share)</span></td>
+          <td>9.7M <span style="font-size:10px;color:var(--glow-coral);">↓7% a/a</span></td>
+          <td>$16.68</td>
+          <td>R$9–99 (Plus a Platinum)</td>
+          <td><span class="badge b-coral">Declínio</span></td>
+        </tr>
+        <tr>
+          <td><strong>Hinge</strong></td>
+          <td>$550M <span style="font-size:10px;color:var(--glow-green);">(+39% a/a)</span></td>
+          <td>1.53M <span style="font-size:10px;color:var(--glow-green);">↑23% a/a</span></td>
+          <td>$29.94 <span style="font-size:10px;color:var(--glow-green);">79% acima do Tinder</span></td>
+          <td>~R$30–60 (varia por país)</td>
+          <td><span class="badge b-green">Crescimento</span></td>
+        </tr>
+        <tr>
+          <td><strong>OkCupid + outros</strong></td>
+          <td>~$1B (restante)</td>
+          <td>3.7M est.</td>
+          <td>~$16–22</td>
+          <td>Variável</td>
+          <td><span class="badge b-amber">Estável</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- BUMBLE -->
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:28px 0 6px; color:var(--text);">Bumble Inc.</h3>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">Nasdaq: BMBL. Fonte: SEC Filing Q4/FY 2024, publicado fev. 2025.</p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:20px;">
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--glow-green); line-height:1; margin-bottom:5px;">$1.07B</div>
+        <div style="font-size:11px; color:var(--muted);">Receita total FY2024 (+2% a/a)</div>
+      </div>
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--amber); line-height:1; margin-bottom:5px;">4.2M</div>
+        <div style="font-size:11px; color:var(--muted);">Usuários pagantes totais</div>
+      </div>
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--cyan); line-height:1; margin-bottom:5px;">$20.58</div>
+        <div style="font-size:11px; color:var(--muted);">ARPPU médio (Q4 2024)</div>
+      </div>
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--glow-coral); line-height:1; margin-bottom:5px;">14%</div>
+        <div style="font-size:11px; color:var(--muted);">Market share global</div>
+      </div>
+    </div>
+
+    <div class="callout coral">
+      <div class="callout-label coral">Sinal importante: Bumble adquiriu a Geneva em 2024</div>
+      <p>A Geneva é uma plataforma de comunidades e grupos. Bumble está <strong>ativamente tentando expandir além do romance</strong> para conexões de amizade e grupo, exatamente o espaço que o Sommar habita nativamente. Eles veem o whitespace, mas estão tentando encaixar amizade num produto de namoro. É uma pegada errada.</p>
+    </div>
+
+    <!-- TAWKIFY -->
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:28px 0 6px; color:var(--text);">Tawkify · Matchmaking humano</h3>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">Empresa privada. Estimativas de mercado. Análise detalhada disponível no arquivo tawkify_analysis.html.</p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:20px;">
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--amber); line-height:1; margin-bottom:5px;">$10–50M</div>
+        <div style="font-size:11px; color:var(--muted);">Receita estimada (empresa privada)</div>
+      </div>
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--glow-coral); line-height:1; margin-bottom:5px;">$4K–70K</div>
+        <div style="font-size:11px; color:var(--muted);">Preço por pacote (USD)</div>
+      </div>
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--cyan); line-height:1; margin-bottom:5px;">80%</div>
+        <div style="font-size:11px; color:var(--muted);">Taxa de sucesso declarada</div>
+      </div>
+      <div style="background:var(--surface); padding:18px 20px;">
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--muted); line-height:1; margin-bottom:5px;">2.8★</div>
+        <div style="font-size:11px; color:var(--muted);">Rating Glassdoor (cultura interna)</div>
+      </div>
+    </div>
+
+    <!-- MAPA COMPETITIVO -->
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:28px 0 14px; color:var(--text);">Mapa de posicionamento: onde o Sommar se encaixa</h3>
+
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Foco de conexão</th>
+          <th>Modelo de receita</th>
+          <th>Ticket médio BR</th>
+          <th>Maior fraqueza</th>
+          <th>Ameaça ao Sommar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tinder</strong></td>
+          <td>Romance / casual</td>
+          <td>Freemium + assinatura</td>
+          <td>R$20–99/mês</td>
+          <td>Declínio de pagantes, burnout</td>
+          <td><span class="badge b-coral">Baixa</span></td>
+        </tr>
+        <tr>
+          <td><strong>Hinge</strong></td>
+          <td>Relacionamento sério</td>
+          <td>Freemium + assinatura premium</td>
+          <td>R$30–60/mês</td>
+          <td>Ainda só romance, EUA-centric</td>
+          <td><span class="badge b-amber">Média</span></td>
+        </tr>
+        <tr>
+          <td><strong>Bumble BFF</strong></td>
+          <td>Amizade (feature, não produto)</td>
+          <td>Bundled com Bumble</td>
+          <td>Incluso no Bumble (~R$40/mês)</td>
+          <td>Amizade tratada como recurso secundário</td>
+          <td><span class="badge b-amber">Média</span></td>
+        </tr>
+        <tr>
+          <td><strong>Meetup / Geneva</strong></td>
+          <td>Comunidade / grupos</td>
+          <td>Freemium / B2B</td>
+          <td>~R$0–30/mês</td>
+          <td>Sem IA, sem contexto físico em tempo real</td>
+          <td><span class="badge b-green">Baixa</span></td>
+        </tr>
+        <tr>
+          <td><strong>LinkedIn</strong></td>
+          <td>Profissional apenas</td>
+          <td>Freemium + Premium $40–120/mês</td>
+          <td>R$80–200/mês (Premium)</td>
+          <td>Sem o lado humano, contexto físico zero</td>
+          <td><span class="badge b-green">Baixa</span></td>
+        </tr>
+        <tr>
+          <td><strong>Tawkify</strong></td>
+          <td>Romance via matchmaker humano</td>
+          <td>Pacote por resultado</td>
+          <td>US$4K–70K (inacessível BR)</td>
+          <td>Caro, lento, EUA only, só romance</td>
+          <td><span class="badge b-green">Quase nula</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--glow-green); font-weight:600;">Sommar</td>
+          <td style="color:var(--glow-green);">Tudo: romance, amizade, projetos, profissional, comunidade</td>
+          <td style="color:var(--glow-green);">B2B eventos + freemium contextual</td>
+          <td style="color:var(--glow-green);">A definir com pesquisa (hipótese: R$0–49/mês)</td>
+          <td style="color:var(--muted);">Ainda sendo construído</td>
+          <td><span class="badge b-neon">Diferente de todos</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout green">
+      <div class="callout-label green">O insight mais importante do mapa competitivo</div>
+      <p>Hinge fatura $550M crescendo 39% ao ano cobrando <strong>79% mais que o Tinder</strong> e com apenas 1/6 dos usuários pagantes. Por quê? Porque ele resolve uma necessidade mais profunda (relacionamento sério vs. casual), o que justifica um ticket maior. O Sommar resolve uma necessidade ainda mais profunda e mais ampla. A lógica de precificação aponta na mesma direção: menos usuários, mais engajados, pagando mais porque o produto entrega mais.</p>
+    </div>
+
+    <!-- HINGE INSIGHTS -->
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:32px 0 12px; color:var(--text);">Por que o Hinge sobe enquanto o Tinder cai: lições para o Sommar</h3>
+    <p>Entender o que os usuários amam e odeiam no Hinge não é curiosidade: é inteligência de produto. O Hinge está, sem querer, mapeando o caminho que o Sommar pode percorrer com mais intenção.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h4 class="g">O que os usuários amam no Hinge</h4>
+        <ul>
+          <li><strong>Prompts de personalidade</strong> em vez de bio genérica: usuários respondem perguntas abertas, e perfis com notas de voz recebem 50% mais engajamento (Tawkify Blog, jan. 2026)</li>
+          <li><strong>"Designed to be deleted"</strong>: a promessa de que o objetivo é te fazer sair do app cria confiança. 87% dos usuários Hinge buscam relacionamento sério</li>
+          <li><strong>Sem swipe binário</strong>: você curte uma foto específica ou uma resposta, o que gera conversas com contexto. Mensagens referenciando interesses comuns têm 58% de taxa de resposta</li>
+          <li><strong>Anti-ghosting nativo</strong>: a feature "Your Turn" lembra o usuário de responder. 35% dos casamentos via apps datam de matches no Hinge (vs. 25% Tinder)</li>
+          <li><strong>Intenção clara</strong>: ao contrário do Tinder, a audiência é homogênea em objetivo. Isso reduz atrito e aumenta qualidade percebida</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="c">O que ainda falha no Hinge (oportunidades do Sommar)</h4>
+        <ul>
+          <li><strong>Ainda é só romance</strong>: zero suporte a amizade, projetos, profissional ou comunidade</li>
+          <li><strong>Sem contexto físico</strong>: o app não sabe onde você está, nem usa isso como sinal de compatibilidade</li>
+          <li><strong>Prompts repetitivos</strong>: usuários reclamam que as respostas aos prompts são genéricas e não revelam personalidade real</li>
+          <li><strong>Sem IA conversacional</strong>: o algoritmo aprende, mas não tem uma "persona" que te acompanha e te conhece de verdade</li>
+          <li><strong>Ghosting ainda acontece</strong>: o "Your Turn" ajuda, mas não é anti-ghosting de verdade. O Ori-to-Ori é estruturalmente diferente</li>
+          <li><strong>EUA e UK cêntrico</strong>: 70% da receita vem de EUA + UK. Brasil e Latam são mercados em desenvolvimento sem produto adaptado</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-label cyan">O que isso gera de insight direto para o produto Sommar</div>
+      <p>O Hinge provou que <strong>profundidade de perfil</strong> + <strong>intenção clara</strong> + <strong>anti-ghosting</strong> = crescimento e ticket maior. As Facetas do Sommar são a versão muito mais rica dos prompts do Hinge. O Ori-to-Ori é o anti-ghosting que o Hinge nunca terá por não ser parte do seu DNA. E o Sommar nasce agnóstico ao tipo de conexão, o que o Hinge nunca será. O movimento que transformou o Hinge em $550M foi exatamente a virada de "volume de matches" para "qualidade de conexão". O Sommar começa exatamente aí.</p>
+    </div>
+
+    <!-- NON-DATING COMPETITORS -->
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:32px 0 12px; color:var(--text);">Competidores além do romance: o que LinkedIn, BetterHelp e Meetup revelam</h3>
+
+    <table class="price-table">
+      <thead>
+        <tr><th>Player</th><th>Mercado / Vertical</th><th>Receita 2024</th><th>O que eles resolvem bem</th><th>O que não resolvem</th><th>Oportunidade Sommar</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>LinkedIn Premium</strong></td>
+          <td>Rede profissional</td>
+          <td>$2B+ em Premium subs (Microsoft, jan. 2025). Premium subs +51% em 2024.</td>
+          <td>Visibilidade profissional, acesso a recrutadores, cursos</td>
+          <td>Não tem o lado humano. Networking no LinkedIn é frio. Não há ambiência, contexto físico, nem conversa real</td>
+          <td>Matching profissional contextual: "há um designer aqui nesse evento que precisa de um dev com o seu perfil"</td>
+        </tr>
+        <tr>
+          <td><strong>BetterHelp / Talkspace</strong></td>
+          <td>Saúde mental / terapia online</td>
+          <td>Talkspace: $187.6M FY2024 (+25%). Mercado de apps de saúde mental: $7.48B (Grand View Research, 2024)</td>
+          <td>Acesso a terapeutas licenciados, conveniência, sem fila</td>
+          <td>Matching por questionário genérico. Sem contexto de vida real. Sem recomendação contextual</td>
+          <td>A Matter pode fazer matching de profissional de saúde como qualquer outra conexão: pelo perfil profundo do usuário, não por "qual plano tem disponibilidade"</td>
+        </tr>
+        <tr>
+          <td><strong>Meetup / Geneva / Luma</strong></td>
+          <td>Comunidades e grupos</td>
+          <td>Não públicos (empresas privadas). Meetup foi adquirido e vendido múltiplas vezes. Geneva foi comprada pelo Bumble em 2024.</td>
+          <td>Criar grupos por interesse, eventos recorrentes</td>
+          <td>Sem IA de matching individual. Sem localização em tempo real. Sem Facetas. Você encontra o grupo, não a pessoa certa dentro dele</td>
+          <td>O Sommar é o que o Meetup poderia ter sido se tivesse nascido com IA: conecta as pessoas dentro dos contextos, não só os contextos</td>
+        </tr>
+        <tr>
+          <td><strong>Bumble BFF</strong></td>
+          <td>Amizade</td>
+          <td>Bundled no Bumble ($1.07B total). BFF é uma feature, não um produto dedicado</td>
+          <td>Tem o conceito de amizade mediada por app, sem romance</td>
+          <td>Produto secundário numa empresa de romance. Sem profundidade de perfil para amizade. Sem contexto físico.</td>
+          <td>Amizade como produto de primeira classe, não apêndice de dating app</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<!-- PITCH B2B & PARCERIAS -->
+<div class="section" id="b2b-pitch">
+  <div class="wrap">
+    <div class="s-label">03b · Modelo B2B · Sales pitch por tier de evento</div>
+    <h2 class="s-title">Como vender o Sommar para <span class="g">quem faz eventos acontecer</span></h2>
+
+    <p>O modelo B2B não é só uma estratégia de monetização: é a forma mais rápida de colocar o Sommar nas mãos de milhares de pessoas com CAC próximo de zero. Cada evento parceiro é um laboratório de produto, uma fonte de receita, e um canal de aquisição ao mesmo tempo. O pitch muda de tamanho para tamanho, mas a lógica é sempre a mesma: <strong>o Sommar transforma um evento de consumo de entretenimento em um evento de conexão humana real.</strong></p>
+
+    <div class="callout amber">
+      <div class="callout-label amber">A proposta de valor central para qualquer organizador</div>
+      <p>As pessoas saem de um show, festival ou evento cultural e as conexões que fizeram ali morrem no dia seguinte. O Sommar captura essas conexões, aprofunda elas antes do evento, e as mantém vivas depois. O organizador ganha: maior engajamento do público, dado real sobre quem são seus fãs, e um diferencial de experiência que nenhum outro festival no Brasil oferece.</p>
+    </div>
+
+    <!-- TIER 1 -->
+    <h3 style="font-family:var(--font-display); font-size:16px; font-weight:600; margin:28px 0 12px; color:var(--glow-green);">Tier 1 · Eventos íntimos e locais · R$500–3K por evento</h3>
+    <p style="font-size:12.5px; color:var(--muted); margin-bottom:14px;">Exemplos: Sounds in da City (Floripa), shows de bar, festas de bairro, eventos de nicho (jazz, eletrônica, cultura), feiras locais</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4 class="g">O que o Sommar oferece</h4>
+        <ul>
+          <li>QR Code personalizado com landing page do evento</li>
+          <li>Onboarding da Matter para os participantes antes do evento via link nas redes do organizador</li>
+          <li>Matching em tempo real durante o evento</li>
+          <li>Relatório pós-evento: quantas conexões foram feitas, quais tipos (amizade, romance, projeto)</li>
+          <li>Follow-up automático da Matter com os participantes no dia seguinte</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="a">O pitch para o Allen Rosa (Sounds in da City)</h4>
+        <ul>
+          <li>"Allen, o Sounds já tem 32K seguidores e 14 anos de história. As pessoas vêm pro Sounds querendo se conectar, não só ouvir música. O Sommar faz isso acontecer de verdade."</li>
+          <li>Oferta de piloto gratuito para os primeiros 2 eventos</li>
+          <li>Em troca: fotos, depoimentos, e autorização para usar como case</li>
+          <li>Depois: R$500–1.500 por edição, dependendo do público</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TIER 2 -->
+    <h3 style="font-family:var(--font-display); font-size:16px; font-weight:600; margin:28px 0 12px; color:var(--amber);">Tier 2 · Eventos médios e baladas · R$3K–15K por evento</h3>
+    <p style="font-size:12.5px; color:var(--muted); margin-bottom:14px;">Exemplos: Green Valley (Camburiú), Afterclapp eventos, D-Edge (SP), Warung Beach Club (SC), festas de DJs reconhecidos com público de 500–5.000 pessoas</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4 class="a">O que o Sommar oferece</h4>
+        <ul>
+          <li>Tudo do Tier 1, mais:</li>
+          <li>Pré-evento: campanha de onboarding nas redes do evento/DJ (o DJ divulga para a base dele)</li>
+          <li>Dashboard ao vivo para o organizador durante o evento</li>
+          <li>Integração com comunicação do evento (email, WhatsApp, Instagram)</li>
+          <li>Segmentação por tipo de conexão desejada (quem quer networking profissional vs. romance vs. amizade)</li>
+          <li>Co-branding: "Esta edição do [evento] tem Sommar"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="a">O pitch para o Rodrigo Vellutini (Afterclapp)</h4>
+        <ul>
+          <li>"Rodrigo, você já tocou em eventos no Brasil e no mundo. Você sabe que a comunidade eletrônica é feita de conexões reais. O Sommar coloca isso na tecnologia."</li>
+          <li>"Um DJ no Sommar pode se conectar com produtores de eventos do Brasil inteiro, e a Matter facilita isso. Você vira um nó de uma rede, não só um performer."</li>
+          <li>Proposta: parceria de visibilidade. Rodrigo divulga o Sommar para sua base, o Sommar cria um perfil especial para ele na plataforma</li>
+          <li>Receita compartilhada: % dos novos usuários que chegarem via Rodrigo</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TIER 3 -->
+    <h3 style="font-family:var(--font-display); font-size:16px; font-weight:600; margin:28px 0 12px; color:var(--cyan);">Tier 3 · Festivais de grande porte · R$30K–200K por edição</h3>
+    <p style="font-size:12.5px; color:var(--muted); margin-bottom:14px;">Exemplos: Surreal Festival (Camburiú), Lollapalooza Brasil, The Town (SP), Primavera Sound, Tomorrowland Brasil, festivais de 10K–300K pessoas</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4 class="cy">O que o Sommar oferece</h4>
+        <ul>
+          <li>Tudo dos tiers anteriores, mais:</li>
+          <li>App com branding co-criado com o festival</li>
+          <li>Campanha de pré-onboarding integrada na comunicação oficial do festival (emails, site, app)</li>
+          <li>Zonas de encontro físico mapeadas no Sommar (totem QR, área de conexão patrocinada)</li>
+          <li>Relatório estratégico completo: perfil de público, tipos de conexão, retenção pós-festival</li>
+          <li>API de dados para o festival usar em estratégias de patrocínio e programação</li>
+          <li>Possibilidade de uso como ferramenta de networking para equipes de patrocinadores</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="cy">O pitch para um Surreal ou The Town</h4>
+        <ul>
+          <li>"O Rock in Rio 2024 movimentou R$2.9B e alcançou 200M de brasileiros. Mas quanto das conexões humanas que aconteceram ali persistiram depois? Zero. O Sommar muda isso."</li>
+          <li>"Seu festival tem 50.000 pessoas em comum: elas escolheram estar no mesmo lugar, ao mesmo tempo, pela mesma música. Isso é o maior sinal de compatibilidade que existe. A Matter apenas faz o que a casualidade faria, mas com muito mais precisão."</li>
+          <li>Modelo de receita: taxa fixa + revenue share sobre usuários ativados que continuam usando o Sommar após o festival</li>
+          <li>Exclusividade de categoria por temporada como argumento de venda para o festival</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- FLYWHEEL DE PARCERIAS -->
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:32px 0 12px; color:var(--text);">O flywheel de crescimento orgânico via rede de criadores</h3>
+
+    <div class="callout neon">
+      <div class="callout-label neon">A lógica do flywheel</div>
+      <p>Um DJ ou produtor de eventos no Sommar não é só um usuário. Ele é um nó de distribuição. Quando o Rodrigo Vellutini (Afterclapp) usa o Sommar para conectar com outros produtores, ele está naturalmente recrutando para a rede. Quando um festival adota o Sommar, todos os patrocinadores e artistas do festival são introduzidos à plataforma. Isso cria um efeito de rede que se auto-alimenta, sem custo de aquisição proporcional.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h4 class="g">Cenário de flywheel realista</h4>
+        <ul>
+          <li>Sounds in da City adota o Sommar → 500 usuários onboardados por edição</li>
+          <li>Allen Rosa menciona o Sommar para outros organizadores da cena de Floripa</li>
+          <li>3 eventos parceiros em Floripa → 1.500 usuários no primeiro mês real</li>
+          <li>Alguns desses usuários são DJs e produtores, que levam para seus eventos</li>
+          <li>Rodrigo Vellutini (Afterclapp) entra → sua base de seguidores descobre o Sommar</li>
+          <li>1 festival médio parceiro → 3.000–5.000 novos usuários em um fim de semana</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="p">Como tornar a parceria irresistível para o criador</h4>
+        <ul>
+          <li>Perfil "Artista/Criador" especial na plataforma com visibilidade diferenciada</li>
+          <li>A Matter pode conectar o artista com: fãs relevantes, promotores, outros artistas, marcas alinhadas</li>
+          <li>Revenue share: % de cada usuário que entrar via link do criador e converter para pago</li>
+          <li>Co-criação: o criador pode personalizar o "ambiente" Sommar do seu evento (paleta, mensagem de boas-vindas da Matter)</li>
+          <li>Dados próprios: o criador recebe relatório de quem são seus fãs e que conexões eles formaram no evento</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 - FASES (renumbered in label only) -->
+<div class="section" id="fases">
+  <div class="wrap">
+    <div class="s-label">04 · Estrutura da pesquisa · Agnóstica ao tipo de conexão</div>
+    <h2 class="s-title">Três fases, <span class="a">intenções diferentes</span></h2>
+
+    <p>A pesquisa não é um evento, é um processo contínuo. E, como o Sommar, ela precisa ser completamente agnóstica ao tipo de conexão: não podemos pesquisar só sobre romance e depois lançar um produto de conexão ampla. As três fases abaixo cobrem amizade, projetos, saúde, comunidade e romance com o mesmo peso.</p>
+
+    <!-- FASE 1 -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-num" style="color:var(--glow-green);">01</div>
+        <div class="phase-meta">
+          <div class="phase-name">Descoberta · O que as pessoas realmente sentem</div>
+          <div class="phase-desc">Qualitativa, exploratória. 4–6 semanas.</div>
+        </div>
+        <span class="badge b-green">Imediato</span>
+      </div>
+      <div class="phase-body">
+        <p><strong>Objetivo:</strong> entender o contexto emocional e comportamental antes de qualquer hipótese de produto. O que é solidão no Brasil em 2026? Onde as pessoas tentam conectar? O que falha? O que dói?</p>
+        <p><strong>Por que qualitativa primeiro?</strong> Porque conexão é um tema onde as pessoas dizem o que acham que deveriam sentir, não o que sentem de fato. Entrevistas em profundidade revelam o que pesquisas fechadas escondem.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h4 class="g">Métodos recomendados</h4>
+            <ul>
+              <li>Entrevistas em profundidade (20–30 pessoas, 45–60 min)</li>
+              <li>Diários de conexão: 7 dias registrando tentativas de conectar</li>
+              <li>Shadowing em eventos culturais (observação etnográfica)</li>
+              <li>Análise de comunidades online (Reddit BR, grupos FB, Discord)</li>
+              <li>Jobs-to-be-done framework aplicado a conexão</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4 class="a">Perfis a entrevistar</h4>
+            <ul>
+              <li>5 pessoas que usam dating apps ativamente</li>
+              <li>5 que abandonaram os apps nos últimos 12 meses</li>
+              <li>5 que frequentam eventos e buscam amizade</li>
+              <li>5 que mudaram de cidade nos últimos 2 anos</li>
+              <li>5 organizadores de eventos culturais / comunidades</li>
+              <li>5 profissionais (médico, psicólogo, coach, etc.)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="method-row">
+          <span class="method-tag">Entrevistas 1:1</span>
+          <span class="method-tag">Diários comportamentais</span>
+          <span class="method-tag">Etnografia digital</span>
+          <span class="method-tag">JTBD framework</span>
+          <span class="method-tag">Análise de comunidades</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-num" style="color:var(--glow-amber);">02</div>
+        <div class="phase-meta">
+          <div class="phase-name">Validação · O que os dados confirmam</div>
+          <div class="phase-desc">Quantitativa, estruturada. 6–8 semanas.</div>
+        </div>
+        <span class="badge b-amber">Fase 2</span>
+      </div>
+      <div class="phase-body">
+        <p><strong>Objetivo:</strong> escalar os insights qualitativos para n=400+ e entender distribuições, tamanho de segmento, e willingness-to-pay real. Também validar hipóteses de posicionamento antes de investir em desenvolvimento.</p>
+        <p>A pesquisa de 50 respostas que já temos é um ponto de partida excelente para o universo do ideaXchange. Para o Sommar, precisamos de um instrumento novo focado nos tipos de conexão e no comportamento em espaços físicos.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h4 class="a">Métodos recomendados</h4>
+            <ul>
+              <li>Survey estruturado (Google Forms / Typeform) n=400+</li>
+              <li>Conjoint analysis para features e precificação</li>
+              <li>Teste de conceito: descrever o Sommar, medir reação</li>
+              <li>Benchmarking de willingness-to-pay por perfil</li>
+              <li>Análise das 50 respostas existentes como proxy</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4 class="cy">Variáveis críticas a medir</h4>
+            <ul>
+              <li>Frequência de solidão por tipo (romance, amizade, profissional)</li>
+              <li>Onde tentam conectar hoje (apps, eventos, grupos)</li>
+              <li>Contextos que geram melhor conexão</li>
+              <li>Barreiras por perfil e faixa etária</li>
+              <li>Quanto pagariam, em que formato</li>
+              <li>Confiança em IA para facilitar conexão</li>
+            </ul>
+          </div>
+        </div>
+        <div class="method-row">
+          <span class="method-tag">Survey quantitativo</span>
+          <span class="method-tag">Conjoint analysis</span>
+          <span class="method-tag">Teste de conceito A/B</span>
+          <span class="method-tag">Price sensitivity meter</span>
+          <span class="method-tag">Net Promoter Score de conceito</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-num" style="color:var(--cyan);">03</div>
+        <div class="phase-meta">
+          <div class="phase-name">Iteração · O produto como pesquisa</div>
+          <div class="phase-desc">Comportamental, contínua. A partir do primeiro evento / uso real.</div>
+        </div>
+        <span class="badge b-cyan">Contínuo</span>
+      </div>
+      <div class="phase-body">
+        <p><strong>Objetivo:</strong> a melhor pesquisa de mercado é o produto real em uso. A partir do primeiro evento ou sessão real com usuários, o Sommar coleta dados comportamentais que nenhum survey consegue capturar.</p>
+        <p>O que as pessoas realmente fazem é sempre mais honesto do que o que dizem que fariam. Isso é a base de qualquer programa de CRO e experimentação, e é exatamente o que você já sabe fazer.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h4 class="cy">Métricas comportamentais</h4>
+            <ul>
+              <li>Taxa de completude do onboarding por trecho</li>
+              <li>Tipos de conexão mais solicitados vs. entregues</li>
+              <li>Tempo entre match e primeira mensagem</li>
+              <li>Taxa de ghosting por tipo de conexão</li>
+              <li>Conexões que continuam após o evento (Day 7, Day 30)</li>
+              <li>NPS por tipo de conexão formada</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4 class="p">Sinais de produto-mercado fit</h4>
+            <ul>
+              <li>Sean Ellis Test: "ficaria chateado se o Sommar sumisse?"</li>
+              <li>Retenção D30 por segmento</li>
+              <li>Compartilhamento espontâneo (crescimento orgânico)</li>
+              <li>Qual tipo de conexão gera mais satisfação declarada</li>
+              <li>Quem volta mesmo sem evento marcado</li>
+              <li>Qual momento do funil quebra mais</li>
+            </ul>
+          </div>
+        </div>
+        <div class="method-row">
+          <span class="method-tag">Analytics de produto</span>
+          <span class="method-tag">Cohort analysis</span>
+          <span class="method-tag">Heatmaps de onboarding</span>
+          <span class="method-tag">Session recording</span>
+          <span class="method-tag">Entrevistas pós-evento</span>
+          <span class="method-tag">Experimentação A/B</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 - PERGUNTAS-CHAVE -->
+<div class="section" id="perguntas">
+  <div class="wrap">
+    <div class="s-label">03 · Perguntas que a pesquisa precisa responder</div>
+    <h2 class="s-title">O que precisamos <span class="p">saber de verdade</span></h2>
+
+    <p>Essas são as perguntas que vão determinar decisões de produto, posicionamento, e modelo de negócio. Não são só curiosidades acadêmicas: cada pergunta tem uma decisão esperando pela resposta.</p>
+
+    <h3 style="font-family:var(--font-display); font-size:16px; color:var(--glow-green); margin: 22px 0 12px;">Sobre comportamento real</h3>
+    <div class="q-list">
+      <div class="q-item">
+        <div class="q-num">1</div>
+        <div>
+          <div class="q-text">Qual tipo de solidão dói mais no Brasil hoje, a romanticamente sozinho, a sem amigos próximos, ou a sem comunidade?</div>
+          <div class="q-why">Determina qual conexão o Sommar deve priorizar no posicionamento, não no produto.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">2</div>
+        <div>
+          <div class="q-text">Quando uma conexão significativa aconteceu na sua vida, onde você estava e o que criou a abertura para ela?</div>
+          <div class="q-why">Valida ou desafia a hipótese de que o contexto físico compartilhado é o catalisador.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">3</div>
+        <div>
+          <div class="q-text">Você já foi a um evento esperando conectar e saiu sem ter falado com ninguém novo? O que impediu?</div>
+          <div class="q-why">Mapeia as barreiras de iniciativa que o Sommar precisa remover.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">4</div>
+        <div>
+          <div class="q-text">Se você soubesse, antes de chegar a um lugar, que alguém ali quer a mesma coisa que você, isso mudaria como você agiria?</div>
+          <div class="q-why">Teste direto da hipótese central do produto.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:16px; color:var(--glow-amber); margin: 22px 0 12px;">Sobre confiança e tecnologia</h3>
+    <div class="q-list">
+      <div class="q-item">
+        <div class="q-num">5</div>
+        <div>
+          <div class="q-text">Você confiaria numa IA para entender o que você realmente quer numa conexão, mesmo quando você não consegue articular isso?</div>
+          <div class="q-why">Calibra o nível de agência que a Matter pode exercer sem gerar resistência.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">6</div>
+        <div>
+          <div class="q-text">O que precisaria acontecer para você confiar seus dados de perfil a um app de conexão que não é um app de namoro?</div>
+          <div class="q-why">Informa a estratégia de privacidade e transparência do Sommar.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">7</div>
+        <div>
+          <div class="q-text">Qual a diferença entre sentir que um algoritmo te conectou e sentir que você se conectou de verdade?</div>
+          <div class="q-why">Problema central do design: como a Matter facilita sem parecer que ela "fez" a conexão.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:16px; color:var(--cyan); margin: 22px 0 12px;">Sobre o modelo de localização</h3>
+    <div class="q-list">
+      <div class="q-item">
+        <div class="q-num">8</div>
+        <div>
+          <div class="q-text">Se você estivesse na Praia dos Açores agora e soubesse que há 3 pessoas ali que a Matter acha que você deveria conhecer, você abriria o app?</div>
+          <div class="q-why">Teste do gatilho de uso por localização. Crucial para o modelo "sem evento".</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">9</div>
+        <div>
+          <div class="q-text">O que seria invasivo e o que seria bem-vindo no contexto de um app que sabe onde você está?</div>
+          <div class="q-why">Calibra os limites do modelo de localização sem criar sensação de vigilância.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:16px; color:var(--purple); margin: 22px 0 12px;">Sobre conexões profissionais e de serviço</h3>
+    <div class="q-list">
+      <div class="q-item">
+        <div class="q-num">10</div>
+        <div>
+          <div class="q-text">Quando você precisou de um médico, psicólogo ou coach, qual foi a maior dificuldade para encontrar a pessoa certa?</div>
+          <div class="q-why">Mapeia o espaço de dor do matching profissional, que é um mercado enorme e mal resolvido.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">11</div>
+        <div>
+          <div class="q-text">Você confiaria mais numa indicação de alguém que te conhece bem ou num ranking de estrelas para encontrar um profissional de saúde?</div>
+          <div class="q-why">Valida o modelo de matching contextual versus o modelo de marketplace de reviews.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 - PRECIFICAÇÃO -->
+<div class="section" id="precificacao">
+  <div class="wrap">
+    <div class="s-label">04 · Precificação</div>
+    <h2 class="s-title">Quanto cobrar sem <span class="c">vender a alma</span></h2>
+
+    <p>A maior armadilha na precificação de apps de conexão é criar incentivos que contradizem a missão. O Tinder precisa que você não encontre ninguém para continuar pagando. O Sommar precisa do oposto: ganhar quando o usuário ganha.</p>
+
+    <div class="callout coral">
+      <div class="callout-label coral">O princípio central</div>
+      <p>O modelo de negócio ético de uma plataforma de conexão é aquele onde a receita <strong>aumenta</strong> quando conexões reais acontecem, e <strong>diminui</strong> quando elas falham. Qualquer modelo que faça o contrário criará, inevitavelmente, os mesmos incentivos perversos dos apps atuais.</p>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:24px 0 14px; color:var(--text);">Modelos a estudar na pesquisa</h3>
+
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Modelo</th>
+          <th>Como funciona</th>
+          <th>Incentivo gerado</th>
+          <th>Risco ético</th>
+          <th>Fit Sommar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Freemium com features</strong></td>
+          <td>Gratuito com limite de matches, pago para mais</td>
+          <td>Vender mais matches, não melhores</td>
+          <td>Alto. Incentiva volume não qualidade.</td>
+          <td><span class="badge b-coral">Evitar</span></td>
+        </tr>
+        <tr>
+          <td><strong>Assinatura plana</strong></td>
+          <td>Mensalidade fixa, acesso total</td>
+          <td>Manter usuário no app, não conectado</td>
+          <td>Médio. Churn por não-resultado vira problema.</td>
+          <td><span class="badge b-amber">Com cuidado</span></td>
+        </tr>
+        <tr>
+          <td><strong>Por resultado</strong></td>
+          <td>Paga quando a conexão é confirmada como positiva</td>
+          <td>Qualidade do match acima de tudo</td>
+          <td>Baixo. Difícil de medir "resultado".</td>
+          <td><span class="badge b-green">Ideal, complexo</span></td>
+        </tr>
+        <tr>
+          <td><strong>B2B (organizadores)</strong></td>
+          <td>Evento paga pelo Sommar como feature</td>
+          <td>Valor entregue ao organizador</td>
+          <td>Baixo. Usuário não paga diretamente.</td>
+          <td><span class="badge b-green">Forte wedge</span></td>
+        </tr>
+        <tr>
+          <td><strong>Marketplace de profissionais</strong></td>
+          <td>Profissional paga para aparecer no matching</td>
+          <td>Qualidade do profissional no pool</td>
+          <td>Médio. Pay-to-win se mal calibrado.</td>
+          <td><span class="badge b-amber">Explorar</span></td>
+        </tr>
+        <tr>
+          <td><strong>Tip / gratidão pós-conexão</strong></td>
+          <td>Usuário contribui voluntariamente se a conexão valeu</td>
+          <td>Alinhamento total com satisfação</td>
+          <td>Baixo. Receita imprevisível.</td>
+          <td><span class="badge b-cyan">Complementar</span></td>
+        </tr>
+        <tr>
+          <td><strong>Comunidade / triagem</strong></td>
+          <td>Assinatura de acesso à rede qualificada</td>
+          <td>Qualidade da rede > quantidade</td>
+          <td>Baixo se inclusivo; alto se elitista.</td>
+          <td><span class="badge b-green">Potencial futuro</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout green">
+      <div class="callout-label green">Hipótese de modelo recomendada (a validar)</div>
+      <p><strong>B2B first:</strong> eventos e locais pagam pelo Sommar como experiência para seus participantes. Isso financia o produto sem cobrar do usuário final, remove a fricção de adoção, e cria um canal de distribuição escalável. O usuário experimenta de graça no contexto do evento, cria perfil, e depois usa o Sommar "sem evento" via localização. Aí entra o modelo freemium, mas baseado em contextos de uso, não em volume de matches.</p>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:24px 0 14px; color:var(--text);">Perguntas de willingness-to-pay para a pesquisa</h3>
+
+    <div class="q-list">
+      <div class="q-item">
+        <div class="q-num">W1</div>
+        <div>
+          <div class="q-text">Se o Sommar te ajudasse a fazer 3 amizades genuínas nos próximos 6 meses, quanto você pagaria por isso, e em que formato?</div>
+          <div class="q-why">Ancora o valor em resultado concreto, não em feature de produto.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">W2</div>
+        <div>
+          <div class="q-text">Você pagaria mais por uma experiência que você usa menos vezes mas com muito mais qualidade, ou por acesso ilimitado com qualidade variável?</div>
+          <div class="q-why">Calibra a percepção de valor: quantidade vs. qualidade, central para o posicionamento.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">W3</div>
+        <div>
+          <div class="q-text">Se você encontrasse um profissional de saúde perfeito para você através do Sommar, você pagaria uma taxa de indicação? Qual seria justa?</div>
+          <div class="q-why">Testa o modelo de marketplace para o segmento profissional.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 05b - POTENCIAL DE RECEITA -->
+<div class="section" id="potencial">
+  <div class="wrap">
+    <div class="s-label">05 · Potencial de receita · Projeções conservadoras</div>
+    <h2 class="s-title">O que os números <span class="a">sugerem para o Sommar</span></h2>
+
+    <p>Projeções de receita para um produto pré-lançamento são, por definição, hipóteses. Mas hipóteses baseadas em benchmarks reais são muito mais úteis do que slides otimistas sem âncoras. O que segue são cenários construídos a partir dos dados verificados dos competidores, com premissas explícitas.</p>
+
+    <div class="callout amber">
+      <div class="callout-label amber">Premissas do modelo</div>
+      <p>Modelo B2B-first: eventos e locais pagam pelo Sommar. Usuários entram de graça via evento, criam Ori, usam depois via localização. Freemium ativado após produto validado. <strong>Não estamos competindo com Tinder em volume. Estamos competindo com Hinge em profundidade.</strong> Os cenários usam a taxa de conversão do Hinge (5.1% pagantes/usuários totais) como benchmark otimista, e 2% como benchmark conservador.</p>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:28px 0 14px; color:var(--text);">Benchmarks de referência (dados reais)</h3>
+
+    <table class="price-table">
+      <thead>
+        <tr><th>Benchmark</th><th>Dado real</th><th>Relevância para o Sommar</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Hinge: conversão free → pago</td>
+          <td><strong>5.1%</strong> (1.53M pagantes / ~30M usuários, FY2024)</td>
+          <td>Teto otimista de conversão para produto de qualidade</td>
+        </tr>
+        <tr>
+          <td>Hinge: RPP mensal</td>
+          <td><strong>$29.94/mês</strong> (R$~150–170 pelo câmbio atual)</td>
+          <td>O quanto pessoas pagam por conexão com qualidade percebida</td>
+        </tr>
+        <tr>
+          <td>Tinder: RPP no Brasil</td>
+          <td><strong>~$2–4/mês equivalente</strong> (R$9–20 planos básicos)</td>
+          <td>Piso de precificação no mercado local</td>
+        </tr>
+        <tr>
+          <td>Match Group: margem operacional ajustada</td>
+          <td><strong>36%</strong> FY2024 em escala</td>
+          <td>Referência de eficiência para modelo digital maduro</td>
+        </tr>
+        <tr>
+          <td>Bumble: ARPPU (receita por pagante/mês)</td>
+          <td><strong>$20.58/mês</strong> (Q4 2024)</td>
+          <td>Benchmark intermediário de ticket médio</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:28px 0 14px; color:var(--text);">Três cenários para o Sommar no Brasil · Ano 3</h3>
+    <p style="font-size:12.5px; color:var(--muted); margin-bottom:16px;">Esses são exercícios de modelagem para validar viabilidade financeira, não promessas. Os valores precisam ser refinados com os dados da pesquisa de mercado.</p>
+
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Cenário</th>
+          <th>Usuários ativos (Ano 3)</th>
+          <th>Taxa conversão pago</th>
+          <th>Ticket médio/mês</th>
+          <th>ARR estimado</th>
+          <th>Premissa-chave</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge b-coral">Conservador</span></td>
+          <td>50.000</td>
+          <td>2%</td>
+          <td>R$19/mês</td>
+          <td style="color:var(--glow-green); font-weight:600;">~R$228K/ano</td>
+          <td>Crescimento lento, ticket baixo (competindo com Tinder BR)</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-amber">Moderado</span></td>
+          <td>200.000</td>
+          <td>4%</td>
+          <td>R$39/mês</td>
+          <td style="color:var(--glow-green); font-weight:600;">~R$3.7M/ano</td>
+          <td>Validação B2B + crescimento orgânico em 3–5 cidades</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-green">Otimista</span></td>
+          <td>500.000</td>
+          <td>5%</td>
+          <td>R$49/mês</td>
+          <td style="color:var(--glow-green); font-weight:600;">~R$14.7M/ano</td>
+          <td>Network effect ativado, B2B + freemium escalando juntos</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-neon">+ Receita B2B</span></td>
+          <td colspan="2">+100 eventos/ano × R$3–10K por evento</td>
+          <td colspan="2" style="color:var(--neon); font-weight:600;">+R$300K–1M adicional</td>
+          <td>Eventos pagam pelo Sommar como feature (modelo wedge)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout neon">
+      <div class="callout-label neon">Por que o modelo B2B muda o jogo financeiro</div>
+      <p>Cada evento parceiro que usa o Sommar: (1) gera receita imediata sem custo de aquisição, (2) onboarda dezenas ou centenas de usuários de graça, (3) valida o produto em contexto real. É um canal de distribuição que <strong>paga para existir</strong>. Nenhum competidor faz isso hoje. O Tinder tentou com o "Tinder Double Date" em 2025. O Hinge alocou $1M em 2025 para eventos físicos em Londres, NY e LA. Eles estão seguindo exatamente a lógica do Sommar, mas de dentro pra fora. O Sommar nasce nela.</p>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:17px; font-weight:600; margin:28px 0 14px; color:var(--text);">O que a pesquisa precisa validar para refinar essas projeções</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4 class="g">Variáveis críticas a medir</h4>
+        <ul>
+          <li>Willingness-to-pay real por tipo de conexão no Brasil</li>
+          <li>Qual tier de preço (R$9 / R$19 / R$39 / R$49) soa justo</li>
+          <li>Quanto um organizador pagaria pelo Sommar por evento</li>
+          <li>Quantas conexões por mês o usuário considera "valor entregue"</li>
+          <li>Taxa de retenção D30 e D90 em produto de conexão</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 class="a">Riscos de modelo a monitorar</h4>
+        <ul>
+          <li>Ticket em R$ muito baixo pode não cobrir custo da IA (Claude API)</li>
+          <li>B2B depende de pipeline de eventos, que tem sazonalidade</li>
+          <li>Taxa de conversão pode ser menor que 2% sem network effect</li>
+          <li>Concorrentes com capital (Bumble, Hinge) podem copiar o modelo</li>
+          <li>Matching profissional (médico, psicólogo) tem dinâmica regulatória</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 06 - ÉTICA -->
+<div class="section" id="etica">
+  <div class="wrap">
+    <div class="s-label">05 · Ética e design responsável</div>
+    <h2 class="s-title">O que separa o Sommar do <span class="c">Tinder</span></h2>
+
+    <div class="ethics-block">
+      <h3>Os cinco princípios éticos do Sommar</h3>
+      <p style="margin-bottom:20px;">Esses princípios não são marketing. São restrições de design que precisam ser testadas, documentadas, e defendidas ativamente toda vez que uma decisão de produto ou negócio for tomada.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h4 class="g">1. Alinhamento de incentivos</h4>
+          <ul>
+            <li>A receita do Sommar cresce quando conexões reais acontecem</li>
+            <li>Nenhuma feature pode ser projetada para maximizar tempo no app</li>
+            <li>Métricas de vaidade (DAU, sessões) não são o norte</li>
+            <li>O sucesso é medido por conexões que persistem fora do app</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 class="a">2. Transparência radical</h4>
+          <ul>
+            <li>A Matter explica por que sugeriu cada conexão</li>
+            <li>O usuário entende quais dados foram usados</li>
+            <li>Nenhum dark pattern de interface</li>
+            <li>Opção de exportar seu Ori (dados pessoais) a qualquer momento</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 class="cy">3. Privacidade por design</h4>
+          <ul>
+            <li>Localização: opt-in explícito, desativável a qualquer momento</li>
+            <li>Perfil visível só para quem a Matter decidir mostrar</li>
+            <li>Sem foto obrigatória, reduzindo julgamento superficial</li>
+            <li>Dados não vendidos para terceiros, ever</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 class="p">4. Anti-adição</h4>
+          <ul>
+            <li>Sem scroll infinito, sem notificações compulsivas</li>
+            <li>A Matter pode sugerir: "você tem conexões suficientes por ora"</li>
+            <li>Sem gamificação que incentive uso excessivo</li>
+            <li>Interface que convida à ação real, não ao consumo digital</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 class="pk">5. Inclusão ativa</h4>
+          <ul>
+            <li>Precificação que não exclui por renda</li>
+            <li>Todos os tipos de conexão com o mesmo peso</li>
+            <li>Diversidade como valor no algoritmo, não como PR</li>
+            <li>Acessibilidade como requisito, não como feature</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 class="c">6. Consentimento contínuo</h4>
+          <ul>
+            <li>Usuário controla o que a Matter sabe sobre ele</li>
+            <li>Matching nunca acontece sem intenção explícita</li>
+            <li>A pessoa decide o que revelar e quando</li>
+            <li>Direito ao esquecimento real e imediato</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout coral">
+      <div class="callout-label coral">O teste da intenção perversa</div>
+      <p>Para cada decisão de produto ou monetização, faça esta pergunta: <strong>"Se aplicarmos isso em escala, cria incentivos para que usuários fiquem mais sozinhos ou mais conectados?"</strong> Se a resposta for ambígua, a decisão precisa ser revisada. Sem exceções.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 06 - ROADMAP -->
+<div class="section" id="roadmap">
+  <div class="wrap">
+    <div class="s-label">06 · Próximos passos</div>
+    <h2 class="s-title">O que fazer <span class="g">agora</span></h2>
+
+    <p>A pesquisa de mercado não é um projeto separado do produto, ela acontece em paralelo e informa cada sprint. Aqui estão as ações imediatas em ordem de prioridade.</p>
+
+    <table class="risk-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Ação</th>
+          <th>Horizonte</th>
+          <th>Por quê agora</th>
+          <th>Output esperado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge b-neon">1</span></td>
+          <td><strong>Analisar as 50 respostas existentes</strong> com lente do Sommar</td>
+          <td>Esta semana</td>
+          <td>Dado já coletado. Tem insights sobre solidão e barreiras que se aplicam diretamente.</td>
+          <td>Relatório com 5–8 hipóteses validadas para o Sommar</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-green">2</span></td>
+          <td><strong>Roteiro de 20 entrevistas</strong> qualitativas (6 perfis mapeados)</td>
+          <td>2 semanas</td>
+          <td>Base de tudo. Sem entender o contexto emocional real, qualquer survey é ruído.</td>
+          <td>Guia de entrevista + seleção de participantes</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-green">3</span></td>
+          <td><strong>Survey Sommar v1</strong> focado em tipos de conexão e localização</td>
+          <td>3 semanas</td>
+          <td>Paralelo às entrevistas. Escala as hipóteses mais fortes que emergirem.</td>
+          <td>Instrumento validado, n=200 meta inicial</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-amber">4</span></td>
+          <td><strong>Benchmark competitivo expandido</strong>: Bumble BFF, Meetup, Geneva, Lunchclub</td>
+          <td>3 semanas</td>
+          <td>O Tawkify foi analisado. Precisa dos players de amizade e comunidade também.</td>
+          <td>Mapa de posicionamento com whitespace claro</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-amber">5</span></td>
+          <td><strong>Price sensitivity study</strong> com as perguntas W1–W3 deste documento</td>
+          <td>4 semanas</td>
+          <td>Informa o modelo de negócio antes de qualquer decisão de monetização.</td>
+          <td>Faixas de preço aceitáveis por segmento</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-cyan">6</span></td>
+          <td><strong>Teste de conceito</strong> do Sommar com landing page e pitch atual</td>
+          <td>4 semanas</td>
+          <td>A landing page existe. Medir reação antes de construir produto real.</td>
+          <td>Taxa de interesse, segmentos mais receptivos</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-purple">7</span></td>
+          <td><strong>Painel de early adopters</strong> (20–30 pessoas para co-criação contínua)</td>
+          <td>6 semanas</td>
+          <td>As melhores decisões de produto vêm de pessoas que sentem o problema.</td>
+          <td>Grupo WhatsApp / comunidade de early users</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout neon">
+      <div class="callout-label neon">Lembrete estratégico</div>
+      <p>O Sommar resolve solidão em todas as suas formas, ativa via contexto (onde você está, o que você quer agora), e tem ética como vantagem competitiva estrutural, não como slogan. A pesquisa de mercado precisa ser construída em torno dessas três afirmações, validando-as ou forçando-as a evoluir. Tudo que não serve a isso é distração.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    Gerado por <strong>Matter</strong> para Sommar · Documento vivo · Março 2026<br>
+    <span style="font-size:10px; color:rgba(255,255,255,0.2); margin-top:6px; display:block;">Versão 1.1 · Dados verificados via pesquisa web em março 2026. Fontes: WHO Commission on Social Connection (jun. 2025) · Forbes Health/OnePoll (abr. 2024) · American Psychiatric Association Healthy Minds Poll (jan. 2024) · Ofcom UK Online Nation Report (2024) · Holt-Lunstad et al. / US Surgeon General Advisory (2023)</span>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('scrollLine');
+    const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    el.style.width = Math.min(scrolled, 100) + '%';
+  });
+</script>
+</body>
+</html>
