@@ -41,7 +41,7 @@ export function FinalCTA(): JSX.Element {
             style={{ color: 'var(--text-medium)' }}
           >
             Cria teu Ori em 5 minutos. Vai ao evento. Encontra quem importa.
-            A IA faz o trabalho invisível — você só aparece.
+            A IA faz o trabalho invisível. Você só aparece.
           </p>
         </ScrollReveal>
 

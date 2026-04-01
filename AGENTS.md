@@ -45,6 +45,12 @@
 - Texto de UI em PT-BR com acentos corretos. Sempre.
 - Emojis: com moderação. A Matter usa no máximo 1-2 por mensagem.
 
+### Copy — regras absolutas de escrita
+- **ZERO travessões (— ou –) em qualquer copy de UI, landing, onboarding ou Matter.** Jamais. Travessão é marca registrada de IA e destrói credibilidade. Use vírgula, ponto ou reescreva a frase.
+- Nunca usar "–" (en dash) nem "—" (em dash) em nenhum texto visível ao usuário.
+- Se precisar de pausa ou separação: use vírgula, ponto final ou quebre em duas frases.
+- Isso vale para: landing page, CTAs, onboarding, mensagens da Matter, notificações, placeholders, tooltips, qualquer string de UI.
+
 ### Navegação
 - Bottom nav: Lobby | Conexões | Eventos | Perfil (4 tabs) + Matter FAB
 - Matter FAB: fixed bottom-right, acima das tabs, z-40

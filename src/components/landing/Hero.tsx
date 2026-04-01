@@ -46,7 +46,7 @@ export function Hero(): JSX.Element {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.8, ease: EASE_OUT_EXPO }}
       >
-        IA que entende quem você é de verdade — não só o que você posta.
+        IA que entende quem você é de verdade, não só o que você posta.
         Revela quem vale conhecer nos eventos que você vai.{' '}
         <span style={{ color: 'var(--text-strong)' }}>
           Sem swipes. Sem perfis rasos.
@@ -64,11 +64,11 @@ export function Hero(): JSX.Element {
         </NeonCTA>
 
         <Link
-          href="#como-funciona"
+          href="#sobre"
           onClick={(e) => {
             e.preventDefault();
             document
-              .getElementById('como-funciona')
+              .getElementById('sobre')
               ?.scrollIntoView({ behavior: 'smooth' });
           }}
           className="text-xs transition-colors duration-200"

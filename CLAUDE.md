@@ -67,6 +67,7 @@ npx supabase gen types typescript --local > src/lib/database.types.ts
 - Usar `cn()` helper (clsx + tailwind-merge) para conditional classes
 - Nunca hardcode strings de UI. Usar constantes em `src/lib/constants.ts`
 - Comentários em português para lógica de negócio, inglês para comentários técnicos
+- **ZERO travessões (— ou –) em qualquer copy de UI.** Travessão é marca de IA. Use vírgula ou ponto.
 - Arquivos com mais de 200 linhas devem ser refatorados em módulos menores
 - IMPORTANTE: data de facetas e Ori é JSONB, nunca enums fixos. As 5 facetas (Essência, Íntimo, Criativo, Profissional, Social) são chaves JSONB, não categorias de conexão.
 
