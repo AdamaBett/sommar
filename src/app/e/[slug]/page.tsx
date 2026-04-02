@@ -71,7 +71,23 @@ export async function generateMetadata({
     openGraph: {
       title: `${MOCK_EVENT.name} | Sommar`,
       description: MOCK_EVENT.description ?? '',
+      url: `https://sommar.app/e/${slug}`,
+      siteName: 'Sommar',
       type: 'website',
+      images: [
+        {
+          url: `/e/${slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `${MOCK_EVENT.name} | Sommar`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${MOCK_EVENT.name} | Sommar`,
+      description: MOCK_EVENT.description ?? '',
+      images: [`/e/${slug}/opengraph-image`],
     },
   };
 }

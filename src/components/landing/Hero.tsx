@@ -21,48 +21,81 @@ export function Hero(): JSX.Element {
         <MatterOrb size="xl" />
       </motion.div>
 
+      {/* H1 */}
       <motion.h1
-        className="font-display text-[clamp(28px,6vw,52px)] font-light leading-tight mt-10 max-w-[640px]"
+        className="font-display text-[clamp(26px,5.5vw,52px)] font-light leading-tight mt-10 max-w-[680px]"
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.8, ease: EASE_OUT_EXPO }}
       >
-        A pessoa certa está{' '}
-        <em className="text-gradient-green not-italic">ao seu lado</em>.
-        <br />
-        <span
-          className="text-[0.7em]"
-          style={{ color: 'var(--text-medium)' }}
+        O mundo está{' '}
+        <em
+          style={{
+            color: 'var(--coral-glow)',
+            fontStyle: 'italic',
+            textShadow:
+              '0 0 10px rgba(255,107,61,0.55), 0 0 28px rgba(255,107,61,0.25)',
+          }}
         >
-          Vocês só não se encontraram{' '}
-          <span style={{ color: 'var(--coral-glow)' }}>ainda</span>.
-        </span>
+          desconectado
+        </em>
+        .
       </motion.h1>
 
+      {/* Sub-heading */}
       <motion.p
-        className="mt-6 text-base max-w-[440px] leading-relaxed"
+        className="mt-5 text-[clamp(16px,2.5vw,22px)] font-light max-w-[480px] leading-relaxed"
         style={{ color: 'var(--text-medium)' }}
-        initial={{ opacity: 0, y: 24 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.8, ease: EASE_OUT_EXPO }}
+        transition={{ delay: 0.45, duration: 0.8, ease: EASE_OUT_EXPO }}
       >
-        IA que entende quem você é de verdade, não só o que você posta.
-        Revela quem vale conhecer nos eventos que você vai.{' '}
-        <span style={{ color: 'var(--text-strong)' }}>
-          Sem swipes. Sem perfis rasos.
-        </span>
+        A gente{' '}
+        <span className="vai-mudar">vai mudar</span>{' '}
+        isso.
       </motion.p>
 
+      {/* Body copy */}
+      <motion.p
+        className="mt-6 text-sm max-w-[420px] leading-relaxed"
+        style={{ color: 'var(--text-subtle)' }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.8, ease: EASE_OUT_EXPO }}
+      >
+        Apps de namoro te esgotam. LinkedIn é performance. Redes sociais são barulho.{' '}
+        <span style={{ color: 'var(--text-medium)' }}>
+          Enquanto isso, as conexões que mudam vidas continuam não acontecendo.
+        </span>{' '}
+        Até agora...
+      </motion.p>
+
+      {/* CTA */}
       <motion.div
-        className="mt-10 flex flex-col items-center gap-4"
+        className="mt-10 flex flex-col items-center gap-3"
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7, duration: 0.8, ease: EASE_OUT_EXPO }}
+        transition={{ delay: 0.75, duration: 0.8, ease: EASE_OUT_EXPO }}
       >
         <NeonCTA href="/login" size="lg">
-          Criar meu Ori
+          Quero ser um dos primeiros
         </NeonCTA>
 
+        <p
+          className="text-xs"
+          style={{ color: 'var(--text-subtle)' }}
+        >
+          Alpha test em andamento, seja a revolução que busca.
+        </p>
+      </motion.div>
+
+      {/* Scroll hint */}
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.1, duration: 1 }}
+      >
         <Link
           href="#sobre"
           onClick={(e) => {
@@ -74,19 +107,9 @@ export function Hero(): JSX.Element {
           className="text-xs transition-colors duration-200"
           style={{ color: 'var(--text-subtle)' }}
         >
-          ou descubra como funciona ↓
+          ou descubra como funciona
         </Link>
       </motion.div>
-
-      <motion.p
-        className="mt-6 text-xs"
-        style={{ color: 'var(--text-subtle)' }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-      >
-        Gratuito para participantes · IA que te entende sem te reduzir
-      </motion.p>
     </section>
   );
 }

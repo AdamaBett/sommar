@@ -179,33 +179,50 @@ body {
 }
 
 /* ── Neon animated border ─────────────────────────────── */
-@keyframes neon-border-spin {
-  to { transform: rotate(360deg); }
+/* Usa @property para animar o ângulo do conic-gradient diretamente,
+   garantindo que o gradiente flua de verdade ao redor da borda arredondada. */
+@property --neon-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes neon-flow {
+  to { --neon-angle: 360deg; }
+}
+
+@keyframes vai-mudar-pulse {
+  0%, 100% {
+    text-shadow: 0 0 8px rgba(29, 255, 168, 0.7), 0 0 20px rgba(29, 255, 168, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 14px rgba(29, 255, 168, 1), 0 0 35px rgba(29, 255, 168, 0.5), 0 0 60px rgba(29, 255, 168, 0.2);
+  }
 }
 
 .neon-border {
-  position: relative;
-  z-index: 0;
-  overflow: hidden;
-  padding: 2px;
   display: inline-block;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(#000000, #000000) padding-box,
+    conic-gradient(
+      from var(--neon-angle),
+      #1DFFA8,
+      #00D4FF,
+      #A855F7,
+      #EC4899,
+      #FF6B3D,
+      #FFB840,
+      #1DFFA8
+    ) border-box;
+  animation: neon-flow 3s linear infinite;
 }
 
-.neon-border::before {
-  content: '';
-  position: absolute;
-  inset: -60%;
-  background: conic-gradient(
-    #1DFFA8,
-    #00D4FF,
-    #A855F7,
-    #EC4899,
-    #FF6B3D,
-    #FFB840,
-    #1DFFA8
-  );
-  animation: neon-border-spin 4s linear infinite;
-  z-index: -1;
+.vai-mudar {
+  color: #1DFFA8;
+  font-weight: 700;
+  animation: vai-mudar-pulse 2.2s ease-in-out infinite;
 }
 
 /* Hide scrollbar utility */

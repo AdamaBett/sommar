@@ -3,6 +3,25 @@
 > Este arquivo deve ser lido por QUALQUER agente IA (Claude Code, Codex, Cursor, etc.) antes de escrever uma única linha de código.
 > Inspirado por [chenglou/pretext AGENTS.md](https://github.com/chenglou/pretext/blob/main/AGENTS.md).
 
+## PROIBICAO #0 — ANTES DE QUALQUER CODIGO OU COPY
+
+**ZERO TRAVESSOES EM QUALQUER TEXTO VISIVEL AO USUARIO. SEM EXCECAO.**
+
+Proibido: `—` (em dash), `–` (en dash), `&mdash;`, `&ndash;` em qualquer string de UI.
+
+Isso inclui: titulos de pagina, OG tags, CTAs, descricoes, placeholders, tooltips, mensagens da Matter, notificacoes, onboarding, qualquer copy.
+
+Use virgula, ponto ou dois pontos no lugar. Ou quebre em duas frases.
+
+```
+ERRADO: 'Sommar — A pessoa certa está ao seu lado'
+CERTO:  'Sommar. A pessoa certa está ao seu lado.'
+```
+
+Travessao e sinal inequivoco de texto gerado por IA. Destroi a credibilidade do produto.
+
+---
+
 ## Hierarquia de Verdade
 
 1. **CLAUDE.md** — Fonte suprema. Spec completa do produto, schema, design system, regras de negócio.

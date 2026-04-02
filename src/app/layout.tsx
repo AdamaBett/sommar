@@ -18,28 +18,39 @@ const outfit = Outfit({
   display: 'swap',
 });
 
+const TAB_TITLE = 'Sommar | Conexões reais'
+const OG_TITLE = 'Sommar. A pessoa certa está ao seu lado.'
+const OG_DESCRIPTION =
+  'A IA cria o seu Ori, entende quem você é de verdade, e te conecta com quem você deveria conhecer, no evento que você está agora. Conexão humana real.'
+
 export const metadata: Metadata = {
   title: {
-    default: 'Sommar | Conexão humana real',
+    default: TAB_TITLE,
     template: '%s | Sommar',
   },
-  description:
-    'Conexão humana real, facilitada por IA, no mundo real. O antídoto para a solidão digital.',
+  description: OG_DESCRIPTION,
   metadataBase: new URL('https://sommar.app'),
   openGraph: {
-    title: 'Sommar | Conexão humana real',
-    description:
-      'Conexão humana real, facilitada por IA, no mundo real. O antídoto para a solidão digital.',
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
     url: 'https://sommar.app',
     siteName: 'Sommar',
     locale: 'pt_BR',
     type: 'website',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: OG_TITLE,
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sommar | Conexão humana real',
-    description:
-      'Conexão humana real, facilitada por IA, no mundo real. O antídoto para a solidão digital.',
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    images: ['/opengraph-image'],
   },
   robots: {
     index: true,
