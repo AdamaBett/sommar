@@ -7,15 +7,16 @@
 
 O projeto usa documentação estruturada para máxima eficiência com agentes IA:
 
-| Documento | Propósito | Quando ler |
-|-----------|-----------|------------|
-| **CLAUDE.md** (este) | Fonte suprema de verdade. Spec completa, schema, design, regras de negócio. | SEMPRE, antes de qualquer código. |
-| **AGENTS.md** | Como trabalhar no código. Invariantes, padrões, armadilhas conhecidas. | Antes de codar. |
-| **RESEARCH.md** | O que foi tentado e rejeitado. Decisões de arquitetura com "por quê". | Antes de propor mudanças. |
-| **TODO.md** | Prioridades atuais, o que está fora de escopo, % de completude. | Antes de escolher o que fazer. |
-| **.claude/CLAUDE.local.md** | Regras de sessão, preferências do Bet, decisões rápidas. | Início de sessão. |
+| Documento                   | Propósito                                                                   | Quando ler                        |
+| --------------------------- | --------------------------------------------------------------------------- | --------------------------------- |
+| **CLAUDE.md** (este)        | Fonte suprema de verdade. Spec completa, schema, design, regras de negócio. | SEMPRE, antes de qualquer código. |
+| **AGENTS.md**               | Como trabalhar no código. Invariantes, padrões, armadilhas conhecidas.      | Antes de codar.                   |
+| **RESEARCH.md**             | O que foi tentado e rejeitado. Decisões de arquitetura com "por quê".       | Antes de propor mudanças.         |
+| **TODO.md**                 | Prioridades atuais, o que está fora de escopo, % de completude.             | Antes de escolher o que fazer.    |
+| **.claude/CLAUDE.local.md** | Regras de sessão, preferências do Bet, decisões rápidas.                    | Início de sessão.                 |
 
 ### Regra de ouro
+
 Qualquer agente IA deve ler `CLAUDE.md` + `AGENTS.md` + `TODO.md` antes de escrever uma única linha.
 Qualquer decisão arquitetural significativa deve ser registrada em `RESEARCH.md`.
 Qualquer feature completada deve ser adicionada ao Patch Notes neste arquivo.
@@ -30,7 +31,7 @@ Qualquer feature completada deve ser adicionada ao Patch Notes neste arquivo.
 
 ## Stack
 
-- **Framework:** Next.js 14 (App Router, SSR, otimizado para free tiers)
+- **Framework:** Next.js 16 (App Router, SSR, otimizado para free tiers)
 - **Linguagem:** TypeScript strict mode
 - **Backend/DB:** Supabase (Postgres + Auth + Realtime + Storage + Edge Functions)
 - **Embeddings:** pgvector extension no Supabase
@@ -425,22 +426,27 @@ create table public.quest_completions (
 O domínio sommar.app serve tudo: landing, páginas públicas de evento, e o app autenticado. O Next.js middleware controla o fluxo.
 
 ### Rotas públicas (sem auth)
+
 - `sommar.app/` → Landing page. Hero, dados de solidão, como funciona, pitch B2B, CTA direto de criar conta. CTA principal: "Criar meu Ori" → /login. Se já logado e onboarding completo → redirect para `/lobby`. Sem email capture. A conversão acontece direto pelo CTA.
 - `sommar.app/e/[slug]` → Página do evento. SSR com OG tags para preview social. Info do evento colapsável no topo (30-40% da tela). Social proof (X interessados, Y views). Feed visível mas interação requer login. Botão "Participar" → login → onboarding (se novo) → volta pra cá.
 
 ### Rotas de auth
+
 - `sommar.app/login` → Social login (Google/Apple/Facebook) + email fallback via Supabase Auth.
 - `sommar.app/callback` → OAuth callback. Redirect lógica: se `onboarding_complete = false` → `/onboarding`. Se veio de link de evento → volta pro evento. Se não → `/lobby`.
 
 ### Rota de onboarding (auth required, onboarding incomplete)
+
 - `sommar.app/onboarding` → Chat com a Matter. Texto, sugestões editáveis, seleção de arquétipos estéticos, facetas. Gera Ori. Ao finalizar: se veio de evento → redirect pra página do evento. Se não → `/lobby`.
 
 ### Rotas do app (auth required, onboarding complete)
+
 - `sommar.app/lobby` → Tab 1. Lobby do evento ativo. Switch no topo se múltiplos eventos. Se nenhum evento ativo: tela de "procure eventos" com link pra Tab 2.
 - `sommar.app/events` → Tab 2. Discover. Eventos seguidos, próximos, buscar. Cada card leva pra `/e/[slug]`.
 - `sommar.app/profile` → Tab 3. Ori, facetas, fotos, conexões, conversas expiradas, eventos participados, configurações/LGPD.
 
 ### Middleware logic (src/lib/supabase/middleware.ts)
+
 ```
 1. Se rota pública (/, /e/[slug], /login, /callback) → pass through
 2. Se não autenticado → redirect /login?redirect=[current_url]
@@ -449,6 +455,7 @@ O domínio sommar.app serve tudo: landing, páginas públicas de evento, e o app
 ```
 
 ### Jornada: Organizador divulga → Pessoa descobre → Cria perfil → Evento
+
 ```
 Organizador posta QR/link no Instagram
   → Pessoa abre sommar.app/e/[slug-do-evento]
@@ -461,6 +468,7 @@ Organizador posta QR/link no Instagram
 ```
 
 ### Jornada: Pessoa descobre organicamente
+
 ```
 Pesquisa "Sommar" ou chega via link direto
   → sommar.app/ (landing page)
@@ -494,6 +502,7 @@ IMPORTANTE: seguir exatamente estas especificações visuais.
 A Matter é o coração do Sommar. Ela não é um chatbot helper. É uma presença constante que conhece o usuário profundamente.
 
 **System prompt base da Matter:**
+
 ```
 Você é a Matter, a inteligência central do Sommar. Sua essência:
 - Presente, quente, intuitiva. Nunca robótica ou genérica.
@@ -507,6 +516,7 @@ Você é a Matter, a inteligência central do Sommar. Sua essência:
 ```
 
 **Contexto que a Matter recebe por sessão:**
+
 1. Ori completo do usuário (narrative + facet_data)
 2. Facetas ativas no lobby atual
 3. Histórico recente de interações (últimas 20 mensagens)
@@ -518,20 +528,21 @@ Você é a Matter, a inteligência central do Sommar. Sua essência:
 
 ### O que cada método de auth nos dá
 
-| Campo | Google OAuth | Email OTP |
-|---|---|---|
-| Nome | ✅ `user_metadata.full_name` | ❌ Matter coleta na 1ª mensagem |
-| Email | ✅ | ✅ |
-| Foto | ✅ `user_metadata.avatar_url` | ❌ |
-| Idade | ❌ | ❌ |
-| Localização | ❌ | ❌ |
-| Gênero/orientação | ❌ | ❌ |
+| Campo             | Google OAuth                  | Email OTP                       |
+| ----------------- | ----------------------------- | ------------------------------- |
+| Nome              | ✅ `user_metadata.full_name`  | ❌ Matter coleta na 1ª mensagem |
+| Email             | ✅                            | ✅                              |
+| Foto              | ✅ `user_metadata.avatar_url` | ❌                              |
+| Idade             | ❌                            | ❌                              |
+| Localização       | ❌                            | ❌                              |
+| Gênero/orientação | ❌                            | ❌                              |
 
 **Regra de ouro:** A Matter NUNCA pergunta algo que já sabemos. Se veio do Google e temos o nome → ela cumprimenta pelo nome já na primeira mensagem, sem perguntar.
 
 ### Personalização do onboarding
 
 O onboarding não é um script linear. A Matter recebe no contexto:
+
 ```json
 {
   "auth_method": "google" | "email",
@@ -548,6 +559,7 @@ O onboarding não é um script linear. A Matter recebe no contexto:
 ```
 
 Com isso, a Matter adapta:
+
 - Ponto de partida da conversa (o que ainda não sabe)
 - Tom (quem veio de festival vs. hackathon recebe abordagens diferentes)
 - O que perguntar e em que ordem
@@ -556,6 +568,7 @@ Com isso, a Matter adapta:
 ### Camada de extração (extraction layer)
 
 Após cada mensagem do usuário, roda um call paralelo e assíncrono com Haiku que:
+
 1. Lê a conversa até aquele ponto
 2. Retorna JSON estruturado com o que conseguiu extrair
 3. Faz merge incremental no `facet_data` JSONB do perfil (merge, não substituição)
@@ -564,6 +577,7 @@ Após cada mensagem do usuário, roda um call paralelo e assíncrono com Haiku q
 O Ori nasce **durante** a conversa, não só no final. O Ori Reveal acontece quando `completeness_score >= 0.65`.
 
 **Formato de saída da extração (Haiku):**
+
 ```json
 {
   "facet_data": {
@@ -590,6 +604,7 @@ Campos com `null` → ainda não mencionados. Nunca presumir.
 ### Continuidade pós-onboarding
 
 Quando a pessoa abre a Matter no lobby, perfil ou qualquer outra tela:
+
 - O sistema injeta o Ori atual completo no contexto
 - A Matter já sabe tudo que foi coletado
 - Se surgir oportunidade natural, ela aprofunda uma faceta
@@ -601,6 +616,7 @@ A Matter nunca diz "posso te fazer mais algumas perguntas para completar seu per
 ### Onboarding via email OTP
 
 Se a pessoa entrou por email:
+
 1. Supabase envia magic link (sem senha)
 2. Após confirmação, redirect para `/onboarding`
 3. Primeira mensagem da Matter pergunta o nome preferido (única exceção de pergunta direta)
@@ -610,8 +626,9 @@ Se a pessoa entrou por email:
 ### Regras de coleta de identidade durante o onboarding
 
 A Matter coleta gênero, orientação e `interested_in` de forma conversacional, NUNCA como formulário. Regras:
+
 - Se a pessoa não mencionar, não forçar
-- Se houver hesitação ou resposta vaga, oferecer saída: *"Sem pressão, você ajusta isso a qualquer momento no perfil"*
+- Se houver hesitação ou resposta vaga, oferecer saída: _"Sem pressão, você ajusta isso a qualquer momento no perfil"_
 - Fallbacks: gênero não declarado → não visível. interested_in não declarado → `["todos"]`. orientation → não visível.
 - A Matter NUNCA presume heterossexualidade, monogamia ou binariedade.
 
@@ -652,13 +669,13 @@ Participantes com role `organizer` ou `featured` aparecem como **círculos maior
 
 O Sommar usa 5 facetas que representam camadas de quem a pessoa é. O tipo de conexão (romance, amizade, parceria, mentoria) não é uma categoria selecionada pelo usuário. Ele emerge do matching entre facetas ativas. O Sommar mostra POR QUÊ duas pessoas devem se conhecer. Elas decidem o tipo.
 
-| Faceta | Toggle | O que contém |
-|--------|--------|--------------|
-| **Essência** | Sempre ativa, sem toggle | Valores, energia, personalidade, estilo de comunicação. Preenchida automaticamente pela Matter durante o onboarding. |
-| **Íntimo** | Liga/desliga por lobby | Vida afetiva, atração, disponibilidade emocional. Quando ativa, o matching respeita `interested_in` e `relationship_model`. É o sinal claro de "estou aberto pra algo caliente aqui". |
-| **Criativo** | Liga/desliga por lobby | Gosto musical, estético, referências culturais, hobbies, expressão artística. |
-| **Profissional** | Liga/desliga por lobby | Área de atuação, expertise, o que sabe fazer, o que quer aprender, o que pode ensinar. |
-| **Social** | Liga/desliga por lobby | Estilo de amizade, interesses de comunidade, esportes, causas, o que faz por diversão. |
+| Faceta           | Toggle                   | O que contém                                                                                                                                                                          |
+| ---------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Essência**     | Sempre ativa, sem toggle | Valores, energia, personalidade, estilo de comunicação. Preenchida automaticamente pela Matter durante o onboarding.                                                                  |
+| **Íntimo**       | Liga/desliga por lobby   | Vida afetiva, atração, disponibilidade emocional. Quando ativa, o matching respeita `interested_in` e `relationship_model`. É o sinal claro de "estou aberto pra algo caliente aqui". |
+| **Criativo**     | Liga/desliga por lobby   | Gosto musical, estético, referências culturais, hobbies, expressão artística.                                                                                                         |
+| **Profissional** | Liga/desliga por lobby   | Área de atuação, expertise, o que sabe fazer, o que quer aprender, o que pode ensinar.                                                                                                |
+| **Social**       | Liga/desliga por lobby   | Estilo de amizade, interesses de comunidade, esportes, causas, o que faz por diversão.                                                                                                |
 
 A pessoa escolhe no check-in do lobby quais facetas ativar ali. A Matter pode sugerir com base no contexto do evento ("Esse é um hackathon, quer ativar Profissional e Social?"), mas a decisão é sempre do usuário.
 
@@ -667,25 +684,30 @@ A pessoa escolhe no check-in do lobby quais facetas ativar ali. A Matter pode su
 A Matter coleta informações de identidade no onboarding de forma conversacional e empática. Nunca presume heterossexualidade, monogamia ou binariedade de gênero. Se a pessoa não responder com especificidade, o fallback é a categoria mais inclusiva possível.
 
 **Opções de gênero:**
+
 - Base (obrigatório): Homem, Mulher, Não-binário
 - Expandido (opcional, campo livre): Transmasculino, Transfeminino, Gênero-fluido, Agênero, Bigênero, Intersexo, Dois-espíritos, ou qualquer texto
 - Toggle de visibilidade no perfil
 
 **Pronomes:**
+
 - Ele/dele, Ela/dela, Elu/delu, Ile/dile, Qualquer pronome
 - Até 2 seleções. Sempre visíveis (é como as pessoas se referem a ti)
 
 **Orientação sexual:**
+
 - Sugestões: Heterossexual, Gay, Lésbica, Bissexual, Pansexual, Assexual, Demissexual, Queer, Questionando, Homoflexível, Heteroflexível
 - Campo livre (aceita qualquer texto)
 - Toggle de visibilidade no perfil. Default: não visível.
 
 **Interesse em (obrigatório pro matching Íntimo):**
+
 - Homens, Mulheres, Pessoas não-binárias, Todos
 - Múltipla seleção
 - Fallback se não respondido: "Todos"
 
 **Modelo relacional:**
+
 - Monogâmico, Monogâmico mas aberto a explorar, Não-monogâmico ético (ENM), Poliamoroso, Relacionamento aberto, Ainda descobrindo, Prefiro não dizer
 - Toggle de visibilidade no perfil. Default: não visível.
 - Fallback se não respondido: "Ainda descobrindo"
@@ -713,6 +735,7 @@ Qualquer coisa que a Matter escreveu, a pessoa sobrescreve. Sem fricção, sem p
 O Sommar é um produto orientado por dados desde o dia 1. **Absolutamente tudo** que o usuário faz precisa ser rastreável, tanto para melhorar o produto quanto para gerar inteligência para o time e para os organizadores.
 
 ### Ferramentas recomendadas (MSP)
+
 - **Vercel Analytics** — page views, vitals, visitors. Grátis no plano Vercel.
 - **PostHog** (self-hosted ou cloud free tier) — eventos personalizados, funis, session replay, feature flags.
 - Qualquer combinação que respeite LGPD. Nunca Google Analytics (GDPR problemático).
@@ -720,6 +743,7 @@ O Sommar é um produto orientado por dados desde o dia 1. **Absolutamente tudo**
 ### Eventos a capturar (mínimo)
 
 **Landing page:**
+
 - `landing_viewed` — com UTM params se existirem
 - `hero_cta_clicked` — "Criar meu Ori"
 - `section_viewed` — qual seção (como_funciona, problema, organizadores, etc.)
@@ -728,6 +752,7 @@ O Sommar é um produto orientado por dados desde o dia 1. **Absolutamente tudo**
 - `organizer_cta_clicked` — "Criar meu primeiro evento"
 
 **Auth:**
+
 - `login_page_viewed`
 - `google_login_started`
 - `google_login_completed`
@@ -736,6 +761,7 @@ O Sommar é um produto orientado por dados desde o dia 1. **Absolutamente tudo**
 - `login_failed` — com reason
 
 **Onboarding:**
+
 - `onboarding_started`
 - `onboarding_message_sent` — com turn number (1ª, 2ª, 3ª mensagem...)
 - `aesthetic_picker_viewed`
@@ -747,6 +773,7 @@ O Sommar é um produto orientado por dados desde o dia 1. **Absolutamente tudo**
 - `onboarding_abandoned` — em qual etapa
 
 **Lobby:**
+
 - `lobby_viewed` — qual evento
 - `facet_filter_changed`
 - `person_popup_opened` — perfil de quem
@@ -756,11 +783,13 @@ O Sommar é um produto orientado por dados desde o dia 1. **Absolutamente tudo**
 - `cosmos_dragged`
 
 **Matter (chat):**
+
 - `matter_fab_opened`
 - `matter_message_sent` — nunca logar o conteúdo (privacidade)
 - `matter_panel_closed`
 
 **Conversões críticas (funil):**
+
 ```
 landing_viewed
   → hero_cta_clicked (taxa A)
@@ -773,6 +802,7 @@ landing_viewed
 ```
 
 ### Princípios de privacidade
+
 - NUNCA logar conteúdo de mensagens (Matter ou Correio)
 - NUNCA logar dados de identidade (gênero, orientação, etc.) nos analytics
 - Eventos devem ter IDs anônimos, não user_ids rastreáveis fora do sistema
@@ -787,6 +817,7 @@ landing_viewed
 Este dashboard é diferente do que o organizador vê. É a visão completa do sistema.
 
 ### Rota e acesso
+
 - Domínio separado ou subdomínio: `admin.sommar.app` ou rota `/admin` com auth de time
 - Acesso via lista branca de emails no Supabase (role = 'superadmin')
 - NUNCA acessível por organizadores ou participantes
@@ -794,12 +825,14 @@ Este dashboard é diferente do que o organizador vê. É a visão completa do si
 ### O que o dashboard interno mostra
 
 **Saúde do sistema:**
+
 - API costs em tempo real (Claude API: tokens/dia, $$/dia. OpenAI: embeddings/dia)
 - Erros de build/deploy (webhook do Vercel)
 - Latência média das rotas de IA
 - Supabase: conexões ativas, DB size, Realtime subs
 
 **Usuários:**
+
 - Total de usuários criados (por dia, semana, mês)
 - Taxa de completude de onboarding
 - Distribuição de facetas ativas (quais facetas as pessoas ativam mais)
@@ -807,23 +840,27 @@ Este dashboard é diferente do que o organizador vê. É a visão completa do si
 - Retenção: usuários que voltaram depois do 1º evento
 
 **Eventos:**
+
 - Todos os eventos (nome, organizador, datas, capacidade, status)
 - Participantes por evento
 - Taxa de matching (matches/participantes)
 - Correios enviados por evento
 
 **Moderação:**
+
 - Fila de denúncias pendentes (`reports` table, status = 'pending')
 - Blocks recentes (sinal de problemas)
 - Conteúdo sinalizado pelo filtro de profanidade
 
 **Qualidade da IA:**
+
 - Completeness score médio por sessão de onboarding
 - Tempo médio para completar onboarding
 - Quantos Ori Reveals aconteceram (score >= 0.65)
 - Ice-breakers gerados vs. usados (taxa de aceitação)
 
 **Telemetria de produto:**
+
 - Funil de conversão completo (landing → correio_sent)
 - Bounce rate por seção da landing
 - Seção com maior drop-off no onboarding
@@ -837,16 +874,19 @@ O valor único que o Sommar oferece ao organizador é **dados que nenhuma outra 
 ### O que o organizador VÊ (portal do organizador)
 
 **Antes do evento:**
+
 - Preview da página pública
 - QR codes para check-in e quests
 - Número de interessados no evento e crescimento por dia
 
 **Durante o evento (realtime):**
+
 - Check-ins em tempo real
 - Heatmap de facetas ativas (quais facetas as pessoas estão ativando neste evento)
 - Correios enviados por hora (indicador de engajamento)
 
 **Após o evento:**
+
 - Total de participantes únicos
 - Taxa de conexão: X% dos participantes trocaram pelo menos 1 Correio
 - Distribuição por faceta: "70% dos participantes ativaram Profissional"
@@ -855,15 +895,18 @@ O valor único que o Sommar oferece ao organizador é **dados que nenhuma outra 
 - NPS implícito: participantes que voltaram a abrir o app após o evento
 
 ### O que o organizador NÃO VÊ
+
 - Identidade de usuários individuais (anonimizado por padrão)
 - Conteúdo de mensagens (nunca)
 - Orientação sexual, pronomes, modelo relacional (nunca)
 - Facet_data de qualquer usuário específico
 
 ### Pitch para o organizador
-*"Você organiza um evento de networking. Hoje você sabe quantas pessoas foram. Com o Sommar, você sabe quantas conexões significativas o seu evento gerou, quais perfis se conectaram mais, e o que as pessoas estavam buscando. Isso é inteligência de evento, não headcount."*
+
+_"Você organiza um evento de networking. Hoje você sabe quantas pessoas foram. Com o Sommar, você sabe quantas conexões significativas o seu evento gerou, quais perfis se conectaram mais, e o que as pessoas estavam buscando. Isso é inteligência de evento, não headcount."_
 
 ### Tiers de organizador (MSP)
+
 - **Free:** 1 evento, até 200 participantes, analytics básicos
 - **Pro (futuramente):** Múltiplos eventos, analytics completos, white-label da landing do evento, suporte
 
@@ -880,6 +923,7 @@ O Sommar opera em eventos presenciais onde as pessoas se encontram de verdade. S
 **Onde fica:** Dentro de qualquer conversa de Correio Elegante ativo, no menu de contexto do perfil de outro usuário, e no menu de configurações rápidas (accessible sem scroll).
 
 **O que acontece ao acionar:**
+
 1. Usuário confirma (toque duplo ou slide para evitar acionamento acidental)
 2. Alerta imediato para o organizador do evento com: timestamp, localização aproximada (se permitida), e opcionalmente uma nota de texto
 3. O organizador recebe notificação push (se PWA instalado) e email
@@ -888,11 +932,13 @@ O Sommar opera em eventos presenciais onde as pessoas se encontram de verdade. S
 6. Opção de bloquear o outro usuário de forma imediata e silenciosa
 
 **O que NÃO acontece:**
+
 - Não é necessário login para ver o número de emergência (190)
 - Não exige localização — é opt-in, não obrigatório
 - Não expõe a identidade da vítima para o suspeito
 
 **Schema adicional necessário:**
+
 ```sql
 create table public.safety_alerts (
   id uuid primary key default gen_random_uuid(),
@@ -911,6 +957,7 @@ create table public.safety_alerts (
 ```
 
 **Regras de moderação pós-alerta:**
+
 - Organizador vê alertas no portal em tempo real
 - Super-admin (Bet/Gusta) vê todos os alertas no dashboard interno
 - 3 alertas contra o mesmo usuário em 30 dias → revisão manual obrigatória
@@ -922,23 +969,27 @@ create table public.safety_alerts (
 O lobby tem dois modos de acesso para maximizar engajamento sem comprometer a integridade do check-in.
 
 ### Tier 1: Acesso antecipado (pre-event)
+
 - **Quando:** Após o usuário confirmar interesse no evento (`event_interests` table) — pode ser dias antes
 - **O que pode:** Ver perfis de outros que também confirmaram interesse. Não pode enviar Correio ainda.
 - **Objetivo:** Criar antecipação. "Tem 47 pessoas interessadas nesse evento. Você já pode ver quem vai."
 - **UI:** Lobby em modo "preview" — orbs visíveis mas sem interação de Correio. Matter pode dizer: "Encontrei 3 pessoas que você vai querer conhecer aqui."
 
 ### Tier 2: Check-in presencial (QR obrigatório)
+
 - **Quando:** No dia do evento, via scan do QR de check-in
 - **O que habilita:** Acesso COMPLETO ao lobby. Correio Elegante liberado (5 grátis). Matching ativo em tempo real. Presence indicator (online agora).
 - **Por que QR é obrigatório para este tier:** Garante que a pessoa está fisicamente no evento. Isso é o que diferencia o Sommar de um app de dating: o encontro acontece no mundo real, com pessoas que estão ali.
 - **Anti-abuso:** QR de check-in muda a cada evento e expira em `event.end_time + 2h`. Um QR por evento por usuário.
 
 ### Tier 3: Lobby histórico (post-event)
+
 - **Quando:** Após `event.end_time`
 - **O que pode:** Ver todos os participantes que fizeram check-in. Conversas ativas ainda funcionam (até expirar). Não pode iniciar novas conversas.
 - **Duração:** ~1 semana. Depois vira `expired` e vai para "eventos participados" no perfil.
 
 ### Regra de negócio importante
+
 Um usuário pode ter acesso Tier 1 (interesse confirmado) mas nunca chegar ao Tier 2 (não foi ao evento). Isso é normal. O lobby histórico que ele verá mostrará "você não fez check-in neste evento" — sem punição, mas sem acesso a Correio retroativo.
 
 ---
@@ -948,12 +999,14 @@ Um usuário pode ter acesso Tier 1 (interesse confirmado) mas nunca chegar ao Ti
 O Sommar começa em eventos presenciais porque é onde a proposta de valor é mais óbvia e defensável. Mas a arquitetura é construída para expandir.
 
 ### Próximas fronteiras (pós-MSP)
+
 - **Geo-lobbies:** Lobbies vinculados a locais (bar, coworking, praia) em vez de eventos com data. "Estou no Café Cultura agora." O QR de check-in fica na parede do estabelecimento.
 - **Lobbies permanentes de comunidade:** Grupos de interesse (meetup semanal, time de esporte, república estudantil). Sem data de expiração.
 - **Sommar para empresas:** Onboarding de times, integração entre departamentos, match por skills para projetos internos.
 - **API pública para organizadores:** Organizadores integram o Sommar ao próprio app/site via API. O Ori e o matching ficam no Sommar; a experiência fica no app deles.
 
 ### O que nunca muda (invariantes de visão)
+
 - Sempre presencial-first: o objetivo é sempre o encontro olho no olho
 - Sempre agnóstico ao tipo de vínculo: o Sommar não decide se é amor, amizade ou parceria
 - Sempre dimensional: o Ori tem 5 facetas, não é um perfil de 3 fotos
@@ -995,7 +1048,8 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 ### v0.1.0 — Fundação (2026-04-01)
 
 **Infraestrutura:**
-- Next.js 14 App Router configurado com TypeScript strict
+
+- Next.js 16 App Router configurado com TypeScript strict
 - Supabase client/server setup com SSR pattern
 - Middleware de auth com bypass para dev sem Supabase
 - Claude API (Matter) e OpenAI (embeddings) integrados
@@ -1003,6 +1057,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - 17 tabelas SQL com migrations e RLS desenhadas
 
 **Landing Page (/):**
+
 - Estrutura original: Hero, ProblemStats, Antidote, HowItWorks, NotJustDating, ForOrganizers, EmailCapture, Footer
 - Hero copy original: "A pessoa certa está ali do lado. Vocês só não se encontraram ainda."
 - CTAs originais: Descubra (scroll), Criar meu perfil (/login), Fale com a gente (mailto)
@@ -1011,17 +1066,20 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - NOTA: Estrutura e copy foram completamente revisados na Sessão 3 (ver abaixo)
 
 **Login (/login):**
+
 - Google OAuth + email OTP via Supabase Auth
 - Tela com Matter orb, cosmos background
 - Redirect logic (onboarding se incompleto, lobby se completo)
 
 **Onboarding (/onboarding) — 4 etapas:**
+
 - Chat com Matter (mock responses, pronto para IA real)
 - Seleção de arquétipos estéticos (9 opções, min 3)
 - Seleção de facetas com toggles coloridos
 - Ori Reveal com orb animado e narrativa
 
 **Lobby (/lobby) — CosmosLobby:**
+
 - Canvas interativo: 35 Oris como estrelas no cosmos
 - Orbs com gradientes únicos (colorA/colorB) e specular highlight
 - Sinapses douradas zigzag entre nodes (como lightning/neurônios)
@@ -1035,23 +1093,27 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - Filtros por faceta: Todos, Íntimo, Criativo, Profissional, Social
 
 **Conexões (/connections) — NOVA:**
+
 - 3 seções: Matches ativos, Conversas, Conexões confirmadas
 - "Sua vez" indicator (inspirado no Hinge)
 - Unread indicator (green dot)
 - Enviar Correio CTA nos matches
 
 **Eventos (/events):**
+
 - Lista de eventos seguidos + próximos
 - Busca por eventos
 - Cards com tags coloridas e social proof
 
 **Página pública de evento (/e/[slug]):**
+
 - SSR com OG tags para share social
 - Cover image, info colapsável, social proof
 - Feed com posts e reações (login required)
 - CTA "Participar" → login → redirect de volta
 
 **Perfil (/profile):**
+
 - Orb animado + avatar com inicial
 - Stats: Eventos, Matches, Conexões
 - Facetas com toggles coloridos
@@ -1059,20 +1121,24 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - Links para Conexões, Eventos, Configurações
 
 **Configurações (/settings) — NOVA:**
+
 - Conta, Privacidade (toggles de visibilidade), Dados (export/delete), Sessão
 - Logout funcional (Supabase signOut + redirect)
 
 **Admin Dashboard (/dashboard):**
+
 - Stats cards, lista de eventos, feed de atividade
 - Nav: Dashboard, Eventos, Usuários, Moderação
 
 **Correio Elegante:**
+
 - CorreioPopup com textarea, contador 0/500, info de preço
 - Preço correto: 5 grátis no check-in + R$0,99 por adicional
 - CorreioExpired com re-enable via missão ou pagamento (R$0,99)
 - Toast de confirmação "Correio enviado com sucesso!"
 
 **Design System implementado:**
+
 - AMOLED true black, glass cards com backdrop blur
 - Fontes: Fraunces (display) + Outfit (body)
 - 6 cores: green, coral, amber, cyan, purple, pink
@@ -1081,6 +1147,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - Bottom nav: Lobby, Conexões, Eventos, Perfil
 
 **Facetas (CLAUDE.md = source of truth):**
+
 - Essência (sempre ativa, green)
 - Íntimo (toggle, pink)
 - Criativo (toggle, cyan)
@@ -1088,6 +1155,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - Social (toggle, purple)
 
 **Correções de qualidade:**
+
 - Gramática PT-BR corrigida em 24 arquivos (acentos, cedilha, etc.)
 - Todos os fluxos navegáveis de ponta a ponta
 - Revisão sistemática: zero dead-ends
@@ -1095,16 +1163,19 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - Build passando limpo
 
 **Navegação completa verificada:**
+
 ```
 / → /login → /onboarding → /lobby → /connections → /events → /e/[slug] → /profile → /settings → logout → /
 ```
 
 **Modo demo:**
+
 - Todas as páginas protegidas funcionam sem Supabase configurado
 - Mock data em todas as telas para validação visual
 - Perfil mock: Matheus Betinelli (PM, todas as 5 facetas)
 
 ### Decisões de produto registradas:
+
 - CLAUDE.md é SEMPRE a fonte de verdade suprema
 - Nomes de facetas seguem CLAUDE.md (Essência, Íntimo, Criativo, Profissional, Social)
 - Social proof nunca mente (sem números falsos)
@@ -1118,13 +1189,14 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 
 ### Jornada do chat de desenvolvimento (contexto para próximos chats):
 
-**Sessão 1 (2026-04-01):** Setup completo do zero. Next.js 14 + TypeScript + Supabase + Tailwind. 87 arquivos criados. Landing page 9 seções. Onboarding 4 etapas. Lobby com grid hexagonal. Todas as rotas do app. Admin dashboard. Correio Elegante. Auth flow. Middleware. AI integrations (Claude + OpenAI). Build passando.
+**Sessão 1 (2026-04-01):** Setup completo do zero. Next.js 16 + TypeScript + Supabase + Tailwind. 87 arquivos criados. Landing page 9 seções. Onboarding 4 etapas. Lobby com grid hexagonal. Todas as rotas do app. Admin dashboard. Correio Elegante. Auth flow. Middleware. AI integrations (Claude + OpenAI). Build passando.
 
 **Sessão 2 (2026-04-01 cont.):** Assessment honesto — UI ~90% mas integração backend ~25%. Modo demo criado (todas as telas funcionam sem Supabase). CTAs da landing corrigidos. Facetas renomeadas para CLAUDE.md spec (Essência/Íntimo/Criativo/Profissional/Social). Correio Elegante wired no lobby. Hero copy reescrito. Stats "O Potencial Desperdiçado" adicionados. Landing balanceada para todas as facetas. CosmosLobby criado (canvas com orbs, sinapses, drag). 35 participantes mock. Perfil do Bet (Matheus Betinelli). Gramática PT-BR corrigida em 24 arquivos. Pesquisa de concorrentes (Tinder, Hinge, Bumble, LinkedIn, Meetup). Tab Conexões adicionada. Settings + logout criados. Revisão sistemática: zero dead-ends. Header lobby fixado. Sinapses douradas zigzag. AGENTS.md, RESEARCH.md, TODO.md criados.
 
 **Sessão 3 (2026-04-01 cont.):** Documentação estratégica e landing overhaul. CRO.md criado com benchmarks, CTAs, onboarding, dark design, social proof. README.md reescrito para Gusta clonar e rodar. Plataforma declarada 100% universal/agnóstica (removidas todas referências a "Sounds in da City"). Regra de travessão adicionada em CLAUDE.md e AGENTS.md: ZERO dashes/travessões em qualquer copy de UI, jamais. NeonCTA.tsx criado (botão com borda neon animada via conic-gradient rotativo). Hero.tsx reescrito: "A pessoa certa está ao seu lado", NeonCTA "Criar meu Ori", secondary link "ou descubra como funciona" corrigido para scroll target #sobre. HowItWorks.tsx reescrito: icon+title inline, descrições enxutas. FinalCTA.tsx criado (substituiu EmailCapture — CTA direto de criar conta). MidCTA.tsx criado (CTA de meio de página). ForOrganizers.tsx: CTA primário "Criar meu primeiro evento" + secondary email. page.tsx atualizado: estrutura Hero → ProblemStats → Antidote → HowItWorks → NotJustDating → MidCTA → ForOrganizers → FinalCTA → Footer. Bug fix: scroll target Hero corrigido (#comecar → #sobre). .gitignore: adicionado .claude/ para não commitar memória interna do Claude Code. Vercel configurado: framework preset → Next.js, deploy automático do GitHub main. Build fix: removido import framer-motion não usado em FinalCTA.tsx. Estimativas de custo de API documentadas: ~$8-10 por evento de 200 pessoas, ~$20-25 por 500 pessoas. CLAUDE.md expandido: seção completa de Matter Intelligence Architecture, extraction layer protocol, continuous improvement do Ori, regras de coleta de identidade. CLAUDE.md expandido (Sessão 3): Telemetria completa (eventos a capturar, funil de conversão, ferramentas), Dashboard Interno (admin.sommar.app, saúde do sistema, moderação, métricas de IA), Inteligência para Organizadores (o que vê vs. não vê, pitch, tiers), Segurança e Botão de Pânico (schema safety_alerts, fluxo de alerta), Lobby Tiers de Acesso (pre-event/QR/histórico), Visão de Longo Prazo (geo-lobbies, comunidades, API pública).
 
 ### Decisões de produto registradas (Sessão 3):
+
 - Plataforma é 100% universal. JAMAIS hardcodar evento específico no código ou docs.
 - ZERO travessões em copy. É sinal de IA. Usa vírgula, ponto, ou reescreve.
 - Landing não tem email capture. Tem CTA direto para criar conta.
@@ -1139,9 +1211,11 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 **Sessão 4:** Bet dormiu e o agente trabalhou. Foco em construir tudo que não depende de ação manual (Supabase cloud, Google OAuth).
 
 **Bug fixes:**
+
 - Fix: `onboarding.ts` usava facetas erradas ("Romântico, Amizade, Profissional, Organizador"). Corrigido para as 5 facetas corretas (Essência, Íntimo, Criativo, Profissional, Social) com descrições de cada uma.
 
 **Extraction Layer (coração do produto):**
+
 - `src/lib/ai/extraction.ts` criado. Call assíncrono com Haiku (`claude-haiku-4-5-20251001`) após cada mensagem.
 - Merge incremental de `facet_data` JSONB (nunca substitui, sempre faz merge).
 - `completeness_score` calculado automaticamente (0 a 1).
@@ -1149,6 +1223,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - Prompts de extração e narrativa do Ori em `src/lib/ai/prompts/extraction.ts`.
 
 **Matter Streaming:**
+
 - `/api/matter/route.ts` reescrito com suporte a streaming SSE via ReadableStream.
 - Rate limiting (30 req/min por IP).
 - Input sanitization (remove HTML, scripts, event handlers).
@@ -1156,6 +1231,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - Hook `useMatter.ts` criado: streaming real + fallback mock + extração em background.
 
 **Telemetria:**
+
 - PostHog (`posthog-js`) + Vercel Analytics (`@vercel/analytics`) instalados.
 - `src/lib/analytics.ts`: wrapper tipado com TODOS os eventos do funil (landing → correio_sent).
 - `AnalyticsProvider.tsx` no root layout.
@@ -1163,12 +1239,14 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - Regra baked: tipo `AnalyticsEvent` NUNCA permite logar conteúdo de mensagens.
 
 **Safety Button (Botão de Pânico):**
+
 - Migration `00002_safety_alerts.sql` com RLS (organizadores veem alertas dos seus eventos).
 - `SafetyButton.tsx`: botão discreto, confirmação dupla, formulário de detalhes opcional.
 - Endpoint `/api/safety/alert` com criação de alerta + notificação ao organizador.
 - Número de emergência 190 sempre visível.
 
 **Portal do Organizador:**
+
 - Route group `(organizer)` com layout autenticado (role = organizer ou creator).
 - `OrganizerHeader.tsx` com navegação: Meus Eventos, Criar Evento, Segurança.
 - `/organizer` — Lista de eventos com stats (interessados, check-ins, correios, taxa de conexão).
@@ -1178,17 +1256,20 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - API `/api/organizer/events` (POST criar + GET listar) com validação de slug e criação automática de lobby.
 
 **Security Hardening:**
+
 - `next.config.mjs`: headers CSP, HSTS (2 anos + preload), X-Frame-Options DENY, X-Content-Type-Options nosniff, Permissions-Policy (camera/microphone/geolocation desabilitados).
 - `src/lib/security.ts`: rate limiting in-memory (serverless-compatible), input sanitization, slug sanitization, UUID validation, profanity filter server-side.
 - Rate limits aplicados em: Matter (30/min), Extraction (30/min), Safety (5/min), Organizer (20/min).
 - Cleanup automático do rate limit store a cada 60s.
 
 **Qualidade:**
+
 - TypeScript: zero erros (`npm run typecheck` passando).
 - ESLint: zero erros (apenas warnings de `<img>` pre-existentes).
 - Build: 24 páginas compiladas com sucesso.
 
 **Arquivos criados nesta sessão:**
+
 ```
 src/lib/analytics.ts                          # Wrapper PostHog tipado
 src/lib/security.ts                           # Rate limiting, sanitização, profanity
@@ -1210,6 +1291,7 @@ supabase/migrations/00002_safety_alerts.sql   # Migration safety
 ```
 
 ### Decisões de produto registradas (Sessão 4):
+
 - Portal do organizador é separado do super-admin (`/organizer` vs `/dashboard`)
 - Rate limiting é in-memory (OK pro MSP serverless, reseta em cold start)
 - Extraction layer usa Haiku (5x mais barato que Sonnet) para custo controlado
@@ -1218,6 +1300,7 @@ supabase/migrations/00002_safety_alerts.sql   # Migration safety
 - API routes usam edge runtime para melhor performance
 
 ### O que o próximo chat deve fazer:
+
 1. Ler CLAUDE.md + AGENTS.md + TODO.md antes de qualquer coisa
 2. **BLOQUEADOR**: Bet/Gusta precisam configurar Supabase cloud + Google OAuth + env vars Vercel (checklist detalhado no TODO.md)
 3. Após Supabase configurado: testar fluxo completo login → onboarding → lobby

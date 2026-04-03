@@ -15,9 +15,9 @@ create table public.safety_alerts (
 );
 
 -- Indexes
-create index idx_safety_alerts_event on public.safety_alerts(event_id);
-create index idx_safety_alerts_status on public.safety_alerts(status);
-create index idx_safety_alerts_reported on public.safety_alerts(reported_user_id);
+create index sommar_safety_alerts_event on public.safety_alerts(event_id);
+create index sommar_safety_alerts_status on public.safety_alerts(status);
+create index sommar_safety_alerts_reported on public.safety_alerts(reported_user_id);
 
 -- RLS
 alter table public.safety_alerts enable row level security;

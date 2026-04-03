@@ -47,8 +47,8 @@ create trigger profiles_updated_at
   before update on public.profiles
   for each row execute function public.handle_updated_at();
 
-create index idx_profiles_role on public.profiles(role);
-create index idx_profiles_onboarding on public.profiles(onboarding_complete);
+create index sommar_profiles_role on public.profiles(role);
+create index sommar_profiles_onboarding on public.profiles(onboarding_complete);
 
 -- =============================================================================
 -- ORIS
@@ -69,7 +69,7 @@ create trigger oris_updated_at
   before update on public.oris
   for each row execute function public.handle_updated_at();
 
-create index idx_oris_user_id on public.oris(user_id);
+create index sommar_oris_user_id on public.oris(user_id);
 
 -- =============================================================================
 -- EVENTS
@@ -94,9 +94,9 @@ create table public.events (
   created_at timestamptz default now()
 );
 
-create index idx_events_slug on public.events(slug);
-create index idx_events_organizer on public.events(organizer_id);
-create index idx_events_start_time on public.events(start_time);
+create index sommar_events_slug on public.events(slug);
+create index sommar_events_organizer on public.events(organizer_id);
+create index sommar_events_start_time on public.events(start_time);
 
 -- =============================================================================
 -- LOBBIES
@@ -111,8 +111,8 @@ create table public.lobbies (
   created_at timestamptz default now()
 );
 
-create index idx_lobbies_event_id on public.lobbies(event_id);
-create index idx_lobbies_state on public.lobbies(state);
+create index sommar_lobbies_event_id on public.lobbies(event_id);
+create index sommar_lobbies_state on public.lobbies(state);
 
 -- =============================================================================
 -- LOBBY PARTICIPANTS
@@ -126,7 +126,7 @@ create table public.lobby_participants (
   primary key (lobby_id, user_id)
 );
 
-create index idx_lobby_participants_user on public.lobby_participants(user_id);
+create index sommar_lobby_participants_user on public.lobby_participants(user_id);
 
 -- =============================================================================
 -- CORREIO ELEGANTE CONVERSATIONS
@@ -145,10 +145,10 @@ create table public.correio_conversations (
   created_at timestamptz default now()
 );
 
-create index idx_correio_conversations_lobby on public.correio_conversations(lobby_id);
-create index idx_correio_conversations_sender on public.correio_conversations(sender_id);
-create index idx_correio_conversations_receiver on public.correio_conversations(receiver_id);
-create index idx_correio_conversations_state on public.correio_conversations(state);
+create index sommar_correio_conversations_lobby on public.correio_conversations(lobby_id);
+create index sommar_correio_conversations_sender on public.correio_conversations(sender_id);
+create index sommar_correio_conversations_receiver on public.correio_conversations(receiver_id);
+create index sommar_correio_conversations_state on public.correio_conversations(state);
 
 -- =============================================================================
 -- CORREIO MESSAGES
@@ -161,8 +161,8 @@ create table public.correio_messages (
   created_at timestamptz default now()
 );
 
-create index idx_correio_messages_conversation on public.correio_messages(conversation_id);
-create index idx_correio_messages_sender on public.correio_messages(sender_id);
+create index sommar_correio_messages_conversation on public.correio_messages(conversation_id);
+create index sommar_correio_messages_sender on public.correio_messages(sender_id);
 
 -- =============================================================================
 -- CONNECTIONS
@@ -178,8 +178,8 @@ create table public.connections (
   created_at timestamptz default now()
 );
 
-create index idx_connections_user_a on public.connections(user_a_id);
-create index idx_connections_user_b on public.connections(user_b_id);
+create index sommar_connections_user_a on public.connections(user_a_id);
+create index sommar_connections_user_b on public.connections(user_b_id);
 
 -- =============================================================================
 -- BLOCKS
@@ -191,7 +191,7 @@ create table public.blocks (
   primary key (blocker_id, blocked_id)
 );
 
-create index idx_blocks_blocked on public.blocks(blocked_id);
+create index sommar_blocks_blocked on public.blocks(blocked_id);
 
 -- =============================================================================
 -- REPORTS
@@ -206,8 +206,8 @@ create table public.reports (
   created_at timestamptz default now()
 );
 
-create index idx_reports_reported on public.reports(reported_id);
-create index idx_reports_status on public.reports(status);
+create index sommar_reports_reported on public.reports(reported_id);
+create index sommar_reports_status on public.reports(status);
 
 -- =============================================================================
 -- EVENT INTERESTS (social proof)
@@ -219,7 +219,7 @@ create table public.event_interests (
   primary key (user_id, event_id)
 );
 
-create index idx_event_interests_event on public.event_interests(event_id);
+create index sommar_event_interests_event on public.event_interests(event_id);
 
 -- =============================================================================
 -- FEED POSTS
@@ -233,9 +233,9 @@ create table public.feed_posts (
   created_at timestamptz default now()
 );
 
-create index idx_feed_posts_event on public.feed_posts(event_id);
-create index idx_feed_posts_author on public.feed_posts(author_id);
-create index idx_feed_posts_parent on public.feed_posts(parent_id);
+create index sommar_feed_posts_event on public.feed_posts(event_id);
+create index sommar_feed_posts_author on public.feed_posts(author_id);
+create index sommar_feed_posts_parent on public.feed_posts(parent_id);
 
 -- =============================================================================
 -- FEED REACTIONS
@@ -261,8 +261,8 @@ create table public.referrals (
   created_at timestamptz default now()
 );
 
-create index idx_referrals_referrer on public.referrals(referrer_id);
-create index idx_referrals_code on public.referrals(referral_code);
+create index sommar_referrals_referrer on public.referrals(referrer_id);
+create index sommar_referrals_code on public.referrals(referral_code);
 
 -- =============================================================================
 -- CONSENTS (LGPD)
@@ -276,8 +276,8 @@ create table public.consents (
   withdrawn_at timestamptz
 );
 
-create index idx_consents_user on public.consents(user_id);
-create index idx_consents_type on public.consents(consent_type);
+create index sommar_consents_user on public.consents(user_id);
+create index sommar_consents_type on public.consents(consent_type);
 
 -- =============================================================================
 -- QR QUESTS
@@ -292,8 +292,8 @@ create table public.quests (
   created_at timestamptz default now()
 );
 
-create index idx_quests_event on public.quests(event_id);
-create index idx_quests_code on public.quests(quest_code);
+create index sommar_quests_event on public.quests(event_id);
+create index sommar_quests_code on public.quests(quest_code);
 
 -- =============================================================================
 -- QUEST COMPLETIONS
