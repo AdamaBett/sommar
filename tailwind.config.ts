@@ -108,8 +108,8 @@ const config: Config = {
           '50%': { boxShadow: '0 0 20px rgba(29,255,168,0.6)' },
         },
         'wave-bar': {
-          '0%, 100%': { height: '4px' },
-          '50%': { height: '12px' },
+          '0%, 100%': { transform: 'scaleY(1)', opacity: '0.4' },
+          '50%': { transform: 'scaleY(1.6)', opacity: '1' },
         },
         'pulse-badge': {
           '0%, 100%': { transform: 'scale(1)', opacity: '0.75' },

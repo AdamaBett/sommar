@@ -16,11 +16,13 @@
     "@anthropic-ai/sdk": "^0.81.0",
     "@supabase/ssr": "^0.10.0",
     "@supabase/supabase-js": "^2.101.1",
+    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "next": "14.2.35",
     "next-intl": "^4.8.4",
     "openai": "^6.33.0",
+    "posthog-js": "^1.364.6",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^3.5.0"

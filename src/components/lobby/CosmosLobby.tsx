@@ -99,7 +99,7 @@ export function CosmosLobby({ participants, onPersonClick }: CosmosLobbyProps): 
     for (let i = nodes.length - 1; i >= 0; i--) {
       const n = nodes[i];
       const d = dist(wx, wy, n.x, n.y);
-      if (d < Math.max(n.currentR + 12, 20)) return i;
+      if (d < Math.max(n.currentR + 18, 28)) return i;
     }
     return -1;
   }, []);

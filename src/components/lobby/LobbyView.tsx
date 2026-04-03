@@ -130,7 +130,7 @@ export function LobbyView({
 
       {/* Matter passive card */}
       <div
-        className="fixed bottom-[100px] left-4 right-4 z-30 rounded-[20px] p-4 opacity-0 translate-y-3 animate-[fade-up_0.8s_cubic-bezier(.16,1,.3,1)_0.8s_forwards] pointer-events-none"
+        className="fixed bottom-[100px] left-4 right-4 z-30 rounded-[20px] p-4 opacity-0 animate-[fade-up_0.8s_cubic-bezier(.16,1,.3,1)_0.8s_forwards] pointer-events-none"
         style={{
           background: 'rgba(29,158,117,0.06)',
           border: '1px solid rgba(29,255,168,0.1)',

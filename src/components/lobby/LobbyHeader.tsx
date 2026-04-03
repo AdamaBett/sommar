@@ -14,7 +14,7 @@ export function LobbyHeader({
   return (
     <div
       className="fixed top-0 left-0 right-0 z-50 px-5 pt-3.5 pb-3"
-      style={{ background: 'linear-gradient(to bottom, #000 60%, rgba(0,0,0,0.6) 85%, transparent)' }}
+      style={{ background: 'linear-gradient(to bottom, #000 50%, transparent)' }}
     >
       <div className="flex items-center justify-between">
         {/* Left: event name + status */}
@@ -50,9 +50,9 @@ export function LobbyHeader({
           }}
         >
           <div className="flex gap-[2px] items-end h-3">
-            <EqualizerBar delay="0s" height="7px" />
-            <EqualizerBar delay="0.15s" height="11px" />
-            <EqualizerBar delay="0.3s" height="8px" />
+            <EqualizerBar delay="0s" />
+            <EqualizerBar delay="0.15s" />
+            <EqualizerBar delay="0.3s" />
           </div>
           <span className="text-[10px] text-[var(--green)]">Ori ativo</span>
         </div>
@@ -66,15 +66,15 @@ export function LobbyHeader({
   );
 }
 
-function EqualizerBar({ delay, height }: { delay: string; height: string }): JSX.Element {
+function EqualizerBar({ delay }: { delay: string }): JSX.Element {
   return (
     <div
-      className="w-[2px] rounded-sm"
+      className="w-[2px] h-3 rounded-sm"
       style={{
-        height,
         background: 'var(--green)',
         animation: 'wave-bar 1.2s ease-in-out infinite',
         animationDelay: delay,
+        transformOrigin: 'bottom',
       }}
     />
   );

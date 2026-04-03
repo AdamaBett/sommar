@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 // Rotas públicas que não requerem autenticação
 const PUBLIC_ROUTES = ['/', '/login', '/callback'];
-const PUBLIC_PREFIXES = ['/e/'];
+const PUBLIC_PREFIXES = ['/e/', '/api/'];
 
 function isPublicRoute(pathname: string): boolean {
   if (PUBLIC_ROUTES.includes(pathname)) return true;

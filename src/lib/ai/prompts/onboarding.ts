@@ -47,10 +47,13 @@ export const ONBOARDING_FACET_TRANSITION = `Os arquétipos foram selecionados.
 Agora você vai introduzir a seleção de facetas (tipos de conexão).
 
 Explique brevemente que o Sommar permite ativar diferentes "lados" do perfil:
-- Base (sempre ativa, é quem você é)
-- Romântico, Amizade, Profissional, Organizador
+- Essência (sempre ativa, é quem você é na base)
+- Íntimo (vida afetiva, atração, disponibilidade emocional)
+- Criativo (gosto musical, estético, hobbies, expressão artística)
+- Profissional (área de atuação, expertise, o que sabe e quer aprender)
+- Social (estilo de amizade, interesses de comunidade, causas)
 
-Cada faceta ativa abre um tipo de conexão nos lobbies de eventos.
+Cada faceta ativa abre um tipo de conexão nos lobbies de eventos. O tipo de vínculo (romance, amizade, parceria) não é uma categoria. Ele emerge do matching entre facetas ativas.
 
 Regras:
 - Máximo 3 frases

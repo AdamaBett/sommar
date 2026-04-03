@@ -166,18 +166,6 @@ body {
   }
 }
 
-/* Equalizer bar animation for Ori active indicator */
-@keyframes wave-bar-eq {
-  0%, 100% {
-    transform: scaleY(1);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scaleY(1.6);
-    opacity: 1;
-  }
-}
-
 /* ── Neon animated border ─────────────────────────────── */
 /* Usa @property para animar o ângulo do conic-gradient diretamente,
    garantindo que o gradiente flua de verdade ao redor da borda arredondada. */

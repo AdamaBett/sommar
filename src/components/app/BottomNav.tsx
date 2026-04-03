@@ -199,14 +199,11 @@ export function BottomNav(): React.ReactElement {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 border-t"
+      className="fixed bottom-0 left-0 right-0 z-40"
       style={{
         height: '60px',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        backgroundColor: 'rgba(0,0,0,0.95)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderTopColor: 'rgba(255,255,255,0.06)',
+        background: 'linear-gradient(to top, #000 60%, transparent)',
       }}
       aria-label="Menu principal"
     >
@@ -233,7 +230,7 @@ export function BottomNav(): React.ReactElement {
                   'font-body leading-none',
                   isActive ? 'text-green-glow' : 'text-white-subtle'
                 )}
-                style={{ fontSize: '10px' }}
+                style={{ fontSize: '10px', letterSpacing: '0.5px' }}
               >
                 {tab.label}
               </span>

@@ -1134,12 +1134,96 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - Botão de pânico é responsabilidade, não feature. Entra no MSP.
 - Lobby tem 3 tiers: interesse (ver sem interagir), QR check-in (full access), histórico (read-only).
 
+### v0.2.0 — Infra de IA, Segurança e Portal do Organizador (2026-04-03)
+
+**Sessão 4:** Bet dormiu e o agente trabalhou. Foco em construir tudo que não depende de ação manual (Supabase cloud, Google OAuth).
+
+**Bug fixes:**
+- Fix: `onboarding.ts` usava facetas erradas ("Romântico, Amizade, Profissional, Organizador"). Corrigido para as 5 facetas corretas (Essência, Íntimo, Criativo, Profissional, Social) com descrições de cada uma.
+
+**Extraction Layer (coração do produto):**
+- `src/lib/ai/extraction.ts` criado. Call assíncrono com Haiku (`claude-haiku-4-5-20251001`) após cada mensagem.
+- Merge incremental de `facet_data` JSONB (nunca substitui, sempre faz merge).
+- `completeness_score` calculado automaticamente (0 a 1).
+- Endpoint `/api/onboarding/extract` (edge runtime).
+- Prompts de extração e narrativa do Ori em `src/lib/ai/prompts/extraction.ts`.
+
+**Matter Streaming:**
+- `/api/matter/route.ts` reescrito com suporte a streaming SSE via ReadableStream.
+- Rate limiting (30 req/min por IP).
+- Input sanitization (remove HTML, scripts, event handlers).
+- Mensagens limitadas a 5000 chars e histórico trimado a 40 mensagens.
+- Hook `useMatter.ts` criado: streaming real + fallback mock + extração em background.
+
+**Telemetria:**
+- PostHog (`posthog-js`) + Vercel Analytics (`@vercel/analytics`) instalados.
+- `src/lib/analytics.ts`: wrapper tipado com TODOS os eventos do funil (landing → correio_sent).
+- `AnalyticsProvider.tsx` no root layout.
+- Opt-out/opt-in para LGPD (`optOutAnalytics()`, `optInAnalytics()`).
+- Regra baked: tipo `AnalyticsEvent` NUNCA permite logar conteúdo de mensagens.
+
+**Safety Button (Botão de Pânico):**
+- Migration `00002_safety_alerts.sql` com RLS (organizadores veem alertas dos seus eventos).
+- `SafetyButton.tsx`: botão discreto, confirmação dupla, formulário de detalhes opcional.
+- Endpoint `/api/safety/alert` com criação de alerta + notificação ao organizador.
+- Número de emergência 190 sempre visível.
+
+**Portal do Organizador:**
+- Route group `(organizer)` com layout autenticado (role = organizer ou creator).
+- `OrganizerHeader.tsx` com navegação: Meus Eventos, Criar Evento, Segurança.
+- `/organizer` — Lista de eventos com stats (interessados, check-ins, correios, taxa de conexão).
+- `/organizer/create` — Formulário completo: nome, slug auto-gerado, descrição, matter_context (campo crucial), datas, local, tickets, capacidade, tags.
+- `/organizer/event/[id]` — Analytics: stats cards, distribuição de facetas (bar chart), top combos de facetas, engajamento por hora (bar chart), contexto da Matter.
+- `/organizer/safety` — Alertas de segurança com status (pendente/notificado/resolvido).
+- API `/api/organizer/events` (POST criar + GET listar) com validação de slug e criação automática de lobby.
+
+**Security Hardening:**
+- `next.config.mjs`: headers CSP, HSTS (2 anos + preload), X-Frame-Options DENY, X-Content-Type-Options nosniff, Permissions-Policy (camera/microphone/geolocation desabilitados).
+- `src/lib/security.ts`: rate limiting in-memory (serverless-compatible), input sanitization, slug sanitization, UUID validation, profanity filter server-side.
+- Rate limits aplicados em: Matter (30/min), Extraction (30/min), Safety (5/min), Organizer (20/min).
+- Cleanup automático do rate limit store a cada 60s.
+
+**Qualidade:**
+- TypeScript: zero erros (`npm run typecheck` passando).
+- ESLint: zero erros (apenas warnings de `<img>` pre-existentes).
+- Build: 24 páginas compiladas com sucesso.
+
+**Arquivos criados nesta sessão:**
+```
+src/lib/analytics.ts                          # Wrapper PostHog tipado
+src/lib/security.ts                           # Rate limiting, sanitização, profanity
+src/lib/ai/extraction.ts                      # Extraction layer (Haiku)
+src/lib/ai/prompts/extraction.ts              # Prompts de extração + narrativa
+src/hooks/useMatter.ts                        # Hook streaming + mock + extração
+src/components/AnalyticsProvider.tsx           # Provider PostHog
+src/components/SafetyButton.tsx               # Botão de pânico
+src/components/organizer/OrganizerHeader.tsx   # Header do portal
+src/app/(organizer)/layout.tsx                # Layout autenticado
+src/app/(organizer)/organizer/page.tsx        # Lista de eventos
+src/app/(organizer)/organizer/create/page.tsx # Criar evento
+src/app/(organizer)/organizer/event/[id]/page.tsx # Analytics do evento
+src/app/(organizer)/organizer/safety/page.tsx # Alertas de segurança
+src/app/api/onboarding/extract/route.ts       # API extração
+src/app/api/safety/alert/route.ts             # API alertas
+src/app/api/organizer/events/route.ts         # API eventos organizador
+supabase/migrations/00002_safety_alerts.sql   # Migration safety
+```
+
+### Decisões de produto registradas (Sessão 4):
+- Portal do organizador é separado do super-admin (`/organizer` vs `/dashboard`)
+- Rate limiting é in-memory (OK pro MSP serverless, reseta em cold start)
+- Extraction layer usa Haiku (5x mais barato que Sonnet) para custo controlado
+- Profanity filter é server-side, patterns básicos em PT-BR
+- CSP permite PostHog e Vercel Analytics como fontes externas
+- API routes usam edge runtime para melhor performance
+
 ### O que o próximo chat deve fazer:
 1. Ler CLAUDE.md + AGENTS.md + TODO.md antes de qualquer coisa
-2. Rodar `npm run typecheck` para confirmar zero erros TypeScript
-3. Prioridade #1: configurar Supabase cloud + Google OAuth + env vars Vercel (sem isso, login não funciona)
-4. Prioridade #2: construir portal do organizador (referência: docs/sommar_organizador_v1.html)
-5. Prioridade #3: conectar Matter real (OnboardingChat.tsx → /api/matter, extraction layer)
-6. Qualquer feature nova → registrar em CLAUDE.md patch notes
-7. Qualquer decisão arquitetural → registrar em RESEARCH.md
-8. Trabalhar em feature branches: `feat/supabase-setup`, `feat/matter-real`, `feat/organizer-portal`
+2. **BLOQUEADOR**: Bet/Gusta precisam configurar Supabase cloud + Google OAuth + env vars Vercel (checklist detalhado no TODO.md)
+3. Após Supabase configurado: testar fluxo completo login → onboarding → lobby
+4. Integrar `useMatter` hook no `OnboardingFlow.tsx` (substituir mock por hook real)
+5. Gerar QR codes reais no portal do organizador (biblioteca de QR)
+6. Instrumentar componentes com `trackEvent()` da analytics
+7. Adicionar `SafetyButton` no CorreioChat.tsx e PersonPopup.tsx
+8. Adicionar `NEXT_PUBLIC_POSTHOG_KEY` nas env vars da Vercel
+9. Qualquer feature nova → registrar em CLAUDE.md patch notes

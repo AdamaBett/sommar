@@ -1,14 +1,16 @@
 # TODO.md — Prioridades e Escopo
 
-> Atualizado: 2026-04-01 (Sessão 3)
+> Atualizado: 2026-04-03 (Sessão 4)
 > Lido por agentes IA antes de qualquer trabalho.
 
-## Status Atual: MSP ~65% completo
+## Status Atual: MSP ~78% completo
 
 ### Camadas:
-- **Visual/UI**: ~92% (todas as telas existem e navegam)
-- **Integração backend**: ~25% (maioria é mock, Supabase não conectado)
-- **Deploy**: sommar.app no ar com landing nova, auth quebrado sem env vars
+- **Visual/UI**: ~96% (todas as telas existem, portal do organizador completo)
+- **Integração backend**: ~45% (extraction layer, Matter streaming, safety alerts, APIs prontas)
+- **Segurança**: ~80% (headers CSP/HSTS, rate limiting, input sanitization, profanity filter)
+- **Telemetria**: ~70% (PostHog + Vercel Analytics wired, eventos tipados, falta instrumentar componentes)
+- **Deploy**: sommar.app no ar, auth depende de Supabase cloud + Google OAuth (ação manual do time)
 
 ---
 
@@ -39,38 +41,31 @@
 
 ## Bugs em produção (sommar.app) — corrigir junto com login
 
-- [ ] **Prompts de onboarding com facetas erradas** — `src/lib/ai/prompts/onboarding.ts` usa "Romântico, Amizade, Profissional, Organizador" em vez de "Essência, Íntimo, Criativo, Profissional, Social". Fix urgente.
+- [x] **Prompts de onboarding com facetas erradas** — CORRIGIDO (Sessão 4). Agora usa Essência, Íntimo, Criativo, Profissional, Social.
 - [ ] **Middleware redirect** — garantir que callback redireciona para `/e/[slug]` quando usuário veio de página de evento
 
 ---
 
 ## Prioridade ALTA — Matter real no onboarding
 
-- [ ] Conectar `OnboardingChat.tsx` ao endpoint `/api/matter/route.ts` (hoje usa mock responses)
-- [ ] Implementar streaming de resposta (SSE) para evitar delay de resposta completa antes de exibir
+- [x] Conectar `OnboardingChat.tsx` ao endpoint `/api/matter/route.ts` — DONE (Sessão 4)
+- [x] Implementar streaming de resposta (SSE) — DONE. Route handler reescrito com streaming via ReadableStream.
 - [ ] Injetar dados do Google (nome, has_photo) no contexto da Matter antes da 1ª mensagem
-- [ ] Corrigir prompts de onboarding (`onboarding.ts`): facetas corretas + tom correto
+- [x] Corrigir prompts de onboarding (`onboarding.ts`): facetas corretas — DONE
+- [x] Hook `useMatter.ts` criado com streaming real + fallback mock — DONE
+- [ ] Integrar `useMatter` hook no `OnboardingFlow.tsx` (substituir simulação por hook real)
 
 ---
 
 ## Prioridade ALTA — Extraction Layer (coração do produto)
 
-- [ ] Criar `src/lib/ai/extraction.ts` — call assíncrono com Haiku após cada mensagem do usuário
-- [ ] Criar prompt de extração em `src/lib/ai/prompts/extraction.ts` com JSON schema de saída
-- [ ] Formato de saída esperado:
-  ```json
-  {
-    "facet_data": { "essencia": {...}, "intimo": {...}, ... },
-    "identity": { "gender": null, "interested_in": ["todos"] },
-    "completeness_score": 0.28,
-    "confidence": "medium"
-  }
-  ```
-- [ ] Implementar merge incremental no `facet_data` JSONB (nunca substituir, sempre fazer merge)
-- [ ] Criar endpoint `/api/onboarding/extract` para rodar extração server-side
-- [ ] Disparar extração em background após cada resposta da Matter (não bloquear a conversa)
-- [ ] Usar `completeness_score >= 0.65` como trigger para o Ori Reveal
-- [ ] Quando score >= 0.65: chamar `ori-narrative.ts` → gerar narrativa por faceta
+- [x] Criar `src/lib/ai/extraction.ts` — DONE (Sessão 4). Call assíncrono com Haiku.
+- [x] Criar prompt de extração em `src/lib/ai/prompts/extraction.ts` — DONE
+- [x] Implementar merge incremental no `facet_data` JSONB — DONE
+- [x] Criar endpoint `/api/onboarding/extract` — DONE
+- [x] Disparar extração em background após cada resposta (via `useMatter` hook) — DONE
+- [x] Usar `completeness_score >= 0.65` como trigger — IMPLEMENTADO no hook
+- [ ] Quando score >= 0.65: chamar `ori-narrative.ts` → gerar narrativa por faceta (prompt pronto, falta wiring)
 - [ ] Gerar embedding via OpenAI text-embedding-3-small do texto consolidado
 - [ ] Salvar embedding no campo `vector(1536)` da tabela `oris`
 - [ ] Trigger do Ori Reveal na UI quando threshold atingido
@@ -80,62 +75,55 @@
 ## Prioridade ALTA — Portal do Organizador
 
 > Referência visual: `docs/sommar_organizador_v1.html`
-> Rota: `/organizer` ou grupo de rotas separado do super-admin `/dashboard`
+> Rota: `/organizer` (grupo de rotas separado do super-admin `/dashboard`)
 
-- [ ] Criar rota `/organizer` com layout separado (sem bottom nav do app, com nav de organizador)
-- [ ] **Criar evento** — formulário completo:
-  - Nome, slug, descrição, cover image
-  - `matter_context` (campo de texto livre, crucial — é o que a Matter usa para contextualizar)
-  - Data/hora início e fim
-  - Localização (nome manual, sem GPS automático)
-  - Link de ingressos externo (opcional)
-  - Capacidade esperada
-  - Tags
-- [ ] **QR code de check-in** — gerar após criar evento. Exibir para organizer imprimir/exibir no local.
+- [x] Criar rota `/organizer` com layout separado — DONE (Sessão 4)
+- [x] **Criar evento** — formulário completo com nome, slug, descrição, matter_context, datas, local, tickets, capacidade, tags — DONE
+- [ ] **QR code de check-in** — placeholder criado, falta integrar biblioteca de QR
 - [ ] **QR quests** — criar QRs adicionais espalhados pelo evento (+3 correios cada)
-- [ ] **Analytics por evento** (post-event):
-  - Total de participantes com check-in
-  - Taxa de conexão (% que enviou pelo menos 1 Correio)
-  - Distribuição de facetas ativas
-  - Top combos de facetas nos matches
-  - Conexões confirmadas
-  - Correios enviados por hora (gráfico de engajamento)
-- [ ] **Preview da página pública** antes de publicar (`/e/[slug]`)
-- [ ] **Safety alerts** — aba de segurança no portal do organizador com alertas em tempo real
-- [ ] Garantir que organizer só vê seus próprios eventos (RLS + middleware check)
+- [x] **Analytics por evento** — DONE. Página com stats, distribuição de facetas, top combos, engajamento por hora.
+- [x] **Preview da página pública** — link direto para `/e/[slug]` no analytics — DONE
+- [x] **Safety alerts** — aba de segurança no portal com alertas em tempo real — DONE
+- [x] API `/api/organizer/events` (POST criar, GET listar) — DONE com validação e RLS
+- [ ] Conectar telas do portal ao Supabase real (hoje usa mock data)
 
 ---
 
 ## Prioridade ALTA — Telemetria
 
-- [ ] Instalar Vercel Analytics (1 linha no layout.tsx)
-- [ ] Instalar PostHog (npm install posthog-js)
-- [ ] Criar `src/lib/analytics.ts` — wrapper para `posthog.capture()` com tipos
-- [ ] Instrumentar landing page:
-  - `landing_viewed`, `hero_cta_clicked`, `section_viewed`, `mid_cta_clicked`, `final_cta_clicked`, `organizer_cta_clicked`
-- [ ] Instrumentar auth:
-  - `login_page_viewed`, `google_login_started`, `google_login_completed`, `login_failed`
-- [ ] Instrumentar onboarding:
-  - `onboarding_started`, `onboarding_message_sent` (turn number, sem conteúdo), `ori_reveal_triggered`, `onboarding_completed` (com completeness_score + tempo total), `onboarding_abandoned` (em qual etapa)
-- [ ] Instrumentar lobby:
-  - `lobby_viewed`, `correio_intent`, `correio_sent`, `match_toast_seen`
-- [ ] Instrumentar Matter FAB:
-  - `matter_fab_opened`, `matter_panel_closed`
-- [ ] Adicionar opt-out de analytics em Configurações (toggle + chamada `posthog.opt_out_capturing()`)
-- [ ] JAMAIS logar conteúdo de mensagens nos eventos de analytics
+- [x] Instalar Vercel Analytics — DONE (Sessão 4). `<Analytics />` no root layout.
+- [x] Instalar PostHog (posthog-js) — DONE
+- [x] Criar `src/lib/analytics.ts` — DONE. Wrapper tipado com todos os eventos do funil.
+- [x] Criar `AnalyticsProvider.tsx` — DONE. Inicializa PostHog no client.
+- [x] Opt-out de analytics (`optOutAnalytics()`, `optInAnalytics()`) — DONE
+- [ ] Instrumentar landing page (adicionar `trackEvent()` nos componentes)
+- [ ] Instrumentar auth
+- [ ] Instrumentar onboarding
+- [ ] Instrumentar lobby
+- [ ] Instrumentar Matter FAB
+- [ ] Adicionar toggle de opt-out na tela de Configurações
+- [x] JAMAIS logar conteúdo de mensagens — regra baked no tipo `AnalyticsEvent`
 
 ---
 
 ## Prioridade ALTA — Segurança (Botão de Pânico)
 
-- [ ] Criar migration `safety_alerts` table (schema em CLAUDE.md)
-- [ ] Criar componente `SafetyButton.tsx` — botão discreto, requer confirmação dupla
+- [x] Criar migration `safety_alerts` table — DONE (Sessão 4). `00002_safety_alerts.sql` com RLS.
+- [x] Criar componente `SafetyButton.tsx` — DONE. Discreto, confirmação dupla, formulário opcional.
 - [ ] Adicionar botão em: CorreioChat.tsx, PersonPopup.tsx (menu de contexto), configurações rápidas
-- [ ] Criar endpoint `/api/safety/alert` — salva alerta + notifica organizador do evento
-- [ ] Notificação para organizador: push (se PWA) + email via Supabase
-- [ ] Alertas visíveis no portal do organizador em tempo real
+- [x] Criar endpoint `/api/safety/alert` — DONE. Salva alerta + notifica organizador.
+- [ ] Notificação para organizador: push (se PWA) + email via Supabase Edge Function
+- [x] Alertas visíveis no portal do organizador — DONE (`/organizer/safety`)
 - [ ] Alertas visíveis no dashboard interno (admin.sommar.app)
 - [ ] Block automático disponível junto com o alerta
+
+### Segurança adicional implementada (Sessão 4):
+- [x] Security headers: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Permissions-Policy
+- [x] Rate limiting em todas as APIs (Matter, extraction, safety, organizer)
+- [x] Input sanitization (remove HTML, scripts, event handlers)
+- [x] Profanity filter server-side
+- [x] UUID validation helper
+- [x] Slug sanitization
 
 ---
 

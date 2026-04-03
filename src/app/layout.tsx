@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import { Fraunces, Outfit } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
+import { Analytics } from '@vercel/analytics/react';
+import { AnalyticsProvider } from '@/components/AnalyticsProvider';
 import './globals.css';
 
 const fraunces = Fraunces({
@@ -83,8 +85,11 @@ export default async function RootLayout({
         className={`${fraunces.variable} ${outfit.variable} font-body antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <AnalyticsProvider>
+            {children}
+          </AnalyticsProvider>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );
