@@ -18,7 +18,7 @@ Retorne JSON com a estrutura:
 {
   "essencia": "narrativa...",
   "intimo": "narrativa..." ou null se sem dados,
-  "criativo": "narrativa..." ou null se sem dados,
+  "academico": "narrativa..." ou null se sem dados,
   "profissional": "narrativa..." ou null se sem dados,
   "social": "narrativa..." ou null se sem dados
 }

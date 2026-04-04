@@ -8,7 +8,7 @@ const MOCK_MATCHES = [
   {
     id: 'm1',
     name: 'Clara Mendes',
-    facet: { id: 'criativo', label: 'Criativo', color: '#00D4FF' },
+    facet: { id: 'academico', label: 'Acadêmico', color: '#00D4FF' },
     colorA: '#00D4FF',
     colorB: '#A855F7',
     reason: 'Vocês compartilham uma paixão por experiências imersivas e arte digital.',
@@ -71,7 +71,7 @@ const MOCK_CONNECTIONS = [
     id: 'x1',
     name: 'Isabela Fontana',
     event: 'Sounds in da City',
-    facet: { label: 'Criativo', color: '#00D4FF' },
+    facet: { label: 'Acadêmico', color: '#00D4FF' },
     colorA: '#00D4FF',
     colorB: '#EC4899',
     confirmedAt: '12 mar 2026',

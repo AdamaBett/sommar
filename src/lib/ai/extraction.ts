@@ -9,7 +9,7 @@ export interface ExtractionResult {
   facet_data: {
     essencia?: Record<string, string>;
     intimo?: Record<string, string>;
-    criativo?: Record<string, string>;
+    academico?: Record<string, string>;
     profissional?: Record<string, string>;
     social?: Record<string, string>;
   };
@@ -30,7 +30,7 @@ const EXTRACTION_PROMPT = `Você é um sistema de extração de dados para o Som
 O Sommar usa 5 facetas:
 - **Essência**: valores, energia social, estilo de comunicação, personalidade base
 - **Íntimo**: vida afetiva, atração, disponibilidade emocional, o que busca em relacionamentos
-- **Criativo**: gosto musical, estético, referências culturais, hobbies, expressão artística
+- **Acadêmico**: formação acadêmica, área de pesquisa, o que estuda, certificações, produção científica
 - **Profissional**: área de atuação, expertise, o que sabe fazer, o que quer aprender
 - **Social**: estilo de amizade, interesses de comunidade, esportes, causas, diversão
 
@@ -53,7 +53,7 @@ Formato de saída (JSON):
   "facet_data": {
     "essencia": { "valores": "...", "energia_social": "...", "como_se_comunica": "..." },
     "intimo": { "o_que_busca": "...", "estilo": "..." },
-    "criativo": { "musica": "...", "arte": "...", "hobbies": "..." },
+    "academico": { "formacao": "...", "pesquisa": "...", "area": "..." },
     "profissional": { "area": "...", "sabe_fazer": "...", "quer_aprender": "..." },
     "social": { "estilo_amizade": "...", "interesses": "...", "causas": "..." }
   },
@@ -130,7 +130,7 @@ function mergeExtractionData(
   incoming: ExtractionResult
 ): ExtractionResult {
   const mergedFacets = { ...existing.facet_data };
-  const facetKeys = ['essencia', 'intimo', 'criativo', 'profissional', 'social'] as const;
+  const facetKeys = ['essencia', 'intimo', 'academico', 'profissional', 'social'] as const;
 
   for (const facet of facetKeys) {
     if (incoming.facet_data[facet]) {

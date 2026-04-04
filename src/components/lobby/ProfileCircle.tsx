@@ -12,7 +12,7 @@ interface ProfileCircleProps {
 /** Color mapping for match badge by facet */
 const BADGE_COLORS: Record<string, string> = {
   intimo: 'var(--pink)',
-  criativo: 'var(--cyan)',
+  academico: 'var(--cyan)',
   profissional: 'var(--amber-glow)',
   social: 'var(--purple)',
 };

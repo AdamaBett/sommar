@@ -27,12 +27,12 @@ const MOCK_UPCOMING_EVENTS = [
   },
   {
     id: '3',
-    name: 'Encontro Criativo',
-    slug: 'encontro-criativo',
+    name: 'Encontro Acadêmico',
+    slug: 'encontro-academico',
     cover_image_url: null as string | null,
     location_name: 'Centro, Florianópolis',
     start_time: '2026-04-22T14:00:00Z',
-    tags: ['criativo', 'networking', 'arte'],
+    tags: ['acadêmico', 'networking', 'pesquisa'],
     interested_count: 134,
   },
   {

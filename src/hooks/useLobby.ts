@@ -8,7 +8,7 @@ import type { MatchResult } from '@/types/ori';
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-type FacetFilter = 'todos' | 'intimo' | 'criativo' | 'profissional' | 'social';
+type FacetFilter = 'todos' | 'intimo' | 'academico' | 'profissional' | 'social';
 
 interface LobbyParticipantWithProfile extends LobbyParticipant {
   displayName: string;
@@ -37,7 +37,7 @@ interface UseLobbyReturn {
 const FACET_FILTER_MAP: Record<FacetFilter, string | null> = {
   todos: null,
   intimo: 'intimo',
-  criativo: 'criativo',
+  academico: 'academico',
   profissional: 'profissional',
   social: 'social',
 };

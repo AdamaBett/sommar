@@ -11,7 +11,7 @@ import { CorreioPopup } from '@/components/correio/CorreioPopup';
 
 type LobbyViewMode = 'cosmos' | 'grid';
 
-export type FacetFilterType = 'all' | 'intimo' | 'criativo' | 'profissional' | 'social';
+export type FacetFilterType = 'all' | 'intimo' | 'academico' | 'profissional' | 'social';
 
 interface LobbyViewProps {
   participants: LobbyParticipant[];

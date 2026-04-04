@@ -69,7 +69,7 @@ npx supabase gen types typescript --local > src/lib/database.types.ts
 - Comentários em português para lógica de negócio, inglês para comentários técnicos
 - **ZERO travessões (— ou –) em qualquer copy de UI.** Travessão é marca de IA. Use vírgula ou ponto.
 - Arquivos com mais de 200 linhas devem ser refatorados em módulos menores
-- IMPORTANTE: data de facetas e Ori é JSONB, nunca enums fixos. As 5 facetas (Essência, Íntimo, Criativo, Profissional, Social) são chaves JSONB, não categorias de conexão.
+- IMPORTANTE: data de facetas e Ori é JSONB, nunca enums fixos. As 5 facetas (Essência, Íntimo, Acadêmico, Profissional, Social) são chaves JSONB, não categorias de conexão.
 
 ## Estrutura de Diretórios
 
@@ -117,7 +117,7 @@ sommar/
 │   │   ├── lobby/
 │   │   │   ├── LobbyGrid.tsx    # Grid hexagonal de perfis
 │   │   │   ├── ProfileCircle.tsx # Cada bolinha no grid (tamanho varia por role)
-│   │   │   ├── FacetFilter.tsx  # Filtros por faceta ativa: Todos | Íntimo | Criativo | Profissional | Social
+│   │   │   ├── FacetFilter.tsx  # Filtros por faceta ativa: Todos | Íntimo | Acadêmico | Profissional | Social
 │   │   │   └── LobbySwitch.tsx  # Switch de evento (como trocar servidor de game)
 │   │   ├── matter/
 │   │   │   ├── MatterFAB.tsx    # Orb pulsante flutuante (fixed bottom-right, acima das tabs)
@@ -180,7 +180,7 @@ sommar/
 
 ## Database Schema (Supabase Postgres)
 
-IMPORTANTE: dados de facetas e Ori usam JSONB, nunca enums. As 5 facetas (Essência, Íntimo, Criativo, Profissional, Social) são chaves fixas no JSONB, mas o conteúdo dentro delas é livre. Isso permite expansão sem migrations.
+IMPORTANTE: dados de facetas e Ori usam JSONB, nunca enums. As 5 facetas (Essência, Íntimo, Acadêmico, Profissional, Social) são chaves fixas no JSONB, mas o conteúdo dentro delas é livre. Isso permite expansão sem migrations.
 
 ```sql
 -- Auth via Supabase Auth (tabela auth.users gerenciada pelo Supabase)
@@ -211,13 +211,13 @@ create table public.profiles (
 
   -- FACETAS
   active_facets text[] default '{essencia}', -- Quais facetas estão habilitadas. Essência SEMPRE inclusa.
-  -- Valores possíveis: 'essencia', 'intimo', 'criativo', 'profissional', 'social'
+  -- Valores possíveis: 'essencia', 'intimo', 'academico', 'profissional', 'social'
   facet_data jsonb default '{}',     -- TODA data de facetas aqui.
-  -- Chaves: "essencia", "intimo", "criativo", "profissional", "social"
+  -- Chaves: "essencia", "intimo", "academico", "profissional", "social"
   -- Cada chave contém dados livres que a Matter extraiu ou o usuário editou manualmente.
   -- Ex: { "essencia": { "valores": "...", "energia": "...", "como_se_comunica": "..." },
   --       "intimo": { "o_que_busca": "...", "estilo": "..." },
-  --       "criativo": { "musica": "...", "arte": "...", "hobbies": "..." },
+  --       "academico": { "formacao": "...", "pesquisa": "...", "area_estudo": "...", "certificacoes": "..." },
   --       "profissional": { "area": "...", "sabe_fazer": "...", "quer_aprender": "..." },
   --       "social": { "estilo_amizade": "...", "interesses": "...", "causas": "..." } }
 
@@ -235,7 +235,7 @@ create table public.oris (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
   embedding vector(1536),            -- text-embedding-3-small output
-  narrative jsonb default '{}',      -- Resumo narrativo por faceta: {"essencia": "...", "intimo": "...", "criativo": "...", "profissional": "...", "social": "..."}
+  narrative jsonb default '{}',      -- Resumo narrativo por faceta: {"essencia": "...", "intimo": "...", "academico": "...", "profissional": "...", "social": "..."}
   ice_breaker_seeds text[] default '{}',
   completeness_score float default 0,
   version int default 1,             -- Incrementa a cada atualização do Ori
@@ -284,7 +284,7 @@ create table public.lobbies (
 create table public.lobby_participants (
   lobby_id uuid not null references public.lobbies(id) on delete cascade,
   user_id uuid not null references public.profiles(id),
-  active_facets text[] default '{essencia}', -- Facetas ativadas NESTE lobby: 'essencia', 'intimo', 'criativo', 'profissional', 'social'
+  active_facets text[] default '{essencia}', -- Facetas ativadas NESTE lobby: 'essencia', 'intimo', 'academico', 'profissional', 'social'
   role text default 'participant',   -- 'participant' | 'organizer' | 'featured' (DJs, palestrantes, etc. = círculos maiores)
   checked_in_at timestamptz default now(),
   primary key (lobby_id, user_id)
@@ -387,7 +387,7 @@ create table public.referrals (
 create table public.consents (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
-  consent_type text not null,        -- 'data_processing' | 'ai_profiling' | 'facet_intimo' | 'facet_criativo' | 'facet_profissional' | 'facet_social'
+  consent_type text not null,        -- 'data_processing' | 'ai_profiling' | 'facet_intimo' | 'facet_academico' | 'facet_profissional' | 'facet_social'
   granted boolean default true,
   granted_at timestamptz default now(),
   withdrawn_at timestamptz
@@ -572,8 +572,8 @@ O Ori nasce **durante** a conversa, não só no final. O Ori Reveal acontece qua
       "energia_social": "seletivamente extrovertido",
       "como_se_comunica": "direto mas cuidadoso"
     },
-    "criativo": {
-      "musica": "jazz, soul, eletrônica orgânica"
+    "academico": {
+      "formacao": "design, pós em UX research"
     }
   },
   "identity": {
@@ -641,7 +641,7 @@ Participantes com role `organizer` ou `featured` aparecem como **círculos maior
 2. **REGRA DE IDENTIDADE (obrigatória quando faceta `intimo` ativa em ambos):**
    - Se `interested_in` de A NÃO inclui o gênero de B → match com faceta Íntimo NÃO acontece. Jamais.
    - Se `relationship_model` de A e B são incompatíveis (ex: A é monogâmico, B é poliamoroso) → reduzir score, não bloquear. A Matter pode mencionar no relatório.
-   - Matches por outras facetas (Profissional, Social, Criativo) IGNORAM esses filtros. Gênero e orientação só importam quando Íntimo está ativo.
+   - Matches por outras facetas (Profissional, Social, Acadêmico) IGNORAM esses filtros. Gênero e orientação só importam quando Íntimo está ativo.
 3. Calcular cosine similarity entre embeddings dos Oris (filtrado por facetas ativas)
 4. Threshold de match: cosine_similarity > 0.75 (ajustável)
 5. Para cada match acima do threshold: gerar ice-breaker via Claude API
@@ -656,7 +656,7 @@ O Sommar usa 5 facetas que representam camadas de quem a pessoa é. O tipo de co
 |--------|--------|--------------|
 | **Essência** | Sempre ativa, sem toggle | Valores, energia, personalidade, estilo de comunicação. Preenchida automaticamente pela Matter durante o onboarding. |
 | **Íntimo** | Liga/desliga por lobby | Vida afetiva, atração, disponibilidade emocional. Quando ativa, o matching respeita `interested_in` e `relationship_model`. É o sinal claro de "estou aberto pra algo caliente aqui". |
-| **Criativo** | Liga/desliga por lobby | Gosto musical, estético, referências culturais, hobbies, expressão artística. |
+| **Acadêmico** | Liga/desliga por lobby | Formação acadêmica, pesquisa, área de estudo, certificações, produção científica. |
 | **Profissional** | Liga/desliga por lobby | Área de atuação, expertise, o que sabe fazer, o que quer aprender, o que pode ensinar. |
 | **Social** | Liga/desliga por lobby | Estilo de amizade, interesses de comunidade, esportes, causas, o que faz por diversão. |
 
@@ -850,7 +850,7 @@ O valor único que o Sommar oferece ao organizador é **dados que nenhuma outra 
 - Total de participantes únicos
 - Taxa de conexão: X% dos participantes trocaram pelo menos 1 Correio
 - Distribuição por faceta: "70% dos participantes ativaram Profissional"
-- Top combinações de facetas nos matches (ex: Profissional+Criativo foi o combo mais comum)
+- Top combinações de facetas nos matches (ex: Profissional+Acadêmico foi o combo mais comum)
 - Conexões confirmadas (ambos clicaram "confirmar conexão")
 - NPS implícito: participantes que voltaram a abrir o app após o evento
 
@@ -1032,7 +1032,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 - "você" marker no centro com glow pulsante
 - Toggle para vista grid alternativa
 - PersonPopup com perfil resumido + Correio Elegante
-- Filtros por faceta: Todos, Íntimo, Criativo, Profissional, Social
+- Filtros por faceta: Todos, Íntimo, Acadêmico, Profissional, Social
 
 **Conexões (/connections) — NOVA:**
 - 3 seções: Matches ativos, Conversas, Conexões confirmadas
@@ -1083,7 +1083,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 **Facetas (CLAUDE.md = source of truth):**
 - Essência (sempre ativa, green)
 - Íntimo (toggle, pink)
-- Criativo (toggle, cyan)
+- Acadêmico (toggle, cyan)
 - Profissional (toggle, amber)
 - Social (toggle, purple)
 
@@ -1106,7 +1106,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 
 ### Decisões de produto registradas:
 - CLAUDE.md é SEMPRE a fonte de verdade suprema
-- Nomes de facetas seguem CLAUDE.md (Essência, Íntimo, Criativo, Profissional, Social)
+- Nomes de facetas seguem CLAUDE.md (Essência, Íntimo, Acadêmico, Profissional, Social)
 - Social proof nunca mente (sem números falsos)
 - Landing balanceada para TODAS as facetas
 - Cosmos = representação visual dos Oris/conexões
@@ -1120,7 +1120,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 
 **Sessão 1 (2026-04-01):** Setup completo do zero. Next.js 14 + TypeScript + Supabase + Tailwind. 87 arquivos criados. Landing page 9 seções. Onboarding 4 etapas. Lobby com grid hexagonal. Todas as rotas do app. Admin dashboard. Correio Elegante. Auth flow. Middleware. AI integrations (Claude + OpenAI). Build passando.
 
-**Sessão 2 (2026-04-01 cont.):** Assessment honesto — UI ~90% mas integração backend ~25%. Modo demo criado (todas as telas funcionam sem Supabase). CTAs da landing corrigidos. Facetas renomeadas para CLAUDE.md spec (Essência/Íntimo/Criativo/Profissional/Social). Correio Elegante wired no lobby. Hero copy reescrito. Stats "O Potencial Desperdiçado" adicionados. Landing balanceada para todas as facetas. CosmosLobby criado (canvas com orbs, sinapses, drag). 35 participantes mock. Perfil do Bet (Matheus Betinelli). Gramática PT-BR corrigida em 24 arquivos. Pesquisa de concorrentes (Tinder, Hinge, Bumble, LinkedIn, Meetup). Tab Conexões adicionada. Settings + logout criados. Revisão sistemática: zero dead-ends. Header lobby fixado. Sinapses douradas zigzag. AGENTS.md, RESEARCH.md, TODO.md criados.
+**Sessão 2 (2026-04-01 cont.):** Assessment honesto — UI ~90% mas integração backend ~25%. Modo demo criado (todas as telas funcionam sem Supabase). CTAs da landing corrigidos. Facetas renomeadas para CLAUDE.md spec (Essência/Íntimo/Acadêmico/Profissional/Social). Correio Elegante wired no lobby. Hero copy reescrito. Stats "O Potencial Desperdiçado" adicionados. Landing balanceada para todas as facetas. CosmosLobby criado (canvas com orbs, sinapses, drag). 35 participantes mock. Perfil do Bet (Matheus Betinelli). Gramática PT-BR corrigida em 24 arquivos. Pesquisa de concorrentes (Tinder, Hinge, Bumble, LinkedIn, Meetup). Tab Conexões adicionada. Settings + logout criados. Revisão sistemática: zero dead-ends. Header lobby fixado. Sinapses douradas zigzag. AGENTS.md, RESEARCH.md, TODO.md criados.
 
 **Sessão 3 (2026-04-01 cont.):** Documentação estratégica e landing overhaul. CRO.md criado com benchmarks, CTAs, onboarding, dark design, social proof. README.md reescrito para Gusta clonar e rodar. Plataforma declarada 100% universal/agnóstica (removidas todas referências a "Sounds in da City"). Regra de travessão adicionada em CLAUDE.md e AGENTS.md: ZERO dashes/travessões em qualquer copy de UI, jamais. NeonCTA.tsx criado (botão com borda neon animada via conic-gradient rotativo). Hero.tsx reescrito: "A pessoa certa está ao seu lado", NeonCTA "Criar meu Ori", secondary link "ou descubra como funciona" corrigido para scroll target #sobre. HowItWorks.tsx reescrito: icon+title inline, descrições enxutas. FinalCTA.tsx criado (substituiu EmailCapture — CTA direto de criar conta). MidCTA.tsx criado (CTA de meio de página). ForOrganizers.tsx: CTA primário "Criar meu primeiro evento" + secondary email. page.tsx atualizado: estrutura Hero → ProblemStats → Antidote → HowItWorks → NotJustDating → MidCTA → ForOrganizers → FinalCTA → Footer. Bug fix: scroll target Hero corrigido (#comecar → #sobre). .gitignore: adicionado .claude/ para não commitar memória interna do Claude Code. Vercel configurado: framework preset → Next.js, deploy automático do GitHub main. Build fix: removido import framer-motion não usado em FinalCTA.tsx. Estimativas de custo de API documentadas: ~$8-10 por evento de 200 pessoas, ~$20-25 por 500 pessoas. CLAUDE.md expandido: seção completa de Matter Intelligence Architecture, extraction layer protocol, continuous improvement do Ori, regras de coleta de identidade. CLAUDE.md expandido (Sessão 3): Telemetria completa (eventos a capturar, funil de conversão, ferramentas), Dashboard Interno (admin.sommar.app, saúde do sistema, moderação, métricas de IA), Inteligência para Organizadores (o que vê vs. não vê, pitch, tiers), Segurança e Botão de Pânico (schema safety_alerts, fluxo de alerta), Lobby Tiers de Acesso (pre-event/QR/histórico), Visão de Longo Prazo (geo-lobbies, comunidades, API pública).
 
@@ -1139,7 +1139,7 @@ IMPORTANTE: Estes protótipos definem o padrão visual. Ao criar componentes Rea
 **Sessão 4:** Bet dormiu e o agente trabalhou. Foco em construir tudo que não depende de ação manual (Supabase cloud, Google OAuth).
 
 **Bug fixes:**
-- Fix: `onboarding.ts` usava facetas erradas ("Romântico, Amizade, Profissional, Organizador"). Corrigido para as 5 facetas corretas (Essência, Íntimo, Criativo, Profissional, Social) com descrições de cada uma.
+- Fix: `onboarding.ts` usava facetas erradas ("Romântico, Amizade, Profissional, Organizador"). Corrigido para as 5 facetas corretas (Essência, Íntimo, Acadêmico, Profissional, Social) com descrições de cada uma.
 
 **Extraction Layer (coração do produto):**
 - `src/lib/ai/extraction.ts` criado. Call assíncrono com Haiku (`claude-haiku-4-5-20251001`) após cada mensagem.
@@ -1227,3 +1227,29 @@ supabase/migrations/00002_safety_alerts.sql   # Migration safety
 7. Adicionar `SafetyButton` no CorreioChat.tsx e PersonPopup.tsx
 8. Adicionar `NEXT_PUBLIC_POSTHOG_KEY` nas env vars da Vercel
 9. Qualquer feature nova → registrar em CLAUDE.md patch notes
+
+### v0.2.1 — Landing Redesign e Faceta Acadêmica (2026-04-03)
+
+**Sessão 5:** Redesign da landing page e decisão de produto sobre facetas.
+
+**Landing Page Redesign:**
+- Antidote.tsx reescrito: "A Mudanca" com ghost apps (Tinder, LinkedIn, Bumble fade-out) + grid de facetas do Sommar
+- HowItWorks.tsx substituido por MeetMatter: Matter se apresenta via chat simulado + Ori teaser
+- MatterOrb ethereal variant criado (visual mais etéreo para landing)
+- Hero.tsx atualizado com novo layout e copy
+
+**Decisao de Produto:**
+- Faceta "Criativo" renomeada para "Academico" em toda a spec (CLAUDE.md = source of truth)
+- Nova descricao: "Formacao academica, pesquisa, area de estudo, certificacoes, producao cientifica"
+- facet_data JSONB key: `"academico"` com campos `formacao`, `pesquisa`, `area_estudo`, `certificacoes`
+- consent_type atualizado: `'facet_academico'`
+- Todas as referencias atualizadas: schema, matching engine, modelo de facetas, lobby, filtros, patch notes historicos
+
+**Flags:**
+- Onboarding redesign flagged como urgente (fluxo atual precisa ser revisado para refletir nova faceta)
+
+### Decisoes de produto registradas (Sessao 5):
+- Faceta Academico substitui Criativo. Cor mantida (cyan). Toggle por lobby.
+- Landing: Antidote vira "A Mudanca", HowItWorks vira MeetMatter
+- MatterOrb tem variante ethereal para landing (diferente do FAB no app)
+- Onboarding precisa ser redesenhado com urgencia
