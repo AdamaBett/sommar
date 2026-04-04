@@ -13,7 +13,7 @@ interface PersonPopupProps {
 /** Label and color mapping for facets */
 const TIPO_CONFIG: Record<string, { label: string; color: string }> = {
   intimo: { label: '\uD83D\uDD25 intimo', color: 'var(--pink)' },
-  criativo: { label: '\uD83C\uDFA8 criativo', color: 'var(--cyan)' },
+  academico: { label: '\uD83C\uDF93 acadêmico', color: 'var(--cyan)' },
   profissional: { label: '\uD83D\uDCBC profissional', color: 'var(--amber-glow)' },
   social: { label: '\uD83C\uDF1F social', color: 'var(--purple)' },
 };

@@ -34,7 +34,7 @@ export function LandingNav(): JSX.Element {
 
       <Link href="/login">
         <Button variant="secondary" size="sm" className="border-[var(--green)]/40 text-[var(--green-glow)]">
-          Criar meu perfil
+          Quero experimentar
         </Button>
       </Link>
     </nav>

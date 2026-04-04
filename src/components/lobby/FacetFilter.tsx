@@ -28,9 +28,9 @@ const FILTERS: FilterOption[] = [
     activeClass: 'bg-[rgba(236,72,153,0.1)] border-[rgba(236,72,153,0.3)] text-[var(--pink)]',
   },
   {
-    id: 'criativo',
-    label: 'Criativo',
-    emoji: '\uD83C\uDFA8',
+    id: 'academico',
+    label: 'Acadêmico',
+    emoji: '\uD83C\uDF93',
     activeClass: 'bg-[rgba(0,212,255,0.08)] border-[rgba(0,212,255,0.25)] text-[var(--cyan)]',
   },
   {

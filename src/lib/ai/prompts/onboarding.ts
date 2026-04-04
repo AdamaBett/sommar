@@ -49,7 +49,7 @@ Agora você vai introduzir a seleção de facetas (tipos de conexão).
 Explique brevemente que o Sommar permite ativar diferentes "lados" do perfil:
 - Essência (sempre ativa, é quem você é na base)
 - Íntimo (vida afetiva, atração, disponibilidade emocional)
-- Criativo (gosto musical, estético, hobbies, expressão artística)
+- Acadêmico (formação acadêmica, área de pesquisa, o que estuda, certificações)
 - Profissional (área de atuação, expertise, o que sabe e quer aprender)
 - Social (estilo de amizade, interesses de comunidade, causas)
 

@@ -48,7 +48,7 @@ export const CONNECTION_TYPES = [
 export const FACETS = [
   { id: 'essencia', label: 'Essência', color: '#1DFFA8' },
   { id: 'intimo', label: 'Íntimo', color: '#EC4899' },
-  { id: 'criativo', label: 'Criativo', color: '#00D4FF' },
+  { id: 'academico', label: 'Acadêmico', color: '#00D4FF' },
   { id: 'profissional', label: 'Profissional', color: '#FFB840' },
   { id: 'social', label: 'Social', color: '#A855F7' },
 ] as const;

@@ -28,7 +28,7 @@ export function Hero(): JSX.Element {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.8, ease: EASE_OUT_EXPO }}
       >
-        O mundo está{' '}
+        Conexões que mudam vidas podem estar {' '}
         <em
           style={{
             color: 'var(--coral-glow)',
@@ -37,7 +37,7 @@ export function Hero(): JSX.Element {
               '0 0 10px rgba(255,107,61,0.55), 0 0 28px rgba(255,107,61,0.25)',
           }}
         >
-          desconectado
+          ao seu lado
         </em>
         .
       </motion.h1>
@@ -50,9 +50,8 @@ export function Hero(): JSX.Element {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45, duration: 0.8, ease: EASE_OUT_EXPO }}
       >
-        A gente{' '}
-        <span className="vai-mudar">vai mudar</span>{' '}
-        isso.
+        Prepare-se para {' '}
+        <span className="vai-mudar">conhecê-las!</span>{' '}
       </motion.p>
 
       {/* Body copy */}
@@ -63,11 +62,11 @@ export function Hero(): JSX.Element {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.8, ease: EASE_OUT_EXPO }}
       >
-        Apps de namoro te esgotam. LinkedIn é performance. Redes sociais são barulho.{' '}
+        Usamos IA ética pra te entender de verdade e conectar com quem faz sentido, nos eventos e espaços que você já frequenta. { }
         <span style={{ color: 'var(--text-medium)' }}>
-          Enquanto isso, as conexões que mudam vidas continuam não acontecendo.
+          <br />Amor, amizade, projetos e comunidades.
         </span>{' '}
-        Até agora...
+        <br /> Onde você quer Sommar?
       </motion.p>
 
       {/* CTA */}
@@ -85,7 +84,7 @@ export function Hero(): JSX.Element {
           className="text-xs"
           style={{ color: 'var(--text-subtle)' }}
         >
-          Alpha test em andamento, seja a revolução que busca.
+          Vagas limitadas para o Alpha Teste. <br />Seja parte da revolução que o mundo precisa.
         </p>
       </motion.div>
 
@@ -107,7 +106,7 @@ export function Hero(): JSX.Element {
           className="text-xs transition-colors duration-200"
           style={{ color: 'var(--text-subtle)' }}
         >
-          ou descubra como funciona
+          quer saber mais? clique aqui e descubra como funciona ↓
         </Link>
       </motion.div>
     </section>

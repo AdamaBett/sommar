@@ -32,7 +32,7 @@ export function buildIceBreakerPrompt(params: {
   const facetLabels: Record<string, string> = {
     essencia: 'essência',
     intimo: 'íntimo',
-    criativo: 'criativo',
+    academico: 'acadêmico',
     profissional: 'profissional',
     social: 'social',
   };

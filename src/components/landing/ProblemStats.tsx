@@ -14,15 +14,15 @@ interface StatCard {
 /* Potential stats — the wasted opportunity */
 const POTENTIAL_STATS: StatCard[] = [
   {
-    stat: '78M',
-    description: 'de brasileiros foram a pelo menos um evento ao vivo em 2023',
-    source: 'ABRAPE / Ministério da Cultura, 2024',
+    stat: '180M',
+    description: 'de brasileiros foram a pelo menos um evento em 2025',
+    source: 'SERASA / Ministério da Cultura, 2025',
     color: 'var(--amber)',
     glowColor: 'var(--amber-glow)',
   },
   {
     stat: '~3%',
-    description: 'das pessoas presentes em um evento chegam a trocar mais do que um "oi"',
+    description: 'das pessoas presentes em um evento chegam a trocar mais do que um "oi" ',
     source: 'Estimativa baseada em dados de mercado',
     color: 'var(--green)',
     glowColor: 'var(--green-glow)',
@@ -39,7 +39,7 @@ const POTENTIAL_STATS: StatCard[] = [
 const STATS: StatCard[] = [
   {
     stat: '79%',
-    description: 'dos jovens adultos relatam esgotamento com aplicativos de encontros e conexão digital',
+    description: 'das pessoas relatam esgotamento com aplicativos de encontros e conexão digital',
     source: 'Forbes Health, 2024',
     color: 'var(--coral)',
     glowColor: 'var(--coral-glow)',
@@ -97,43 +97,41 @@ export function ProblemStats(): JSX.Element {
             O problema
           </span>
           <h2 className="font-display text-[clamp(22px,4.5vw,36px)] font-light leading-snug mt-4">
-            As pessoas estão cada vez mais conectadas digitalmente.
-            <br />
-            E cada vez mais sozinhas.
+            Mais ferramentas sociais do que nunca. <br />Mais solidão também.
           </h2>
         </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {STATS.map((card) => (
-          <motion.div key={card.stat} variants={cardVariants}>
-            <GlassCard
-              padding="lg"
-              className="flex flex-col items-center text-center h-full"
-            >
-              <span
-                className="font-display text-[40px] font-light leading-none"
-                style={{ color: card.glowColor }}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {STATS.map((card) => (
+            <motion.div key={card.stat} variants={cardVariants}>
+              <GlassCard
+                padding="lg"
+                className="flex flex-col items-center text-center h-full"
               >
-                {card.stat}
-              </span>
+                <span
+                  className="font-display text-[40px] font-light leading-none"
+                  style={{ color: card.glowColor }}
+                >
+                  {card.stat}
+                </span>
 
-              <p
-                className="mt-3 text-sm leading-relaxed"
-                style={{ color: 'var(--text-medium)' }}
-              >
-                {card.description}
-              </p>
+                <p
+                  className="mt-3 text-sm leading-relaxed"
+                  style={{ color: 'var(--text-medium)' }}
+                >
+                  {card.description}
+                </p>
 
-              <span
-                className="mt-auto pt-4 text-[10px] tracking-wide uppercase"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                {card.source}
-              </span>
-            </GlassCard>
-          </motion.div>
-        ))}
-      </div>
+                <span
+                  className="mt-auto pt-4 text-[10px] tracking-wide uppercase"
+                  style={{ color: 'var(--text-muted)' }}
+                >
+                  {card.source}
+                </span>
+              </GlassCard>
+            </motion.div>
+          ))}
+        </div>
 
         {/* Potential section */}
         <motion.div className="text-center mt-20 mb-12" variants={cardVariants}>
@@ -144,9 +142,8 @@ export function ProblemStats(): JSX.Element {
             O potencial desperdiçado
           </span>
           <h2 className="font-display text-[clamp(22px,4.5vw,36px)] font-light leading-snug mt-4">
-            Milhões de pessoas vão a eventos e voltam
-            <br />
-            sem conhecer quem estava{' '}
+            Milhões de pessoas vão e voltam de eventos
+            sem realmente se conectar com quem estava {' '}
             <span style={{ color: 'var(--amber-glow)' }}>ali do lado</span>.
           </h2>
         </motion.div>

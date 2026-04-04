@@ -23,13 +23,13 @@ const MOCK_EVENT = {
       essencia: 42,
       profissional: 38,
       social: 29,
-      criativo: 15,
+      academico: 15,
       intimo: 8,
     },
     topFacetCombos: [
       { combo: 'Profissional + Social', count: 14 },
-      { combo: 'Profissional + Criativo', count: 8 },
-      { combo: 'Social + Criativo', count: 6 },
+      { combo: 'Profissional + Acadêmico', count: 8 },
+      { combo: 'Social + Acadêmico', count: 6 },
     ],
     correiosByHour: [
       { hour: '19h', count: 5 },
@@ -44,7 +44,7 @@ const MOCK_EVENT = {
 const FACET_COLORS: Record<string, string> = {
   essencia: 'bg-[var(--green-glow)]',
   intimo: 'bg-[var(--pink)]',
-  criativo: 'bg-[var(--cyan)]',
+  academico: 'bg-[var(--cyan)]',
   profissional: 'bg-[var(--amber-glow)]',
   social: 'bg-[var(--purple)]',
 };
@@ -52,7 +52,7 @@ const FACET_COLORS: Record<string, string> = {
 const FACET_LABELS: Record<string, string> = {
   essencia: 'Essência',
   intimo: 'Íntimo',
-  criativo: 'Criativo',
+  academico: 'Acadêmico',
   profissional: 'Profissional',
   social: 'Social',
 };

@@ -1,12 +1,12 @@
 # TODO.md — Prioridades e Escopo
 
-> Atualizado: 2026-04-03 (Sessão 4)
+> Atualizado: 2026-04-03 (Sessão 5 — feedback do Bet)
 > Lido por agentes IA antes de qualquer trabalho.
 
 ## Status Atual: MSP ~78% completo
 
 ### Camadas:
-- **Visual/UI**: ~96% (todas as telas existem, portal do organizador completo)
+- **Visual/UI**: ~96% (todas as telas existem, portal do organizador completo, landing page redesign feito nesta sessão)
 - **Integração backend**: ~45% (extraction layer, Matter streaming, safety alerts, APIs prontas)
 - **Segurança**: ~80% (headers CSP/HSTS, rate limiting, input sanitization, profanity filter)
 - **Telemetria**: ~70% (PostHog + Vercel Analytics wired, eventos tipados, falta instrumentar componentes)
@@ -89,6 +89,17 @@
 
 ---
 
+## Prioridade ALTA — Redesign de Onboarding (URGENTE)
+
+> Bet flagged: onboarding atual está sem vida, sem cor, horrível. Precisa de redesign urgente.
+
+- [ ] Redesign visual completo do OnboardingFlow.tsx (cores, animações, vitalidade)
+- [ ] Facet completeness % por faceta com incentivo visual (barra de progresso)
+- [ ] Matter FAB com notificações sutis (indicador de facetas incompletas)
+- [ ] Matter usar contexto do evento pra sugerir facetas relevantes no check-in
+
+---
+
 ## Prioridade ALTA — Telemetria
 
 - [x] Instalar Vercel Analytics — DONE (Sessão 4). `<Analytics />` no root layout.
@@ -159,6 +170,9 @@
 - [ ] Mobile responsiveness: testar em 375px e 390px
 - [ ] Correio Chat: tela de conversa ativa com timer anti-ghosting
 - [ ] Página do evento (/e/[slug]): melhorar visual do feed
+- [ ] Import de dados externos: LinkedIn PDF, currículo, prints de perfis de outras redes
+- [ ] Fotos no perfil: UX de upload, importância para match Íntimo
+- [ ] MatterOrb ethereal variant aplicar em outras telas (chat bubble, onboarding)
 
 ---
 
@@ -215,6 +229,14 @@
 - App nativo iOS/Android (PWA primeiro)
 - Integração com redes sociais além do login
 - Internacionalização (EN) no MSP
+
+---
+
+## Decisões de produto registradas (Sessão 5)
+
+- Faceta Criativo substituída por Acadêmico (decisão 2026-04-03)
+- Landing page: seção "A Mudança" com ghost apps + facets grid
+- Landing page: seção MeetMatter com Matter se apresentando via chat bubbles
 
 ---
 

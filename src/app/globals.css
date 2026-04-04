@@ -213,6 +213,12 @@ body {
   animation: vai-mudar-pulse 2.2s ease-in-out infinite;
 }
 
+/* Typing bounce for MeetMatter chat dots */
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+}
+
 /* Hide scrollbar utility */
 .scrollbar-none {
   -ms-overflow-style: none;
